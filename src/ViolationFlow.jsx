@@ -700,6 +700,341 @@ const Bdg=({status})=>{const s=ST[status]||ST.NEW_REPORT;return<span style={{bac
 const NDoc=({d})=><div style={{background:"#0D1117",borderRadius:16,padding:32,border:`1px solid ${T.border2}`}}><div style={{textAlign:"center",borderBottom:`1px solid ${T.border}`,paddingBottom:18,marginBottom:20}}><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,letterSpacing:"0.05em"}}>VIOLATION NOTICE</div><div style={{fontSize:13,color:T.muted,marginTop:4}}>{d.assocName}</div><div style={{fontSize:12,color:T.muted,marginTop:2}}>Notice Date: {d.noticeDate}</div></div>{[["Unit in Violation",`Unit ${d.violatorUnit}`],["Rule Violated",d.ruleTitle],["Rule Section",`§${d.ruleSection}`],["Description",d.description]].map(([k,v])=><div key={k} style={{marginBottom:12,fontSize:14,color:T.muted2}}><span style={{color:T.text,fontWeight:600}}>{k}:</span> {v}</div>)}<div style={{marginBottom:20,fontSize:14}}><span style={{color:T.text,fontWeight:600}}>Fine Amount:</span> <span style={{color:T.gold,fontWeight:700}}>${d.fineAmount}</span></div><div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:10,padding:14,marginBottom:16}}><div style={{fontWeight:700,marginBottom:6,color:"#fbbf24",fontSize:13}}>⚖ Your Hearing Rights</div><div style={{fontSize:13,lineHeight:1.7,color:T.muted2}}>You have the right to contest this violation by requesting a formal hearing within <strong style={{color:T.text}}>{d.hearingDays} days</strong> (by <strong style={{color:T.text}}>{d.deadline}</strong>). Failure to request a hearing will result in this violation becoming final and a fine of <strong style={{color:T.gold}}>${d.fineAmount}</strong> applied to your account.</div></div><div style={{fontSize:11,color:T.muted,borderTop:`1px solid ${T.border}`,paddingTop:12}}>Issued pursuant to applicable state condominium and HOA statutes and the association's governing documents. For questions contact: support@violationflow.com</div></div>;
 const TL=({events})=><div style={{paddingLeft:22,position:"relative"}}><div style={{position:"absolute",left:7,top:8,bottom:8,width:2,background:T.border}}/>{events.map((e,i)=><div key={e.id} style={{position:"relative",marginBottom:16}}><div style={{position:"absolute",left:-22,top:5,width:11,height:11,borderRadius:"50%",background:i===0?T.violet:T.border2,border:"2px solid #06080F",outline:`2px solid ${i===0?T.violet:T.border}`}}/><div style={{fontSize:11,color:T.muted,marginBottom:2}}>{new Date(e.created_at).toLocaleString()}</div><div style={{fontSize:13,fontWeight:600,color:T.muted2}}>{e.event_type.replace(/_/g," ")}</div>{e.description&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>{e.description}</div>}</div>)}</div>;
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   ASSOCIATIONS TAB
+───────────────────────────────────────────────────────────────────────────── */
+function AssociationsTab({assocs,onSave}) {
+  const [showForm,setShowForm]=useState(false);
+  const [editing,setEditing]=useState(null);
+  const [saving,setSaving]=useState(false);
+  const [err,setErr]=useState("");
+  const [f,setF]=useState({name:"",address:"",city:"",state:"",zip:"",hearing_days:"10",phone:"",email:""});
+  const set=k=>e=>setF(p=>({...p,[k]:e.target.value}));
+  const open=(a=null)=>{setEditing(a);setErr("");setF(a?{name:a.name||"",address:a.address||"",city:a.city||"",state:a.state||"",zip:a.zip||"",hearing_days:String(a.hearing_days||10),phone:a.phone||"",email:a.email||""}:{name:"",address:"",city:"",state:"",zip:"",hearing_days:"10",phone:"",email:""});setShowForm(true);};
+  const save=async()=>{
+    if(!f.name.trim()){setErr("Association name is required.");return;}
+    setSaving(true);setErr("");
+    try{
+      const data={name:f.name,address:f.address,city:f.city,state:f.state,zip:f.zip,hearing_days:parseInt(f.hearing_days)||10,phone:f.phone,email:f.email};
+      if(editing){await db(`associations?id=eq.${editing.id}`,{method:"PATCH",body:JSON.stringify(data)});}
+      else{await db("associations",{method:"POST",body:JSON.stringify(data)});}
+      setShowForm(false);onSave();
+    }catch(e){setErr(e.message);}
+    setSaving(false);
+  };
+  const del=async id=>{if(!window.confirm("Delete this association? This cannot be undone."))return;await db(`associations?id=eq.${id}`,{method:"DELETE"});onSave();};
+  return(
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Associations</h2>
+        <VBtn onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Association</VBtn>
+      </div>
+      {!assocs.length&&<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>🏢</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No associations yet</div><div style={{fontSize:13,color:T.muted,marginTop:6}}>Add your first HOA or Condo association to get started.</div></GlassCard>}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
+        {assocs.map(a=>(
+          <GlassCard key={a.id} style={{padding:22}} hover={false}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+              <div>
+                <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text}}>{a.name}</div>
+                <div style={{fontSize:12,color:T.muted,marginTop:2}}>{[a.address,a.city,a.state,a.zip].filter(Boolean).join(", ")}</div>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button onClick={()=>open(a)} style={{background:"rgba(124,58,237,0.12)",border:"1px solid rgba(124,58,237,0.2)",borderRadius:7,padding:"5px 10px",color:"#c4b5fd",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Edit</button>
+                <button onClick={()=>del(a.id)} style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.15)",borderRadius:7,padding:"5px 10px",color:"#f87171",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Delete</button>
+              </div>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+              {[["Hearing Window",`${a.hearing_days} days`],["Phone",a.phone||"—"],["Email",a.email||"—"],["ZIP",a.zip||"—"]].map(([l,v])=>(
+                <div key={l} style={{background:"rgba(255,255,255,0.03)",borderRadius:8,padding:"8px 10px",border:`1px solid ${T.border}`}}>
+                  <div style={{fontSize:9,color:T.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:2}}>{l}</div>
+                  <div style={{fontSize:12,color:T.muted2}}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+        ))}
+      </div>
+      {showForm&&<Modal title={editing?"Edit Association":"Add New Association"} onClose={()=>setShowForm(false)} wide>
+        {err&&<div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:10,padding:"10px 14px",marginBottom:16,color:"#f87171",fontSize:13}}>⚠ {err}</div>}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 14px"}}>
+          <Fld label="Association Name" req><DarkInp value={f.name} onChange={set("name")} placeholder="e.g. Oakwood HOA"/></Fld>
+          <Fld label="Hearing Window (days)" req><DarkSel value={f.hearing_days} onChange={set("hearing_days")}><option value="10">10 days</option><option value="11">11 days</option><option value="12">12 days</option><option value="13">13 days</option><option value="14">14 days</option></DarkSel></Fld>
+          <Fld label="Street Address"><DarkInp value={f.address} onChange={set("address")} placeholder="123 Main St"/></Fld>
+          <Fld label="City"><DarkInp value={f.city} onChange={set("city")} placeholder="Chicago"/></Fld>
+          <Fld label="State"><DarkInp value={f.state} onChange={set("state")} placeholder="IL"/></Fld>
+          <Fld label="ZIP Code"><DarkInp value={f.zip} onChange={set("zip")} placeholder="60601"/></Fld>
+          <Fld label="Phone"><DarkInp value={f.phone} onChange={set("phone")} placeholder="(312) 555-0000"/></Fld>
+          <Fld label="Email"><DarkInp type="email" value={f.email} onChange={set("email")} placeholder="manager@association.com"/></Fld>
+        </div>
+        <VBtn onClick={save} disabled={saving} style={{width:"100%",justifyContent:"center",padding:"13px",marginTop:8}}>{saving?"Saving...":editing?"Save Changes":"Add Association"}</VBtn>
+      </Modal>}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   OWNERS TAB
+───────────────────────────────────────────────────────────────────────────── */
+function OwnersTab({assocs,onSave}) {
+  const [owners,setOwners]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [showForm,setShowForm]=useState(false);
+  const [editing,setEditing]=useState(null);
+  const [saving,setSaving]=useState(false);
+  const [err,setErr]=useState("");
+  const [search,setSearch]=useState("");
+  const [filterAssoc,setFilterAssoc]=useState("");
+  const [f,setF]=useState({association_id:"",unit_number:"",owner_name:"",email:"",phone:"",mailing_address:"",mailing_city:"",mailing_state:"",mailing_zip:""});
+  const set=k=>e=>setF(p=>({...p,[k]:e.target.value}));
+  useEffect(()=>{db("unit_owners?select=*,associations(name)&order=unit_number.asc").then(d=>{setOwners(Array.isArray(d)?d:[]);setLoading(false);}).catch(()=>setLoading(false));},[]);
+  const reload=()=>db("unit_owners?select=*,associations(name)&order=unit_number.asc").then(d=>setOwners(Array.isArray(d)?d:[]));
+  const open=(o=null)=>{setEditing(o);setErr("");setF(o?{association_id:o.association_id||"",unit_number:o.unit_number||"",owner_name:o.owner_name||"",email:o.email||"",phone:o.phone||"",mailing_address:o.mailing_address||"",mailing_city:o.mailing_city||"",mailing_state:o.mailing_state||"",mailing_zip:o.mailing_zip||""}:{association_id:assocs[0]?.id||"",unit_number:"",owner_name:"",email:"",phone:"",mailing_address:"",mailing_city:"",mailing_state:"",mailing_zip:""});setShowForm(true);};
+  const save=async()=>{
+    if(!f.unit_number.trim()||!f.owner_name.trim()||!f.association_id){setErr("Association, unit number and owner name are required.");return;}
+    setSaving(true);setErr("");
+    try{
+      const data={association_id:f.association_id,unit_number:f.unit_number,owner_name:f.owner_name,email:f.email,phone:f.phone,mailing_address:f.mailing_address,mailing_city:f.mailing_city,mailing_state:f.mailing_state,mailing_zip:f.mailing_zip};
+      if(editing){await db(`unit_owners?id=eq.${editing.id}`,{method:"PATCH",body:JSON.stringify(data)});}
+      else{await db("unit_owners",{method:"POST",body:JSON.stringify(data)});}
+      setShowForm(false);reload();onSave();
+    }catch(e){setErr(e.message);}
+    setSaving(false);
+  };
+  const del=async id=>{if(!window.confirm("Delete this owner record?"))return;await db(`unit_owners?id=eq.${id}`,{method:"DELETE"});reload();};
+  const filtered=owners.filter(o=>{
+    const matchSearch=!search||o.owner_name?.toLowerCase().includes(search.toLowerCase())||o.unit_number?.toLowerCase().includes(search.toLowerCase());
+    const matchAssoc=!filterAssoc||o.association_id===filterAssoc;
+    return matchSearch&&matchAssoc;
+  });
+  return(
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Unit Owners</h2>
+        <VBtn onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Owner</VBtn>
+      </div>
+      <div style={{display:"flex",gap:12,marginBottom:16}}>
+        <DarkInp value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by name or unit..." style={{maxWidth:280}}/>
+        <DarkSel value={filterAssoc} onChange={e=>setFilterAssoc(e.target.value)} style={{maxWidth:220,width:"auto"}}>
+          <option value="">All Associations</option>
+          {assocs.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
+        </DarkSel>
+      </div>
+      {loading?<div style={{textAlign:"center",padding:40,color:T.muted}}>Loading...</div>:
+      !filtered.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>👤</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>{owners.length?"No results found":"No owners yet"}</div><div style={{fontSize:13,color:T.muted,marginTop:6}}>Add unit owners so they can be identified in violation reports.</div></GlassCard>:
+      <GlassCard hover={false} style={{overflow:"hidden"}}>
+        <div style={{display:"grid",gridTemplateColumns:"80px 1.5fr 1.5fr 1fr 1fr 80px",padding:"10px 18px",background:"rgba(255,255,255,0.03)",borderBottom:`1px solid ${T.border}`,fontSize:10,fontWeight:700,color:T.muted,letterSpacing:"0.1em",textTransform:"uppercase"}}>
+          <span>Unit</span><span>Owner Name</span><span>Association</span><span>Phone</span><span>Email</span><span>Actions</span>
+        </div>
+        {filtered.map(o=>(
+          <div key={o.id} style={{display:"grid",gridTemplateColumns:"80px 1.5fr 1.5fr 1fr 1fr 80px",padding:"12px 18px",alignItems:"center",borderBottom:`1px solid ${T.border}`,transition:"background 0.1s"}} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.02)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+            <span style={{fontWeight:700,color:T.violet,fontSize:13}}>U{o.unit_number}</span>
+            <span style={{fontSize:13,color:T.text,fontWeight:500}}>{o.owner_name}</span>
+            <span style={{fontSize:12,color:T.muted}}>{o.associations?.name||"—"}</span>
+            <span style={{fontSize:12,color:T.muted}}>{o.phone||"—"}</span>
+            <span style={{fontSize:12,color:T.muted}}>{o.email||"—"}</span>
+            <div style={{display:"flex",gap:4}}>
+              <button onClick={()=>open(o)} style={{background:"rgba(124,58,237,0.12)",border:"none",borderRadius:6,padding:"4px 8px",color:"#c4b5fd",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Edit</button>
+              <button onClick={()=>del(o.id)} style={{background:"rgba(239,68,68,0.08)",border:"none",borderRadius:6,padding:"4px 8px",color:"#f87171",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Del</button>
+            </div>
+          </div>
+        ))}
+      </GlassCard>}
+      {showForm&&<Modal title={editing?"Edit Owner":"Add Unit Owner"} onClose={()=>setShowForm(false)} wide>
+        {err&&<div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:10,padding:"10px 14px",marginBottom:16,color:"#f87171",fontSize:13}}>⚠ {err}</div>}
+        <Fld label="Association" req><DarkSel value={f.association_id} onChange={set("association_id")}><option value="">Select association...</option>{assocs.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</DarkSel></Fld>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 14px"}}>
+          <Fld label="Unit Number" req><DarkInp value={f.unit_number} onChange={set("unit_number")} placeholder="e.g. 305"/></Fld>
+          <Fld label="Owner Full Name" req><DarkInp value={f.owner_name} onChange={set("owner_name")} placeholder="John Smith"/></Fld>
+          <Fld label="Email"><DarkInp type="email" value={f.email} onChange={set("email")} placeholder="owner@email.com"/></Fld>
+          <Fld label="Phone" req><DarkInp value={f.phone} onChange={set("phone")} placeholder="(312) 555-0000"/></Fld>
+        </div>
+        <div style={{background:"rgba(245,158,11,0.06)",border:"1px solid rgba(245,158,11,0.15)",borderRadius:12,padding:"14px 16px",marginBottom:16}}>
+          <div style={{fontSize:11,fontWeight:700,color:"#fbbf24",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Mailing Address (for official notices)</div>
+          <Fld label="Street Address"><DarkInp value={f.mailing_address} onChange={set("mailing_address")} placeholder="123 Main St"/></Fld>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 80px 100px",gap:"0 10px"}}>
+            <Fld label="City"><DarkInp value={f.mailing_city} onChange={set("mailing_city")} placeholder="Chicago"/></Fld>
+            <Fld label="State"><DarkInp value={f.mailing_state} onChange={set("mailing_state")} placeholder="IL"/></Fld>
+            <Fld label="ZIP"><DarkInp value={f.mailing_zip} onChange={set("mailing_zip")} placeholder="60601"/></Fld>
+          </div>
+        </div>
+        <VBtn onClick={save} disabled={saving} style={{width:"100%",justifyContent:"center",padding:"13px"}}>{saving?"Saving...":editing?"Save Changes":"Add Owner"}</VBtn>
+      </Modal>}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RULES TAB WITH AI PDF UPLOAD
+───────────────────────────────────────────────────────────────────────────── */
+function RulesTab({assocs,rules,onSave}) {
+  const [showForm,setShowForm]=useState(false);
+  const [editing,setEditing]=useState(null);
+  const [saving,setSaving]=useState(false);
+  const [err,setErr]=useState("");
+  const [filterAssoc,setFilterAssoc]=useState("");
+  const [aiLoading,setAiLoading]=useState(false);
+  const [aiResult,setAiResult]=useState(null);
+  const [aiAssocId,setAiAssocId]=useState("");
+  const [importing,setImporting]=useState(false);
+  const [f,setF]=useState({association_id:"",rule_title:"",rule_section:"",category:"General",description:"",fine_amount:"",active:true});
+  const set=k=>e=>setF(p=>({...p,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
+  const open=(r=null)=>{setEditing(r);setErr("");setF(r?{association_id:r.association_id||"",rule_title:r.rule_title||"",rule_section:r.rule_section||"",category:r.category||"General",description:r.description||"",fine_amount:String(r.fine_amount||""),active:r.active!==false}:{association_id:assocs[0]?.id||"",rule_title:"",rule_section:"",category:"General",description:"",fine_amount:"",active:true});setShowForm(true);};
+  const save=async()=>{
+    if(!f.rule_title.trim()||!f.association_id){setErr("Association and rule title are required.");return;}
+    setSaving(true);setErr("");
+    try{
+      const data={association_id:f.association_id,rule_title:f.rule_title,rule_section:f.rule_section,category:f.category,description:f.description,fine_amount:parseFloat(f.fine_amount)||0,active:f.active};
+      if(editing){await db(`rules?id=eq.${editing.id}`,{method:"PATCH",body:JSON.stringify(data)});}
+      else{await db("rules",{method:"POST",body:JSON.stringify(data)});}
+      setShowForm(false);onSave();
+    }catch(e){setErr(e.message);}
+    setSaving(false);
+  };
+  const del=async id=>{if(!window.confirm("Delete this rule?"))return;await db(`rules?id=eq.${id}`,{method:"DELETE"});onSave();};
+
+  // AI PDF Upload
+  const handlePDF=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    if(!aiAssocId){alert("Please select an association first.");return;}
+    setAiLoading(true);setAiResult(null);
+    try{
+      const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
+      const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",max_tokens:4000,
+        messages:[{role:"user",content:[
+          {type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},
+          {type:"text",text:`Extract ALL rules and violations from this HOA/Condo governing document. For each rule found, return a JSON array with objects containing: rule_title (string), rule_section (string, e.g. "4.2"), category (one of: Parking, Noise, Pets, Landscaping, Structural, Common Areas, Trash, Leasing, General), description (brief description), fine_amount (number, 0 if not specified). Return ONLY the JSON array, no other text.`}
+        ]}]
+      })});
+      const data=await resp.json();
+      const text=data.content?.find(c=>c.type==="text")?.text||"[]";
+      const clean=text.replace(/```json|```/g,"").trim();
+      const parsed=JSON.parse(clean);
+      setAiResult(parsed);
+    }catch(e){alert("Could not extract rules. Make sure the PDF contains readable text. Error: "+e.message);}
+    setAiLoading(false);
+  };
+
+  const importRules=async()=>{
+    if(!aiResult?.length)return;
+    setImporting(true);
+    try{
+      for(const r of aiResult){
+        await db("rules",{method:"POST",body:JSON.stringify({association_id:aiAssocId,rule_title:r.rule_title,rule_section:r.rule_section||"",category:r.category||"General",description:r.description||"",fine_amount:parseFloat(r.fine_amount)||0,active:true})});
+      }
+      setAiResult(null);onSave();
+      alert(`Successfully imported ${aiResult.length} rules!`);
+    }catch(e){alert("Import failed: "+e.message);}
+    setImporting(false);
+  };
+
+  const filtered=rules.filter(r=>!filterAssoc||r.association_id===filterAssoc);
+  const CATS=["Parking","Noise","Pets","Landscaping","Structural","Common Areas","Trash","Leasing","General"];
+
+  return(
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Rules Library</h2>
+        <VBtn onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Rule</VBtn>
+      </div>
+
+      {/* AI PDF Upload */}
+      <GlassCard style={{padding:24,marginBottom:20,border:"1px solid rgba(124,58,237,0.3)"}} hover={false}>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+          <div style={{width:40,height:40,background:"rgba(124,58,237,0.15)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🤖</div>
+          <div>
+            <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text}}>AI Rules Extractor</div>
+            <div style={{fontSize:12,color:T.muted}}>Upload your HOA/Condo rulebook PDF and AI will automatically extract all rules and fees</div>
+          </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr auto",gap:12,alignItems:"end"}}>
+          <Fld label="Select Association for these rules">
+            <DarkSel value={aiAssocId} onChange={e=>setAiAssocId(e.target.value)}>
+              <option value="">Select association...</option>
+              {assocs.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
+            </DarkSel>
+          </Fld>
+          <div>
+            <label style={{display:"inline-flex",alignItems:"center",gap:8,background:`linear-gradient(135deg,${T.violet},${T.indigo})`,color:"#fff",padding:"12px 20px",borderRadius:12,cursor:aiLoading?"not-allowed":"pointer",fontSize:13,fontWeight:600,opacity:aiLoading?0.6:1}}>
+              {aiLoading?"🔄 Extracting rules...":"📄 Upload PDF Rulebook"}
+              <input type="file" accept=".pdf" onChange={handlePDF} style={{display:"none"}} disabled={aiLoading}/>
+            </label>
+          </div>
+        </div>
+
+        {/* AI Results Preview */}
+        {aiResult&&(
+          <div style={{marginTop:16}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+              <div style={{fontSize:13,fontWeight:700,color:"#34d399"}}>✓ Found {aiResult.length} rules — review before importing:</div>
+              <div style={{display:"flex",gap:8}}>
+                <VBtn variant="success" onClick={importRules} disabled={importing} style={{fontSize:12,padding:"8px 16px"}}>{importing?"Importing...":"Import All Rules"}</VBtn>
+                <VBtn variant="ghost" onClick={()=>setAiResult(null)} style={{fontSize:12,padding:"8px 16px"}}>Discard</VBtn>
+              </div>
+            </div>
+            <div style={{maxHeight:280,overflowY:"auto",border:`1px solid ${T.border}`,borderRadius:10}}>
+              {aiResult.map((r,i)=>(
+                <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 80px",padding:"10px 14px",borderBottom:`1px solid ${T.border}`,fontSize:12,alignItems:"center",background:"rgba(16,185,129,0.03)"}}>
+                  <div><div style={{color:T.text,fontWeight:500}}>{r.rule_title}</div><div style={{color:T.muted,fontSize:11,marginTop:1}}>{r.description}</div></div>
+                  <span style={{background:"rgba(124,58,237,0.12)",color:"#c4b5fd",padding:"2px 8px",borderRadius:20,fontSize:10,fontWeight:600,display:"inline-block"}}>{r.category}</span>
+                  <span style={{color:T.muted}}>§{r.rule_section}</span>
+                  <span style={{color:T.gold,fontWeight:700}}>${r.fine_amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </GlassCard>
+
+      {/* Filter */}
+      <div style={{marginBottom:14}}>
+        <DarkSel value={filterAssoc} onChange={e=>setFilterAssoc(e.target.value)} style={{maxWidth:260}}>
+          <option value="">All Associations</option>
+          {assocs.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
+        </DarkSel>
+      </div>
+
+      {/* Rules Table */}
+      {!filtered.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>📖</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No rules yet</div><div style={{fontSize:13,color:T.muted,marginTop:6}}>Add rules manually or upload your PDF rulebook above.</div></GlassCard>:
+      <GlassCard hover={false} style={{overflow:"hidden"}}>
+        <div style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1fr 80px 70px 80px",padding:"10px 18px",background:"rgba(255,255,255,0.03)",borderBottom:`1px solid ${T.border}`,fontSize:10,fontWeight:700,color:T.muted,letterSpacing:"0.1em",textTransform:"uppercase"}}>
+          <span>Rule</span><span>Association</span><span>Category</span><span>Section</span><span>Fine</span><span>Actions</span>
+        </div>
+        {filtered.map(r=>{const a=assocs.find(x=>x.id===r.association_id);return(
+          <div key={r.id} style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1fr 80px 70px 80px",padding:"12px 18px",alignItems:"center",borderBottom:`1px solid ${T.border}`,transition:"background 0.1s"}} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.02)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+            <div><div style={{fontSize:13,fontWeight:500,color:T.muted2}}>{r.rule_title}</div>{r.description&&<div style={{fontSize:11,color:T.muted,marginTop:1}}>{r.description}</div>}</div>
+            <span style={{fontSize:12,color:T.muted}}>{a?.name||"—"}</span>
+            <span style={{background:"rgba(124,58,237,0.12)",color:"#c4b5fd",padding:"2px 8px",borderRadius:20,fontSize:11,fontWeight:600}}>{r.category}</span>
+            <span style={{fontSize:12,color:T.muted}}>§{r.rule_section}</span>
+            <span style={{fontSize:13,fontWeight:700,color:T.gold}}>${r.fine_amount}</span>
+            <div style={{display:"flex",gap:4}}>
+              <button onClick={()=>open(r)} style={{background:"rgba(124,58,237,0.12)",border:"none",borderRadius:6,padding:"4px 8px",color:"#c4b5fd",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Edit</button>
+              <button onClick={()=>del(r.id)} style={{background:"rgba(239,68,68,0.08)",border:"none",borderRadius:6,padding:"4px 8px",color:"#f87171",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Del</button>
+            </div>
+          </div>
+        );})}
+      </GlassCard>}
+
+      {showForm&&<Modal title={editing?"Edit Rule":"Add New Rule"} onClose={()=>setShowForm(false)}>
+        {err&&<div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:10,padding:"10px 14px",marginBottom:16,color:"#f87171",fontSize:13}}>⚠ {err}</div>}
+        <Fld label="Association" req><DarkSel value={f.association_id} onChange={set("association_id")}><option value="">Select...</option>{assocs.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</DarkSel></Fld>
+        <Fld label="Rule Title" req><DarkInp value={f.rule_title} onChange={set("rule_title")} placeholder="e.g. No Unauthorized Parking"/></Fld>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 14px"}}>
+          <Fld label="Rule Section"><DarkInp value={f.rule_section} onChange={set("rule_section")} placeholder="e.g. 4.2"/></Fld>
+          <Fld label="Category"><DarkSel value={f.category} onChange={set("category")}>{CATS.map(c=><option key={c}>{c}</option>)}</DarkSel></Fld>
+        </div>
+        <Fld label="Description"><DarkTxt value={f.description} onChange={set("description")} placeholder="Describe the rule briefly..."/></Fld>
+        <Fld label="Fine Amount ($)"><DarkInp type="number" value={f.fine_amount} onChange={set("fine_amount")} placeholder="e.g. 150"/></Fld>
+        <label style={{display:"flex",alignItems:"center",gap:10,marginBottom:20,cursor:"pointer"}}>
+          <input type="checkbox" checked={f.active} onChange={set("active")} style={{accentColor:T.violet,width:16,height:16}}/>
+          <span style={{fontSize:13,color:T.muted2}}>Rule is active (visible to reporters)</span>
+        </label>
+        <VBtn onClick={save} disabled={saving} style={{width:"100%",justifyContent:"center",padding:"13px"}}>{saving?"Saving...":editing?"Save Changes":"Add Rule"}</VBtn>
+      </Modal>}
+    </div>
+  );
+}
+
 function Dashboard({onBack,session,onSignOut}) {
   const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);
   const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db("violation_reports?select=*,rules(*),associations(*)&order=created_at.desc"),db("violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc"),db("associations?select=*&order=name.asc"),db("rules?select=*&order=rule_title.asc"),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
@@ -712,14 +1047,16 @@ function Dashboard({onBack,session,onSignOut}) {
   const pending=reports.filter(r=>!cases.find(c=>c.report_id===r.id));
   const stats={p:pending.length,a:cases.filter(c=>["NOTICE_SENT","UNDER_REVIEW","HEARING_REQUESTED"].includes(c.status)).length,f:cases.filter(c=>c.status==="FINAL_VIOLATION").length,cl:cases.filter(c=>c.status==="CLOSED").length};
   const CD=({dl})=>{if(!dl)return null;const d=Math.ceil((new Date(dl)-new Date())/86400000);if(d<0)return<span style={{color:"#f87171",fontSize:11,fontWeight:700}}>EXPIRED</span>;if(d<=2)return<span style={{color:T.gold,fontSize:11,fontWeight:700}}>{d}d ⚠</span>;return<span style={{color:T.muted,fontSize:11}}>{d}d</span>;};
-  const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"associations",icon:"🏢",label:"Associations"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"}];
+  const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"associations",icon:"🏢",label:"Associations"},{id:"owners",icon:"👤",label:"Owners"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"}];
   const bars=[42,68,35,78,55,90,62,85,45,88,72,95];
   return(
     <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text}}>
       <style>{STYLES}</style>
       <div style={{display:"flex",minHeight:"100vh"}}>
         <aside style={{width:240,background:T.bg2,display:"flex",flexDirection:"column",padding:"24px 0",flexShrink:0,borderRight:`1px solid ${T.border}`}}>
-          <div style={{padding:"0 20px 24px",borderBottom:`1px solid ${T.border}`,cursor:"pointer"}} onClick={onBack}>
+          <div style={{padding:"0 20px 24px",borderBottom:`1px solid ${T.border}`,cursor:"pointer",transition:"opacity 0.2s"}} onClick={onBack}
+            onMouseEnter={e=>e.currentTarget.style.opacity="0.7"}
+            onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
             <div style={{display:"flex",alignItems:"center",gap:10}}><ScaleLogo size={28} gold/><div><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></div><div style={{fontSize:10,color:T.muted,marginTop:1}}>Manager Portal</div></div></div>
           </div>
           {TABS.map(t=>(
@@ -807,23 +1144,9 @@ function Dashboard({onBack,session,onSignOut}) {
             </div>
           </div>}
 
-          {tab==="rules"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Rules Library</h2>
-            <GlassCard hover={false} style={{overflow:"hidden"}}>
-              <div style={{display:"grid",gridTemplateColumns:"2fr 1.5fr 1fr 80px 70px",padding:"11px 18px",background:"rgba(255,255,255,0.03)",borderBottom:`1px solid ${T.border}`,fontSize:10,fontWeight:700,color:T.muted,letterSpacing:"0.1em",textTransform:"uppercase"}}>
-                <span>Rule</span><span>Association</span><span>Category</span><span>Section</span><span>Fine</span>
-              </div>
-              {rules.map((r,i)=>{const a=assocs.find(x=>x.id===r.association_id);return(
-                <div key={r.id} style={{display:"grid",gridTemplateColumns:"2fr 1.5fr 1fr 80px 70px",padding:"12px 18px",alignItems:"center",borderBottom:`1px solid ${T.border}`,transition:"background 0.1s"}} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.02)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div><div style={{fontSize:13,fontWeight:500,color:T.muted2}}>{r.rule_title}</div>{r.description&&<div style={{fontSize:11,color:T.muted,marginTop:1}}>{r.description}</div>}</div>
-                  <span style={{fontSize:12,color:T.muted}}>{a?.name||"—"}</span>
-                  <span style={{background:"rgba(124,58,237,0.12)",color:"#c4b5fd",padding:"2px 8px",borderRadius:20,fontSize:11,fontWeight:600}}>{r.category}</span>
-                  <span style={{fontSize:12,color:T.muted}}>§{r.rule_section}</span>
-                  <span style={{fontSize:13,fontWeight:700,color:T.gold}}>${r.fine_amount}</span>
-                </div>
-              );})}
-            </GlassCard>
-          </div>}
+          {tab==="associations"&&<AssociationsTab assocs={assocs} onSave={load}/>}
+          {tab==="owners"&&<OwnersTab assocs={assocs} onSave={load}/>}
+          {tab==="rules"&&<RulesTab assocs={assocs} rules={rules} onSave={load}/>}
 
           {tab==="leads"&&<div>
             <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Captured Leads</h2>
