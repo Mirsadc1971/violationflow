@@ -52,11 +52,13 @@ function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(_){}}
    MANAGER LOGIN PAGE
 ───────────────────────────────────────────────────────────────────────────── */
 function ManagerLogin({onSuccess,onBack}) {
-  const [mode,setMode]=useState("login"); // login | signup | reset
+  const [mode,setMode]=useState("login");
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [confirm,setConfirm]=useState("");
   const [companyName,setCompanyName]=useState("");
+  const [contactName,setContactName]=useState("");
+  const [phone,setPhone]=useState("");
   const [err,setErr]=useState("");
   const [msg,setMsg]=useState("");
   const [loading,setLoading]=useState(false);
@@ -67,6 +69,8 @@ function ManagerLogin({onSuccess,onBack}) {
     if(!email.trim()){setErr("Email is required.");return;}
     if(mode!=="reset"&&!password){setErr("Password is required.");return;}
     if(mode==="signup"&&!companyName.trim()){setErr("Company or association name is required.");return;}
+    if(mode==="signup"&&!contactName.trim()){setErr("Your full name is required.");return;}
+    if(mode==="signup"&&!phone.trim()){setErr("Phone number is required.");return;}
     if(mode==="signup"&&password!==confirm){setErr("Passwords do not match.");return;}
     if(mode==="signup"&&password.length<8){setErr("Password must be at least 8 characters.");return;}
     setLoading(true);
@@ -74,13 +78,10 @@ function ManagerLogin({onSuccess,onBack}) {
       if(mode==="login"){
         const r=await fetch(`${SB}/auth/v1/token?grant_type=password`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim(),password})});
         const j=await r.json();
-        if(!r.ok){
-          setErr(`Error ${r.status}: ${j?.error_description||j?.error||j?.message||j?.msg||JSON.stringify(j)}`);
-          setLoading(false);return;
-        }
-        if(!j.access_token){setErr("No token received. Response: "+JSON.stringify(j));setLoading(false);return;}
-        // Load company_id for this user
-        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name`,{headers:AH});
+        if(!r.ok){setErr(`Error ${r.status}: ${j?.error_description||j?.error||j?.message||j?.msg||JSON.stringify(j)}`);setLoading(false);return;}
+        if(!j.access_token){setErr("No token received.");setLoading(false);return;}
+        // Load full company record including role and status
+        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name,role,status,phone,contact_name`,{headers:AH});
         const compData=await comp.json();
         const company=Array.isArray(compData)&&compData.length?compData[0]:null;
         saveSession({access_token:j.access_token,refresh_token:j.refresh_token,user:j.user,company});
@@ -89,10 +90,12 @@ function ManagerLogin({onSuccess,onBack}) {
         const r=await fetch(`${SB}/auth/v1/signup`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim(),password})});
         const j=await r.json();
         if(!r.ok){setErr(`Signup error ${r.status}: ${j?.error_description||j?.error||j?.message||JSON.stringify(j)}`);setLoading(false);return;}
-        // Auto-create company record
-        await fetch(`${SB}/rest/v1/companies`,{method:"POST",headers:{...AH,"Prefer":"return=minimal"},body:JSON.stringify({name:companyName.trim(),owner_email:email.trim()})});
-        setMsg("Account created! Check your email to confirm, then sign in.");
-        setMode("login");setPassword("");setConfirm("");setCompanyName("");
+        // Create company record with pending status
+        await fetch(`${SB}/rest/v1/companies`,{method:"POST",headers:{...AH,"Prefer":"return=minimal"},body:JSON.stringify({name:companyName.trim(),owner_email:email.trim(),contact_name:contactName.trim(),phone:phone.trim(),status:"pending",role:"manager"})});
+        // Notify admin via leads table
+        await fetch(`${SB}/rest/v1/leads`,{method:"POST",headers:{...AH,"Prefer":"return=minimal"},body:JSON.stringify({name:contactName.trim(),email:email.trim(),company:companyName.trim(),role:"manager_signup",message:`New manager signup: ${contactName} from ${companyName} (${phone})`,source:"signup"})});
+        setMsg("Application submitted! We'll review your account and notify you by email within 24 hours.");
+        setMode("login");setPassword("");setConfirm("");setCompanyName("");setContactName("");setPhone("");
       } else {
         const r=await fetch(`${SB}/auth/v1/recover`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim()})});
         if(r.ok){setMsg("Password reset email sent! Check your inbox.");}
@@ -139,12 +142,20 @@ function ManagerLogin({onSuccess,onBack}) {
             <span style={{flexShrink:0}}>✓</span>{msg}
           </div>}
 
-          {/* Company Name - signup only */}
-          {mode==="signup"&&(
+          {/* Signup extra fields */}
+          {mode==="signup"&&(<>
             <Fld label="Company / Association Name" req>
-              <DarkInp value={companyName} onChange={e=>setCompanyName(e.target.value)} placeholder="e.g. ABC Property Management" onKeyDown={e=>e.key==="Enter"&&submit()}/>
+              <DarkInp value={companyName} onChange={e=>setCompanyName(e.target.value)} placeholder="e.g. ABC Property Management"/>
             </Fld>
-          )}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 14px"}}>
+              <Fld label="Your Full Name" req>
+                <DarkInp value={contactName} onChange={e=>setContactName(e.target.value)} placeholder="John Smith"/>
+              </Fld>
+              <Fld label="Phone Number" req>
+                <DarkInp value={phone} onChange={e=>setPhone(e.target.value)} placeholder="(312) 555-0000"/>
+              </Fld>
+            </div>
+          </>)}
 
           {/* Email */}
           <Fld label="Email Address" req>
@@ -1430,6 +1441,188 @@ function FAQAccordion() {
 /* ─────────────────────────────────────────────────────────────────────────────
    MAIN LANDING PAGE
 ───────────────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   PENDING / REJECTED SCREENS
+───────────────────────────────────────────────────────────────────────────── */
+function PendingScreen({session,onSignOut}) {
+  return(
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif"}}>
+      <style>{STYLES}</style>
+      <div style={{textAlign:"center",maxWidth:480,padding:40}}>
+        <div style={{width:80,height:80,borderRadius:"50%",background:"rgba(245,158,11,0.12)",border:"2px solid rgba(245,158,11,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,margin:"0 auto 24px"}}>⏳</div>
+        <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Application Under Review</div>
+        <div style={{color:T.muted,fontSize:15,lineHeight:1.7,marginBottom:8}}>Thank you for signing up for ViolationFlow. Your application is being reviewed by our team.</div>
+        <div style={{color:T.muted,fontSize:14,marginBottom:32}}>You'll receive an email at <span style={{color:"#a78bfa"}}>{session?.user?.email}</span> once your account is approved — usually within 24 hours.</div>
+        <GlassCard style={{padding:"14px 20px",marginBottom:20,textAlign:"left"}} hover={false}>
+          <div style={{fontSize:12,color:T.muted,marginBottom:8,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>What happens next</div>
+          {["Our team reviews your application","You receive an approval email","Log in and set up your associations","Start managing violations"].map((s,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,fontSize:13,color:T.muted2}}>
+              <div style={{width:20,height:20,borderRadius:"50%",background:"rgba(124,58,237,0.15)",border:"1px solid rgba(124,58,237,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,color:"#a78bfa",flexShrink:0}}>{i+1}</div>
+              {s}
+            </div>
+          ))}
+        </GlassCard>
+        <div style={{fontSize:13,color:T.muted,marginBottom:20}}>Questions? Email us at <a href="mailto:support@violationflow.com" style={{color:"#a78bfa"}}>support@violationflow.com</a></div>
+        <button onClick={onSignOut} style={{background:"none",border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 24px",color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Sign Out</button>
+      </div>
+    </div>
+  );
+}
+
+function RejectedScreen({reason,onSignOut}) {
+  return(
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif"}}>
+      <style>{STYLES}</style>
+      <div style={{textAlign:"center",maxWidth:480,padding:40}}>
+        <div style={{width:80,height:80,borderRadius:"50%",background:"rgba(239,68,68,0.1)",border:"2px solid rgba(239,68,68,0.25)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,margin:"0 auto 24px"}}>✕</div>
+        <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Application Not Approved</div>
+        <div style={{color:T.muted,fontSize:15,lineHeight:1.7,marginBottom:20}}>Unfortunately your application was not approved at this time.</div>
+        {reason&&<GlassCard style={{padding:"14px 20px",marginBottom:20,textAlign:"left",border:"1px solid rgba(239,68,68,0.2)"}} hover={false}>
+          <div style={{fontSize:11,color:"#f87171",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:6}}>Reason</div>
+          <div style={{fontSize:13,color:T.muted2}}>{reason}</div>
+        </GlassCard>}
+        <div style={{fontSize:13,color:T.muted,marginBottom:20}}>If you believe this is an error, contact us at <a href="mailto:support@violationflow.com" style={{color:"#a78bfa"}}>support@violationflow.com</a></div>
+        <button onClick={onSignOut} style={{background:"none",border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 24px",color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Sign Out</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ADMIN DASHBOARD
+───────────────────────────────────────────────────────────────────────────── */
+function AdminDashboard({session,onSignOut,onBack}) {
+  const [tab,setTab]=useState("approvals");
+  const [companies,setCompanies]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [saving,setSaving]=useState(null);
+  const [rejectModal,setRejectModal]=useState(null);
+  const [rejectReason,setRejectReason]=useState("");
+
+  const load=async()=>{
+    setLoading(true);
+    const data=await db("companies?select=*&order=created_at.desc").catch(()=>[]);
+    setCompanies(Array.isArray(data)?data:[]);
+    setLoading(false);
+  };
+  useEffect(()=>{load();},[]);
+
+  const approve=async(id)=>{
+    setSaving(id);
+    await db(`companies?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({status:"approved"})});
+    await load();setSaving(null);
+  };
+
+  const reject=async()=>{
+    if(!rejectModal)return;
+    setSaving(rejectModal);
+    await db(`companies?id=eq.${rejectModal}`,{method:"PATCH",body:JSON.stringify({status:"rejected",rejected_reason:rejectReason})});
+    setRejectModal(null);setRejectReason("");
+    await load();setSaving(null);
+  };
+
+  const pending=companies.filter(c=>c.status==="pending"&&c.role!=="admin");
+  const approved=companies.filter(c=>c.status==="approved"&&c.role!=="admin");
+  const rejected=companies.filter(c=>c.status==="rejected");
+  const TABS=[{id:"approvals",label:"Pending Approvals",icon:"⏳",count:pending.length},{id:"managers",label:"Active Managers",icon:"✅",count:approved.length},{id:"rejected",label:"Rejected",icon:"✕",count:rejected.length}];
+
+  const CoCard=({c,showActions})=>(
+    <div style={{background:T.glass,border:`1px solid ${T.border}`,borderRadius:14,padding:18,marginBottom:10}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text,marginBottom:4}}>{c.name}</div>
+          <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+            {[["Contact",c.contact_name],["Email",c.owner_email],["Phone",c.phone],["Signed up",new Date(c.created_at).toLocaleDateString()]].map(([l,v])=>v?(
+              <div key={l} style={{fontSize:12,color:T.muted}}><span style={{color:T.muted,fontWeight:600}}>{l}:</span> <span style={{color:T.muted2}}>{v}</span></div>
+            ):null)}
+          </div>
+          {c.rejected_reason&&<div style={{marginTop:8,fontSize:12,color:"#f87171"}}>Reason: {c.rejected_reason}</div>}
+        </div>
+        {showActions&&(
+          <div style={{display:"flex",gap:8,marginLeft:16,flexShrink:0}}>
+            <button onClick={()=>approve(c.id)} disabled={saving===c.id} style={{background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:9,padding:"8px 16px",color:"#34d399",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving===c.id?"...":"Approve"}</button>
+            <button onClick={()=>{setRejectModal(c.id);setRejectReason("");}} style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:9,padding:"8px 16px",color:"#f87171",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Reject</button>
+          </div>
+        )}
+        {!showActions&&c.status==="approved"&&(
+          <button onClick={()=>reject()&&setRejectModal(c.id)} style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:9,padding:"6px 12px",color:"#f87171",fontSize:12,cursor:"pointer",fontFamily:"inherit"}} onClick={()=>{setRejectModal(c.id);setRejectReason("");}}>Revoke</button>
+        )}
+      </div>
+    </div>
+  );
+
+  return(
+    <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text,display:"flex"}}>
+      <style>{STYLES}</style>
+      {/* Sidebar */}
+      <aside style={{width:240,background:T.bg2,display:"flex",flexDirection:"column",padding:"24px 0",flexShrink:0,borderRight:`1px solid ${T.border}`}}>
+        <div style={{padding:"0 20px 24px",borderBottom:`1px solid ${T.border}`,cursor:"pointer"}} onClick={onBack}
+          onMouseEnter={e=>e.currentTarget.style.opacity="0.7"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}><ScaleLogo size={28} gold/><div><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></div><div style={{fontSize:10,color:"#f59e0b",marginTop:1,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>Admin Panel</div></div></div>
+        </div>
+        {TABS.map(t=>(
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"11px 20px",background:tab===t.id?"rgba(124,58,237,0.12)":"none",border:"none",borderLeft:`3px solid ${tab===t.id?T.violet:"transparent"}`,color:tab===t.id?T.text:T.muted,fontSize:13,fontWeight:tab===t.id?600:400,cursor:"pointer",fontFamily:"inherit",textAlign:"left",transition:"all 0.15s"}}>
+            <span>{t.icon}</span><span style={{flex:1}}>{t.label}</span>
+            {t.count>0&&<span style={{background:t.id==="approvals"?"#f59e0b":T.violet,color:"#fff",borderRadius:20,padding:"1px 7px",fontSize:10,fontWeight:700}}>{t.count}</span>}
+          </button>
+        ))}
+        <div style={{flex:1}}/>
+        <div style={{padding:"14px 20px",borderTop:`1px solid ${T.border}`}}>
+          <div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:10,padding:"10px 12px",marginBottom:10}}>
+            <div style={{fontSize:9,fontWeight:700,color:"#f59e0b",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:3}}>Admin</div>
+            <div style={{fontSize:12,color:"#fbbf24",fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{session?.user?.email}</div>
+          </div>
+          <button onClick={load} style={{background:T.glass,border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:12,padding:"8px",cursor:"pointer",width:"100%",fontFamily:"inherit",marginBottom:6}}>↻ Refresh</button>
+          <button onClick={onSignOut} style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.15)",borderRadius:8,color:"#f87171",fontSize:12,padding:"8px",cursor:"pointer",width:"100%",fontFamily:"inherit"}}>Sign Out</button>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main style={{flex:1,padding:32,overflowY:"auto"}}>
+        {/* Stats */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:28}}>
+          {[["Pending",pending.length,"#f59e0b"],["Active Managers",approved.length,"#34d399"],["Rejected",rejected.length,"#f87171"]].map(([l,v,c])=>(
+            <GlassCard key={l} style={{padding:"20px 24px"}} hover={false}>
+              <div style={{fontSize:32,fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,color:c,marginBottom:4}}>{v}</div>
+              <div style={{fontSize:11,color:T.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em"}}>{l}</div>
+            </GlassCard>
+          ))}
+        </div>
+
+        {loading?<div style={{textAlign:"center",padding:60,color:T.muted}}>Loading...</div>:<>
+          {tab==="approvals"&&<div>
+            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,marginBottom:16}}>Pending Approvals</h2>
+            {!pending.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>✅</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No pending applications</div></GlassCard>:
+            pending.map(c=><CoCard key={c.id} c={c} showActions/>)}
+          </div>}
+
+          {tab==="managers"&&<div>
+            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,marginBottom:16}}>Active Managers</h2>
+            {!approved.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>👤</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No approved managers yet</div></GlassCard>:
+            approved.map(c=><CoCard key={c.id} c={c} showActions={false}/>)}
+          </div>}
+
+          {tab==="rejected"&&<div>
+            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,marginBottom:16}}>Rejected Applications</h2>
+            {!rejected.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>📋</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No rejected applications</div></GlassCard>:
+            rejected.map(c=><CoCard key={c.id} c={c} showActions={false}/>)}
+          </div>}
+        </>}
+      </main>
+
+      {rejectModal&&<Modal title="Reject Application" onClose={()=>setRejectModal(null)}>
+        <Fld label="Reason for rejection (will be shown to applicant)">
+          <DarkTxt value={rejectReason} onChange={e=>setRejectReason(e.target.value)} placeholder="e.g. Unable to verify business information. Please contact support@violationflow.com"/>
+        </Fld>
+        <div style={{display:"flex",gap:10,marginTop:8}}>
+          <VBtn variant="danger" onClick={reject} disabled={saving} style={{flex:1,justifyContent:"center"}}>{saving?"Rejecting...":"Confirm Rejection"}</VBtn>
+          <VBtn variant="ghost" onClick={()=>setRejectModal(null)} style={{flex:1,justifyContent:"center"}}>Cancel</VBtn>
+        </div>
+      </Modal>}
+    </div>
+  );
+}
+
 export default function App() {
   const [view,setView] = useState("home");
   const [modal,setModal] = useState(null);
@@ -1467,8 +1660,15 @@ export default function App() {
   if(view==="resident") return <><ResidentForm onBack={()=>setView("home")}/><AIAgent/></>;
   if(view==="login") return <ManagerLogin onBack={()=>setView("home")} onSuccess={s=>{setSession(s);saveSession(s);setView("manager");}}/>;
   if(view==="manager"){
-    // Always require a verified session — never bypass
     if(!session||!session.access_token) return <ManagerLogin onBack={()=>setView("home")} onSuccess={s=>{setSession(s);saveSession(s);setView("manager");}}/>;
+    const co=session?.company;
+    // Admin gets admin dashboard
+    if(co?.role==="admin") return <AdminDashboard session={session} onSignOut={handleSignOut} onBack={()=>setView("home")}/>;
+    // Pending approval
+    if(!co||co?.status==="pending") return <PendingScreen session={session} onSignOut={handleSignOut}/>;
+    // Rejected
+    if(co?.status==="rejected") return <RejectedScreen reason={co?.rejected_reason} onSignOut={handleSignOut}/>;
+    // Approved manager
     return <Dashboard onBack={()=>setView("home")} session={session} onSignOut={handleSignOut}/>;
   }
 
