@@ -801,6 +801,45 @@ function OwnersTab({assocs,onSave}) {
     setSaving(false);
   };
   const del=async id=>{if(!window.confirm("Delete this owner record?"))return;await db(`unit_owners?id=eq.${id}`,{method:"DELETE"});reload();};
+  const [csvAssocId,setCsvAssocId]=useState("");
+  const [csvLoading,setCsvLoading]=useState(false);
+  const [csvPreview,setCsvPreview]=useState(null);
+
+  const downloadTemplate=()=>{
+    const csv="unit_number,owner_name,email,phone,mailing_address,mailing_city,mailing_state,mailing_zip\n101,John Smith,john@email.com,312-555-0001,123 Main St,Chicago,IL,60601\n102,Jane Doe,jane@email.com,312-555-0002,456 Oak Ave,Chicago,IL,60602";
+    const blob=new Blob([csv],{type:"text/csv"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="owners-template.csv";a.click();
+  };
+
+  const handleCSV=e=>{
+    const file=e.target.files[0];if(!file)return;
+    if(!csvAssocId){alert("Please select an association first.");e.target.value="";return;}
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const lines=ev.target.result.split("\n").map(l=>l.trim()).filter(Boolean);
+      const headers=lines[0].split(",").map(h=>h.trim().toLowerCase());
+      const rows=lines.slice(1).map(line=>{
+        const vals=line.split(",").map(v=>v.trim());
+        const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||"");
+        return{association_id:csvAssocId,unit_number:obj.unit_number,owner_name:obj.owner_name,email:obj.email,phone:obj.phone,mailing_address:obj.mailing_address,mailing_city:obj.mailing_city,mailing_state:obj.mailing_state,mailing_zip:obj.mailing_zip};
+      }).filter(r=>r.unit_number&&r.owner_name);
+      setCsvPreview(rows);
+    };
+    reader.readAsText(file);
+    e.target.value="";
+  };
+
+  const importCSV=async()=>{
+    if(!csvPreview?.length)return;
+    setCsvLoading(true);
+    try{
+      for(const row of csvPreview){await db("unit_owners",{method:"POST",body:JSON.stringify(row)});}
+      alert(`Successfully imported ${csvPreview.length} owners!`);
+      setCsvPreview(null);reload();onSave();
+    }catch(e){alert("Import failed: "+e.message);}
+    setCsvLoading(false);
+  };
+
   const filtered=owners.filter(o=>{
     const matchSearch=!search||o.owner_name?.toLowerCase().includes(search.toLowerCase())||o.unit_number?.toLowerCase().includes(search.toLowerCase());
     const matchAssoc=!filterAssoc||o.association_id===filterAssoc;
@@ -810,8 +849,58 @@ function OwnersTab({assocs,onSave}) {
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Unit Owners</h2>
-        <VBtn onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Owner</VBtn>
+        <div style={{display:"flex",gap:8}}>
+          <VBtn variant="ghost" onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Owner</VBtn>
+        </div>
       </div>
+
+      {/* CSV Import Box */}
+      <GlassCard style={{padding:22,marginBottom:20,border:"1px solid rgba(245,158,11,0.25)"}} hover={false}>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+          <div style={{width:38,height:38,background:"rgba(245,158,11,0.12)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>📊</div>
+          <div>
+            <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:14,fontWeight:700,color:T.text}}>Bulk Import via CSV</div>
+            <div style={{fontSize:12,color:T.muted}}>Upload a spreadsheet to add all owners at once</div>
+          </div>
+          <button onClick={downloadTemplate} style={{marginLeft:"auto",background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:8,padding:"7px 14px",color:"#fbbf24",fontSize:12,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Download Template</button>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr auto",gap:12,alignItems:"end"}}>
+          <Fld label="Select Association for import">
+            <DarkSel value={csvAssocId} onChange={e=>setCsvAssocId(e.target.value)}>
+              <option value="">Select association...</option>
+              {assocs.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
+            </DarkSel>
+          </Fld>
+          <label style={{display:"inline-flex",alignItems:"center",gap:8,background:`linear-gradient(135deg,#d97706,#b45309)`,color:"#fff",padding:"12px 20px",borderRadius:12,cursor:"pointer",fontSize:13,fontWeight:600,whiteSpace:"nowrap"}}>
+            📂 Upload CSV
+            <input type="file" accept=".csv" onChange={handleCSV} style={{display:"none"}}/>
+          </label>
+        </div>
+        {csvPreview&&(
+          <div style={{marginTop:14}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{fontSize:13,fontWeight:700,color:"#34d399"}}>✓ Found {csvPreview.length} owners — review before importing:</div>
+              <div style={{display:"flex",gap:8}}>
+                <VBtn variant="success" onClick={importCSV} disabled={csvLoading} style={{fontSize:12,padding:"7px 14px"}}>{csvLoading?"Importing...":"Import All"}</VBtn>
+                <VBtn variant="ghost" onClick={()=>setCsvPreview(null)} style={{fontSize:12,padding:"7px 14px"}}>Discard</VBtn>
+              </div>
+            </div>
+            <div style={{maxHeight:200,overflowY:"auto",border:`1px solid ${T.border}`,borderRadius:10}}>
+              <div style={{display:"grid",gridTemplateColumns:"80px 1.5fr 1.5fr 1fr",padding:"8px 14px",background:"rgba(255,255,255,0.03)",fontSize:10,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.08em"}}>
+                <span>Unit</span><span>Name</span><span>Email</span><span>Phone</span>
+              </div>
+              {csvPreview.map((r,i)=>(
+                <div key={i} style={{display:"grid",gridTemplateColumns:"80px 1.5fr 1.5fr 1fr",padding:"9px 14px",borderTop:`1px solid ${T.border}`,fontSize:12,alignItems:"center"}}>
+                  <span style={{fontWeight:700,color:T.violet}}>U{r.unit_number}</span>
+                  <span style={{color:T.text}}>{r.owner_name}</span>
+                  <span style={{color:T.muted}}>{r.email||"—"}</span>
+                  <span style={{color:T.muted}}>{r.phone||"—"}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </GlassCard>
       <div style={{display:"flex",gap:12,marginBottom:16}}>
         <DarkInp value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by name or unit..." style={{maxWidth:280}}/>
         <DarkSel value={filterAssoc} onChange={e=>setFilterAssoc(e.target.value)} style={{maxWidth:220,width:"auto"}}>
