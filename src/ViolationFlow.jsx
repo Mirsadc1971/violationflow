@@ -56,6 +56,7 @@ function ManagerLogin({onSuccess,onBack}) {
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [confirm,setConfirm]=useState("");
+  const [companyName,setCompanyName]=useState("");
   const [err,setErr]=useState("");
   const [msg,setMsg]=useState("");
   const [loading,setLoading]=useState(false);
@@ -65,6 +66,7 @@ function ManagerLogin({onSuccess,onBack}) {
     setErr("");setMsg("");
     if(!email.trim()){setErr("Email is required.");return;}
     if(mode!=="reset"&&!password){setErr("Password is required.");return;}
+    if(mode==="signup"&&!companyName.trim()){setErr("Company or association name is required.");return;}
     if(mode==="signup"&&password!==confirm){setErr("Passwords do not match.");return;}
     if(mode==="signup"&&password.length<8){setErr("Password must be at least 8 characters.");return;}
     setLoading(true);
@@ -73,11 +75,32 @@ function ManagerLogin({onSuccess,onBack}) {
         const r=await fetch(`${SB}/auth/v1/token?grant_type=password`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim(),password})});
         const j=await r.json();
         if(!r.ok){
-          // Show exact error from Supabase for debugging
           setErr(`Error ${r.status}: ${j?.error_description||j?.error||j?.message||j?.msg||JSON.stringify(j)}`);
           setLoading(false);return;
         }
         if(!j.access_token){setErr("No token received. Response: "+JSON.stringify(j));setLoading(false);return;}
+        // Load company_id for this user
+        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name`,{headers:AH});
+        const compData=await comp.json();
+        const company=Array.isArray(compData)&&compData.length?compData[0]:null;
+        saveSession({access_token:j.access_token,refresh_token:j.refresh_token,user:j.user,company});
+        onSuccess({...j,company});
+      } else if(mode==="signup"){
+        const r=await fetch(`${SB}/auth/v1/signup`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim(),password})});
+        const j=await r.json();
+        if(!r.ok){setErr(`Signup error ${r.status}: ${j?.error_description||j?.error||j?.message||JSON.stringify(j)}`);setLoading(false);return;}
+        // Auto-create company record
+        await fetch(`${SB}/rest/v1/companies`,{method:"POST",headers:{...AH,"Prefer":"return=minimal"},body:JSON.stringify({name:companyName.trim(),owner_email:email.trim()})});
+        setMsg("Account created! Check your email to confirm, then sign in.");
+        setMode("login");setPassword("");setConfirm("");setCompanyName("");
+      } else {
+        const r=await fetch(`${SB}/auth/v1/recover`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim()})});
+        if(r.ok){setMsg("Password reset email sent! Check your inbox.");}
+        else{const j=await r.json();setErr(`Reset error: ${j?.error||JSON.stringify(j)}`);}
+      }
+    }catch(e){setErr("Network error: "+e.message);}
+    setLoading(false);
+  };
         saveSession({access_token:j.access_token,refresh_token:j.refresh_token,user:j.user});
         onSuccess(j);
       } else if(mode==="signup"){
@@ -131,6 +154,13 @@ function ManagerLogin({onSuccess,onBack}) {
           {msg&&<div style={{background:"rgba(16,185,129,0.08)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:10,padding:"12px 16px",marginBottom:20,color:"#34d399",fontSize:13,display:"flex",gap:8,alignItems:"flex-start"}}>
             <span style={{flexShrink:0}}>✓</span>{msg}
           </div>}
+
+          {/* Company Name - signup only */}
+          {mode==="signup"&&(
+            <Fld label="Company / Association Name" req>
+              <DarkInp value={companyName} onChange={e=>setCompanyName(e.target.value)} placeholder="e.g. ABC Property Management" onKeyDown={e=>e.key==="Enter"&&submit()}/>
+            </Fld>
+          )}
 
           {/* Email */}
           <Fld label="Email Address" req>
@@ -703,7 +733,7 @@ const TL=({events})=><div style={{paddingLeft:22,position:"relative"}}><div styl
 /* ─────────────────────────────────────────────────────────────────────────────
    ASSOCIATIONS TAB
 ───────────────────────────────────────────────────────────────────────────── */
-function AssociationsTab({assocs,onSave}) {
+function AssociationsTab({assocs,companyId,onSave}) {
   const [showForm,setShowForm]=useState(false);
   const [editing,setEditing]=useState(null);
   const [saving,setSaving]=useState(false);
@@ -715,7 +745,7 @@ function AssociationsTab({assocs,onSave}) {
     if(!f.name.trim()){setErr("Association name is required.");return;}
     setSaving(true);setErr("");
     try{
-      const data={name:f.name,address:f.address,city:f.city,state:f.state,zip:f.zip,hearing_days:parseInt(f.hearing_days)||10,phone:f.phone,email:f.email};
+      const data={name:f.name,address:f.address,city:f.city,state:f.state,zip:f.zip,hearing_days:parseInt(f.hearing_days)||10,phone:f.phone,email:f.email,company_id:companyId||null};
       if(editing){await db(`associations?id=eq.${editing.id}`,{method:"PATCH",body:JSON.stringify(data)});}
       else{await db("associations",{method:"POST",body:JSON.stringify(data)});}
       setShowForm(false);onSave();
@@ -775,7 +805,7 @@ function AssociationsTab({assocs,onSave}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    OWNERS TAB
 ───────────────────────────────────────────────────────────────────────────── */
-function OwnersTab({assocs,onSave}) {
+function OwnersTab({assocs,companyId,onSave}) {
   const [owners,setOwners]=useState([]);
   const [loading,setLoading]=useState(true);
   const [showForm,setShowForm]=useState(false);
@@ -793,7 +823,7 @@ function OwnersTab({assocs,onSave}) {
     if(!f.unit_number.trim()||!f.owner_name.trim()||!f.association_id){setErr("Association, unit number and owner name are required.");return;}
     setSaving(true);setErr("");
     try{
-      const data={association_id:f.association_id,unit_number:f.unit_number,owner_name:f.owner_name,email:f.email,phone:f.phone,mailing_address:f.mailing_address,mailing_city:f.mailing_city,mailing_state:f.mailing_state,mailing_zip:f.mailing_zip};
+      const data={association_id:f.association_id,unit_number:f.unit_number,owner_name:f.owner_name,email:f.email,phone:f.phone,mailing_address:f.mailing_address,mailing_city:f.mailing_city,mailing_state:f.mailing_state,mailing_zip:f.mailing_zip,company_id:companyId||null};
       if(editing){await db(`unit_owners?id=eq.${editing.id}`,{method:"PATCH",body:JSON.stringify(data)});}
       else{await db("unit_owners",{method:"POST",body:JSON.stringify(data)});}
       setShowForm(false);reload();onSave();
@@ -955,7 +985,7 @@ function OwnersTab({assocs,onSave}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    RULES TAB WITH AI PDF UPLOAD
 ───────────────────────────────────────────────────────────────────────────── */
-function RulesTab({assocs,rules,onSave}) {
+function RulesTab({assocs,rules,companyId,onSave}) {
   const [showForm,setShowForm]=useState(false);
   const [editing,setEditing]=useState(null);
   const [saving,setSaving]=useState(false);
@@ -972,7 +1002,7 @@ function RulesTab({assocs,rules,onSave}) {
     if(!f.rule_title.trim()||!f.association_id){setErr("Association and rule title are required.");return;}
     setSaving(true);setErr("");
     try{
-      const data={association_id:f.association_id,rule_title:f.rule_title,rule_section:f.rule_section,category:f.category,description:f.description,fine_amount:parseFloat(f.fine_amount)||0,active:f.active};
+      const data={association_id:f.association_id,rule_title:f.rule_title,rule_section:f.rule_section,category:f.category,description:f.description,fine_amount:parseFloat(f.fine_amount)||0,active:f.active,company_id:companyId||null};
       if(editing){await db(`rules?id=eq.${editing.id}`,{method:"PATCH",body:JSON.stringify(data)});}
       else{await db("rules",{method:"POST",body:JSON.stringify(data)});}
       setShowForm(false);onSave();
@@ -1125,8 +1155,9 @@ function RulesTab({assocs,rules,onSave}) {
 }
 
 function Dashboard({onBack,session,onSignOut}) {
+  const company=session?.company;const cid=company?.id;const cFilter=cid?`&company_id=eq.${cid}`:"";
   const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);
-  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db("violation_reports?select=*,rules(*),associations(*)&order=created_at.desc"),db("violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc"),db("associations?select=*&order=name.asc"),db("rules?select=*&order=rule_title.asc"),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
+  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc${cFilter}`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc${cFilter}`),db(`associations?select=*&order=name.asc${cFilter}`),db(`rules?select=*&order=rule_title.asc${cFilter}`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
   useEffect(()=>{load();},[]);
   const log=async(cid,type,desc)=>db("case_events",{method:"POST",body:JSON.stringify({case_id:cid,event_type:type,description:desc})});
   const openCase=async c=>{setSelCase(c);const e=await db(`case_events?case_id=eq.${c.id}&order=created_at.asc`);setEvts(Array.isArray(e)?e:[]);};
@@ -1158,6 +1189,7 @@ function Dashboard({onBack,session,onSignOut}) {
           <div style={{padding:"14px 20px",borderTop:`1px solid ${T.border}`}}>
             {/* Logged in user */}
             <div style={{background:"rgba(124,58,237,0.08)",border:`1px solid rgba(124,58,237,0.2)`,borderRadius:10,padding:"10px 12px",marginBottom:10}}>
+              {company&&<div style={{fontSize:11,fontWeight:700,color:"#a78bfa",marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{company.name}</div>}
               <div style={{fontSize:9,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:3}}>Signed in as</div>
               <div style={{fontSize:12,color:"#c4b5fd",fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{session?.user?.email||"Manager"}</div>
             </div>
@@ -1233,9 +1265,9 @@ function Dashboard({onBack,session,onSignOut}) {
             </div>
           </div>}
 
-          {tab==="associations"&&<AssociationsTab assocs={assocs} onSave={load}/>}
-          {tab==="owners"&&<OwnersTab assocs={assocs} onSave={load}/>}
-          {tab==="rules"&&<RulesTab assocs={assocs} rules={rules} onSave={load}/>}
+          {tab==="associations"&&<AssociationsTab assocs={assocs} companyId={cid} onSave={load}/>}
+          {tab==="owners"&&<OwnersTab assocs={assocs} companyId={cid} onSave={load}/>}
+          {tab==="rules"&&<RulesTab assocs={assocs} rules={rules} companyId={cid} onSave={load}/>}
 
           {tab==="leads"&&<div>
             <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Captured Leads</h2>
