@@ -101,22 +101,6 @@ function ManagerLogin({onSuccess,onBack}) {
     }catch(e){setErr("Network error: "+e.message);}
     setLoading(false);
   };
-        saveSession({access_token:j.access_token,refresh_token:j.refresh_token,user:j.user});
-        onSuccess(j);
-      } else if(mode==="signup"){
-        const r=await fetch(`${SB}/auth/v1/signup`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim(),password})});
-        const j=await r.json();
-        if(!r.ok){setErr(`Signup error ${r.status}: ${j?.error_description||j?.error||j?.message||JSON.stringify(j)}`);setLoading(false);return;}
-        setMsg("Account created! Check your email to confirm, then sign in.");
-        setMode("login");setPassword("");setConfirm("");
-      } else {
-        const r=await fetch(`${SB}/auth/v1/recover`,{method:"POST",headers:AH,body:JSON.stringify({email:email.trim()})});
-        if(r.ok){setMsg("Password reset email sent! Check your inbox.");}
-        else{const j=await r.json();setErr(`Reset error: ${j?.error||JSON.stringify(j)}`);}
-      }
-    }catch(e){setErr("Network error: "+e.message);}
-    setLoading(false);
-  };
 
   return(
     <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:24,fontFamily:"'DM Sans',sans-serif",position:"relative",overflow:"hidden"}}>
