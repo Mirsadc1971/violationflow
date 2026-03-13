@@ -1523,11 +1523,15 @@ function RulesTab({assocs,rules,companyId,onSave}) {
         ]}]
       })});
       const data=await resp.json();
-      const text=data.content?.find(c=>c.type==="text")?.text||"[]";
+      if(!resp.ok){alert("API Error: "+JSON.stringify(data));setAiLoading(false);return;}
+      const text=data.content?.find(c=>c.type==="text")?.text||"";
+      if(!text){alert("AI returned no text. Response: "+JSON.stringify(data));setAiLoading(false);return;}
       const clean=text.replace(/```json|```/g,"").trim();
-      const parsed=JSON.parse(clean);
+      const jsonStart=clean.indexOf("[");const jsonEnd=clean.lastIndexOf("]");
+      if(jsonStart===-1){alert("No JSON array found in response. AI said: "+text.slice(0,500));setAiLoading(false);return;}
+      const parsed=JSON.parse(clean.slice(jsonStart,jsonEnd+1));
       setAiResult(parsed);
-    }catch(e){alert("Could not extract rules. Make sure the PDF contains readable text. Error: "+e.message);}
+    }catch(e){alert("Error: "+e.message);}
     setAiLoading(false);
   };
 
