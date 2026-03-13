@@ -639,6 +639,7 @@ function ResidentForm({onBack}) {
   const selRule=rules.find(r=>r.id===form.rule_id);
   const grouped=rules.reduce((a,r)=>{(a[r.category]=a[r.category]||[]).push(r);return a;},{});
   const setF=k=>e=>setForm(f=>({...f,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
+  const set=setF;
   const setR=k=>e=>setReg(r=>({...r,[k]:e.target.value}));
 
   const submitReg=async()=>{
