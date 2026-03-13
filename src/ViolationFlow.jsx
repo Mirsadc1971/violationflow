@@ -83,7 +83,7 @@ function ManagerLogin({onSuccess,onBack}) {
         if(!r.ok){setErr(`Error ${r.status}: ${j?.error_description||j?.error||j?.message||j?.msg||JSON.stringify(j)}`);setLoading(false);return;}
         if(!j.access_token){setErr("No token received.");setLoading(false);return;}
         // Load full company record including role and status
-        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name,role,status,phone,contact_name`,{headers:AH});
+        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name,role,status,phone,contact_name`,{headers:{...AH,Authorization:`Bearer ${j.access_token}`}});
         const compData=await comp.json();
         const company=Array.isArray(compData)&&compData.length?compData[0]:null;
         saveSession({access_token:j.access_token,refresh_token:j.refresh_token,user:j.user,company});
@@ -1652,8 +1652,9 @@ function RulesTab({assocs,rules,companyId,onSave}) {
 
 function Dashboard({onBack,session,onSignOut}) {
   const company=session?.company;const cid=company?.id;const cFilter=cid?`&company_id=eq.${cid}`:"";
+  const cFilterOr=cid?`&or=(company_id.eq.${cid},company_id.is.null)`:"";
   const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);const [activeForm,setActiveForm]=useState(null);
-  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc`),db(`associations?select=*&order=name.asc`),db(`rules?select=*&order=rule_title.asc`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
+  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc`),db(`associations?select=*&order=name.asc${cFilterOr}`),db(`rules?select=*&order=rule_title.asc${cFilterOr}`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
   useEffect(()=>{load();},[]);
   const log=async(cid,type,desc)=>db("case_events",{method:"POST",body:JSON.stringify({case_id:cid,event_type:type,description:desc})});
   const openCase=async c=>{setSelCase(c);const e=await db(`case_events?case_id=eq.${c.id}&order=created_at.asc`);setEvts(Array.isArray(e)?e:[]);};
@@ -1663,7 +1664,7 @@ function Dashboard({onBack,session,onSignOut}) {
   const pending=reports.filter(r=>!cases.find(c=>c.report_id===r.id));
   const stats={p:pending.length,a:cases.filter(c=>["NOTICE_SENT","UNDER_REVIEW","HEARING_REQUESTED"].includes(c.status)).length,f:cases.filter(c=>c.status==="FINAL_VIOLATION").length,cl:cases.filter(c=>c.status==="CLOSED").length};
   const CD=({dl})=>{if(!dl)return null;const d=Math.ceil((new Date(dl)-new Date())/86400000);if(d<0)return<span style={{color:"#f87171",fontSize:11,fontWeight:700}}>EXPIRED</span>;if(d<=2)return<span style={{color:T.gold,fontSize:11,fontWeight:700}}>{d}d ⚠</span>;return<span style={{color:T.muted,fontSize:11}}>{d}d</span>;};
-  const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"forms",icon:"📄",label:"Legal Forms"},{id:"associations",icon:"🏢",label:"Associations"},{id:"owners",icon:"👤",label:"Owners"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"}];
+  const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"forms",icon:"📄",label:"Legal Forms"},{id:"associations",icon:"🏢",label:"Associations"},{id:"owners",icon:"👤",label:"Owners"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"},{id:"settings",icon:"⚙️",label:"Settings"}];
   const bars=[42,68,35,78,55,90,62,85,45,88,72,95];
   return(
     <div style={{fontFamily:"'Inter',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text}}>
@@ -1805,6 +1806,27 @@ function Dashboard({onBack,session,onSignOut}) {
                 </div>
               ))}
             </div>
+          </div>}
+          {tab==="settings"&&<div>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:24}}>Account Settings</h2>
+            <GlassCard style={{padding:28,marginBottom:20}} hover={false}>
+              <div style={{fontSize:13,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:16}}>Company Info</div>
+              {[["Company Name",company?.name||"—"],["Contact Name",company?.contact_name||"—"],["Phone",company?.phone||"—"],["Status",company?.status||"—"],["Company ID",company?.id||"Not linked — contact support"],["Your Email",session?.user?.email||"—"]].map(([l,v])=>(
+                <div key={l} style={{display:"flex",gap:16,marginBottom:12,paddingBottom:12,borderBottom:`1px solid ${T.border}`}}>
+                  <div style={{fontSize:13,color:T.muted,width:140,flexShrink:0}}>{l}</div>
+                  <div style={{fontSize:13,color:T.text,fontWeight:500,fontFamily:l==="Company ID"?"monospace":"inherit",wordBreak:"break-all"}}>{v}</div>
+                </div>
+              ))}
+            </GlassCard>
+            <GlassCard style={{padding:28}} hover={false}>
+              <div style={{fontSize:13,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12}}>Data Summary</div>
+              {[["Associations",assocs.length],["Rules",rules.length],["Total Cases",cases.length]].map(([l,v])=>(
+                <div key={l} style={{display:"flex",justifyContent:"space-between",marginBottom:10,fontSize:13}}>
+                  <span style={{color:T.muted}}>{l}</span>
+                  <span style={{color:T.text,fontWeight:700}}>{v}</span>
+                </div>
+              ))}
+            </GlassCard>
           </div>}
           {tab==="analytics"&&<div>
             <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Analytics</h2>
