@@ -2094,6 +2094,8 @@ function AdminDashboard({session,onSignOut,onBack}) {
   const [saving,setSaving]=useState(null);
   const [rejectModal,setRejectModal]=useState(null);
   const [rejectReason,setRejectReason]=useState("");
+  const [approveModal,setApproveModal]=useState(null);
+  const [approveFields,setApproveFields]=useState({plan:"starter",notes:""});
 
   const load=async()=>{
     setLoading(true);
@@ -2103,9 +2105,11 @@ function AdminDashboard({session,onSignOut,onBack}) {
   };
   useEffect(()=>{load();},[]);
 
-  const approve=async(id)=>{
-    setSaving(id);
-    await db(`companies?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({status:"approved"})});
+  const approve=async()=>{
+    if(!approveModal)return;
+    setSaving(approveModal.id);
+    await db(`companies?id=eq.${approveModal.id}`,{method:"PATCH",body:JSON.stringify({status:"approved",plan:approveFields.plan,notes:approveFields.notes})});
+    setApproveModal(null);setApproveFields({plan:"starter",notes:""});
     await load();setSaving(null);
   };
 
@@ -2136,7 +2140,7 @@ function AdminDashboard({session,onSignOut,onBack}) {
         </div>
         {showActions&&(
           <div style={{display:"flex",gap:8,marginLeft:16,flexShrink:0}}>
-            <button onClick={()=>approve(c.id)} disabled={saving===c.id} style={{background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:9,padding:"8px 16px",color:"#34d399",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving===c.id?"...":"Approve"}</button>
+            <button onClick={()=>{setApproveModal(c);setApproveFields({plan:"starter",notes:""));}} style={{background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:9,padding:"8px 16px",color:"#34d399",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Approve</button>
             <button onClick={()=>{setRejectModal(c.id);setRejectReason("");}} style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:9,padding:"8px 16px",color:"#f87171",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Reject</button>
           </div>
         )}
@@ -2206,6 +2210,31 @@ function AdminDashboard({session,onSignOut,onBack}) {
         </>}
       </main>
 
+      {approveModal&&<Modal title="Approve Manager Account" onClose={()=>setApproveModal(null)}>
+        <div style={{marginBottom:20}}>
+          <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:16,fontWeight:700,color:T.text,marginBottom:4}}>{approveModal.name}</div>
+          <div style={{fontSize:13,color:T.muted}}>{approveModal.owner_email} · {approveModal.contact_name}</div>
+        </div>
+        <div style={{background:"rgba(52,211,153,0.06)",border:"1px solid rgba(52,211,153,0.15)",borderRadius:10,padding:"12px 16px",marginBottom:20,fontSize:13,color:"#34d399"}}>
+          ✓ Company ID will be: <span style={{fontFamily:"monospace",fontWeight:700}}>{approveModal.id}</span>
+        </div>
+        <Fld label="Subscription Plan">
+          <DarkSel value={approveFields.plan} onChange={e=>setApproveFields(f=>({...f,plan:e.target.value}))}>
+            <option value="on_demand">On Demand — $9.99/report</option>
+            <option value="starter">Starter — $79/mo (up to 100 units)</option>
+            <option value="professional1">Professional 1 — $299/mo (up to 500 units)</option>
+            <option value="professional2">Professional 2 — $499/mo (up to 2,000 units)</option>
+            <option value="enterprise">Enterprise — Custom</option>
+          </DarkSel>
+        </Fld>
+        <Fld label="Internal Notes (optional)">
+          <DarkTxt value={approveFields.notes} onChange={e=>setApproveFields(f=>({...f,notes:e.target.value}))} placeholder="e.g. Referred by John, 30-day trial..."/>
+        </Fld>
+        <div style={{display:"flex",gap:10,marginTop:8}}>
+          <VBtn onClick={approve} disabled={!!saving} style={{flex:1,justifyContent:"center"}}>{saving?"Approving...":"✓ Approve & Activate"}</VBtn>
+          <VBtn variant="ghost" onClick={()=>setApproveModal(null)}>Cancel</VBtn>
+        </div>
+      </Modal>}
       {rejectModal&&<Modal title="Reject Application" onClose={()=>setRejectModal(null)}>
         <Fld label="Reason for rejection (will be shown to applicant)">
           <DarkTxt value={rejectReason} onChange={e=>setRejectReason(e.target.value)} placeholder="e.g. Unable to verify business information. Please contact support@violationflow.com"/>
