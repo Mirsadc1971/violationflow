@@ -2263,9 +2263,23 @@ export default function App() {
     const saved = loadSession();
     if(saved?.access_token){
       authGetUser(saved.access_token)
-        .then(u=>{
-          if(u){setSession(saved);}
-          else{clearSession();}
+        .then(async u=>{
+          if(u){
+            // Always re-fetch company on app load to get fresh company_id
+            try{
+              const email = saved?.user?.email;
+              if(email){
+                const r=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email)}&select=id,name,role,status,phone,contact_name`,{headers:{"Content-Type":"application/json",apikey:SK,Authorization:`Bearer ${saved.access_token}`}});
+                const data=await r.json();
+                const company=Array.isArray(data)&&data.length?data[0]:saved.company;
+                const updated={...saved,company};
+                saveSession(updated);
+                setSession(updated);
+              } else {
+                setSession(saved);
+              }
+            }catch(e){setSession(saved);}
+          } else {clearSession();}
         })
         .catch(()=>clearSession())
         .finally(()=>setSessionChecked(true));
