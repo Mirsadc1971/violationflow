@@ -8,7 +8,7 @@ const SK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const SUPA_URL = SB;
 const SUPA_KEY = SK;
 const SH = {"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true",apikey:SK,Authorization:`Bearer ${SK}`,Prefer:"return=representation"};
-async function db(p,o={}){const r=await fetch(`${SB}/rest/v1/${p}`,{headers:getAuthHeaders(),...o});if(r.status===204)return null;const j=await r.json();if(!r.ok)throw new Error(j?.message||"err");return j;}
+async function db(p,o={}){const r=await fetch(`${SB}/rest/v1/${p}`,{headers:SH,...o});if(r.status===204)return null;const j=await r.json();if(!r.ok)throw new Error(j?.message||"err");return j;}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SUPABASE AUTH
@@ -1655,7 +1655,7 @@ function Dashboard({onBack,session,onSignOut}) {
   const company=session?.company;const cid=company?.id;const cFilter=cid?`&company_id=eq.${cid}`:"";
   const cFilterOr=cid?`&or=(company_id.eq.${cid},company_id.is.null)`:"";
   const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);const [activeForm,setActiveForm]=useState(null);
-  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc`),db(`associations?select=*&order=name.asc${cFilterOr}`),db(`rules?select=*&order=rule_title.asc${cFilterOr}`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
+  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc`),db(`associations?select=*&order=name.asc`),db(`rules?select=*&order=rule_title.asc`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
   useEffect(()=>{load();},[]);
   const log=async(cid,type,desc)=>db("case_events",{method:"POST",body:JSON.stringify({case_id:cid,event_type:type,description:desc})});
   const openCase=async c=>{setSelCase(c);const e=await db(`case_events?case_id=eq.${c.id}&order=created_at.asc`);setEvts(Array.isArray(e)?e:[]);};
