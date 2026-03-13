@@ -513,7 +513,7 @@ ON DEMAND — $9.99 per violation report (no monthly fee)
 
 STARTER — $59/month
 - Best for: Self-managed HOAs or Condo associations, volunteer boards
-- Units: Up to 150 units
+- Units: Up to 100 units
 - Features: Violation portal for residents, rule database upload, notice generator, hearing deadline tracking, compliance history, email support
 - Who should choose this: A small community with a volunteer board
 
@@ -1521,15 +1521,14 @@ const FAQS = [
   {q:"Can residents submit anonymous violation reports?",a:"No. ViolationFlow requires all reporters to provide their full name, unit number, and contact information. This prevents frivolous or harassing reports and ensures accountability. Anonymous submissions are blocked by design."},
   {q:"What happens if a hearing is not requested?",a:"If the unit owner does not request a hearing within the configured window (10–14 days), the violation is automatically finalized. Both the manager and owner are notified and the fine is ready to apply to the account ledger."},
   {q:"Does ViolationFlow work in all US states?",a:"Yes — all 50 states. Hearing windows are fully configurable (10–14 days) to match your specific state's governing document requirements and applicable HOA or Condominium statutes."},
-  {q:"What's the difference between Starter and Professional?",a:"Starter is $59/month for self-managed communities up to 150 units. Professional is $149/month for property managers who need a multi-association dashboard, compliance analytics, API integrations, and up to 300 units. For 600+ units, we offer an Enterprise plan with custom pricing."},
-  {q:"What is the On Demand plan?",a:"On Demand is $9.99 per violation report — no subscription required. It's designed for individual condo owners or homeowners whose HOA hasn't signed up for ViolationFlow. You can submit a violation report and have it delivered to the board or manager who files the official notice — no account needed."},
-  {q:"Can I manage multiple HOAs or Condo associations?",a:"Yes, with the Professional and Enterprise plans. You can manage unlimited associations from a single dashboard — perfect for property management companies."},
-  {q:"Is my community's data secure?",a:"Yes. ViolationFlow is SOC 2 Type II compliant with encrypted data storage and secure access controls. Your community's data is never sold or shared with third parties."},
-  {q:"Do you offer a free trial?",a:"Yes. The Professional plan includes a free trial. Contact us at support@violationflow.com or request a demo and our team will set you up within 1 business day."},
+  {q:"What's the difference between the plans?",a:"Pay-Per-Violation is $9.99 per report with no subscription — ideal for individual owners. Starter is $79/month for self-managed HOAs up to 100 units. Professional 1 is $299/month for property managers handling multiple associations up to 500 units. Professional 2 is $499/month for larger portfolios up to 2,000 units. Enterprise is custom pricing for unlimited scale."},
+  {q:"What is the Pay-Per-Violation plan?",a:"Pay-Per-Violation is $9.99 per violation report — no subscription required. It's designed for individual condo owners or homeowners who need to submit a violation report in their building instantly."},
+  {q:"Can I manage multiple HOAs or Condo associations?",a:"Yes, with Professional 1, Professional 2, and Enterprise plans. You can manage unlimited associations from a single portfolio dashboard — perfect for property management companies."},
+  {q:"Is my community's data secure?",a:"Yes. ViolationFlow uses encrypted data storage and secure access controls. Your community's data is never sold or shared with third parties."},
   {q:"What information does my association need to provide?",a:"To onboard, associations must provide: property name and full address, owner name and mailing address per unit (for official notice delivery), unit numbers, phone numbers per owner, and uploaded governing documents (bylaws, CC&Rs, rules). This information is required for legally defensible enforcement."},
   {q:"Why do you need mailing addresses and phone numbers?",a:"Some states require physical mail delivery for official violation notices to be legally enforceable. Phone numbers ensure your team can reach owners before hearing deadlines expire. Both are essential for a compliant enforcement process."},
   {q:"Is ViolationFlow legal advice?",a:"No. ViolationFlow is a technology platform only. Nothing on our website or within the platform constitutes legal advice. We strongly recommend that associations consult a qualified attorney licensed in their jurisdiction regarding their governing documents and applicable state law."},
-  {q:"How long does setup take?",a:"Most associations are live in under 30 minutes. Our team helps you upload governing documents, configure your rules, set hearing windows, and import unit/owner data. Full Service customers receive white-glove onboarding with a dedicated account manager."},
+  {q:"How long does setup take?",a:"Most associations are live in under 30 minutes. Our team helps you upload governing documents, configure your rules, set hearing windows, and import unit/owner data."},
 ];
 
 function FAQAccordion() {
@@ -1537,13 +1536,13 @@ function FAQAccordion() {
   return (
     <div>
       {FAQS.map((f,i)=>(
-        <div key={i} style={{marginBottom:10,border:`1px solid ${open===i?T.border2:T.border}`,borderRadius:14,overflow:"hidden",transition:"all 0.2s",background:open===i?"rgba(124,58,237,0.05)":T.glass}}>
+        <div key={i} style={{marginBottom:10,border:`1px solid ${open===i?"#D1D5DB":"#E5E7EB"}`,borderRadius:14,overflow:"hidden",transition:"all 0.2s",background:open===i?"#F9FAFB":"#fff"}}>
           <button onClick={()=>setOpen(open===i?null:i)} style={{width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 20px",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",textAlign:"left",gap:12}}>
-            <span style={{fontSize:14,fontWeight:600,color:open===i?"#c4b5fd":T.text,lineHeight:1.5}}>{f.q}</span>
-            <span style={{flexShrink:0,width:22,height:22,borderRadius:"50%",background:open===i?"rgba(124,58,237,0.2)":T.glass2,border:`1px solid ${open===i?T.violet:T.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:open===i?"#c4b5fd":T.muted,transition:"all 0.2s",transform:open===i?"rotate(45deg)":"rotate(0deg)"}}>+</span>
+            <span style={{fontSize:14,fontWeight:600,color:"#111827",lineHeight:1.5}}>{f.q}</span>
+            <span style={{flexShrink:0,width:22,height:22,borderRadius:"50%",background:open===i?"#F3F4F6":"#F9FAFB",border:`1px solid ${open===i?"#9CA3AF":"#E5E7EB"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#6B7280",transition:"all 0.2s",transform:open===i?"rotate(45deg)":"rotate(0deg)"}}>+</span>
           </button>
           {open===i&&(
-            <div style={{padding:"0 20px 18px",fontSize:13,color:T.muted,lineHeight:1.85,borderTop:`1px solid ${T.border}`}}>
+            <div style={{padding:"0 20px 18px",fontSize:13,color:"#6B7280",lineHeight:1.85,borderTop:"1px solid #E5E7EB"}}>
               <div style={{paddingTop:14}}>{f.a}</div>
             </div>
           )}
@@ -1876,7 +1875,7 @@ export default function App() {
       bg: "#F9FAFB",
       border: "#6EE7B7",
       desc: "For small self-managed associations. Everything you need to run enforcement properly.",
-      features: ["Violation reporting portal","Rule database upload","Notice generator","Hearing deadline tracking","Compliance history","Up to 150 units"],
+      features: ["Violation reporting portal","Rule database upload","Notice generator","Hearing deadline tracking","Compliance history","Up to 100 units"],
       cta: "Get Started",
       ctaStyle: {background:"#111827",color:"#fff",border:"none"},
       ctaHover: "#047857",
@@ -1885,7 +1884,7 @@ export default function App() {
     {
       name: "Professional 1",
       tag: "PROPERTY MANAGERS",
-      price: "$159",
+      price: "$299",
       per: "/month",
       color: "#1E3A8A",
       bg: "#F9FAFB",
@@ -1900,7 +1899,7 @@ export default function App() {
     {
       name: "Professional 2",
       tag: "PROPERTY MANAGERS",
-      price: "$359",
+      price: "$499",
       per: "/month",
       color: "#4C1D95",
       bg: "#F5F3FF",
