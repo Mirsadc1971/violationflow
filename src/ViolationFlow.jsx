@@ -1490,7 +1490,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
   const [filterAssoc,setFilterAssoc]=useState("");useEffect(()=>{if(!filterAssoc&&assocs.length)setFilterAssoc(assocs[0].id);},[assocs]);
   const [aiLoading,setAiLoading]=useState(false);
   const [aiResult,setAiResult]=useState(null);
-  const [aiAssocId,setAiAssocId]=useState("");
+  const [aiAssocId,setAiAssocId]=useState("");useEffect(()=>{if(!aiAssocId&&assocs.length>0)setAiAssocId(assocs[0].id);},[assocs]);
   const [importing,setImporting]=useState(false);
   const [f,setF]=useState({association_id:"",rule_title:"",rule_section:"",category:"General",description:"",fine_amount:"",active:true});
   const set=k=>e=>setF(p=>({...p,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
