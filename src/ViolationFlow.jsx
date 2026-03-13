@@ -1447,7 +1447,7 @@ function FAQAccordion() {
 /* ─── NAV SIGN-IN DROPDOWN ─────────────────────────────────────────────── */
 function NavSignIn({goToLogin}) {
   const [open,setOpen]=useState(false);
-  const ref=React.useRef();
+  const ref=useRef();
   useEffect(()=>{
     const h=(e)=>{ if(ref.current&&!ref.current.contains(e.target)) setOpen(false); };
     document.addEventListener("mousedown",h);
