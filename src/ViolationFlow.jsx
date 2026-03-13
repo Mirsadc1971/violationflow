@@ -1707,12 +1707,12 @@ export default function App() {
 
   const year = new Date().getFullYear();
   const features = [
-    {icon:"⚡",title:"One-Click Enforcement",desc:"Automatically generate legal violation notices and cure-period timelines based on your specific bylaws."},
-    {icon:"📋",title:"Rule-Based Reporting",desc:"Residents select the exact rule violated from your uploaded governing documents. Zero vague complaints."},
-    {icon:"⏱",title:"Hearing Deadline Automation",desc:"Configurable 10–14 day hearing windows tracked automatically. Violations self-finalize on expiry."},
-    {icon:"📊",title:"Powerful Analytics",desc:"Identify recurring violators, resolution bottlenecks, and enforcement patterns with community-wide reporting."},
-    {icon:"🛡",title:"Due Process Protection",desc:"Full audit trail on every case — timestamped, immutable, ready for legal proceedings."},
-    {icon:"📱",title:"Mobile First",desc:"File violation reports on-site from your phone. Timestamped for legal accuracy."},
+    {icon:"⚡",title:"One-Click Enforcement",desc:"Automatically generate violation notices and cure timelines based on association rules."},
+    {icon:"📋",title:"Rule-Based Reporting",desc:"Residents select the exact rule violated from governing documents."},
+    {icon:"⏱",title:"Hearing Deadline Automation",desc:"Track hearing request windows automatically."},
+    {icon:"📊",title:"Powerful Analytics",desc:"Identify patterns, repeat violations, and enforcement bottlenecks."},
+    {icon:"🛡",title:"Due Process Protection",desc:"Full timestamped audit trail for every case."},
+    {icon:"⚖️",title:"Consistent Enforcement Tracking",desc:"Ensure violations are enforced consistently across the community."},
   ];
 
   // ── LANDING PAGE ──
@@ -1838,12 +1838,12 @@ export default function App() {
       {/* ── HERO ── */}
       <section style={{paddingTop:120,paddingBottom:80,background:"linear-gradient(180deg,#F8FAFC 0%,#ffffff 100%)",borderBottom:"1px solid #E5E7EB"}}>
         <div style={{maxWidth:900,margin:"0 auto",padding:"0 32px",textAlign:"center"}}>
-          <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"#FEF3C7",border:"1px solid #FDE68A",borderRadius:99,padding:"5px 14px",fontSize:12,fontWeight:600,color:"#92400E",marginBottom:24,letterSpacing:"0.02em"}}>
+          <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"#FEF3C7",border:"1px solid #FDE68A",borderRadius:99,padding:"6px 18px",fontSize:15,fontWeight:600,color:"#92400E",marginBottom:24,letterSpacing:"0.01em"}}>
             <span style={{width:6,height:6,borderRadius:"50%",background:"#111827",display:"inline-block"}}/>
-            HOA &amp; Condo Enforcement Platform
+            HOA &amp; Condominium Enforcement Platform
           </div>
           <h1 style={{fontFamily:"'Georgia',serif",fontSize:"clamp(36px,5.5vw,68px)",fontWeight:700,lineHeight:1.1,color:"#111827",marginBottom:20,letterSpacing:"-0.02em"}}>
-            Report and Enforce<br/>HOA Rule Violations<br/>in Minutes.
+            Report and Enforce House Rule Violations in Minutes.
           </h1>
           <p style={{fontSize:"clamp(15px,1.6vw,18px)",color:"#6B7280",maxWidth:580,margin:"0 auto 36px",lineHeight:1.75}}>
             ViolationFlow helps condominium associations and property managers document violations, generate notices, manage hearings, and track compliance — all in one platform.
@@ -1961,7 +1961,7 @@ export default function App() {
           <div>
             <div style={{fontSize:11,fontWeight:700,color:"#1D4ED8",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:12}}>For Boards &amp; Property Managers</div>
             <h2 style={{fontFamily:"'Georgia',serif",fontSize:"clamp(26px,3.5vw,44px)",fontWeight:700,color:"#111827",lineHeight:1.15,marginBottom:16,letterSpacing:"-0.02em"}}>Stop Managing Violations in Email.</h2>
-            <p style={{color:"#6B7280",fontSize:15,lineHeight:1.8,marginBottom:28}}>ViolationFlow automates your entire enforcement workflow — from the first report to the final hearing determination.</p>
+            <p style={{color:"#6B7280",fontSize:15,lineHeight:1.8,marginBottom:28}}>ViolationFlow automates your entire enforcement workflow — from the first report to the final hearing determination. Accepting violation reports by phone or email is not compliant with proper HOA enforcement procedures. Informal reporting creates inconsistent records, exposes the association to legal liability, and undermines due process. Every report must be documented, timestamped, and traceable.</p>
             <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:36}}>
               {["Violation reports & notices","Evidence storage & audit trail","Notice generation & delivery","Hearing scheduling","Board determinations","Fine tracking & compliance history"].map(f=>(
                 <div key={f} style={{display:"flex",alignItems:"center",gap:10,fontSize:14,color:"#374151"}}>
