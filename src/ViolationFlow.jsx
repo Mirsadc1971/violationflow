@@ -84,7 +84,7 @@ function ManagerLogin({onSuccess,onBack}) {
         if(!r.ok){setErr(`Error ${r.status}: ${j?.error_description||j?.error||j?.message||j?.msg||JSON.stringify(j)}`);setLoading(false);return;}
         if(!j.access_token){setErr("No token received.");setLoading(false);return;}
         // Load full company record including role and status
-        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name,role,status,phone,contact_name`,{headers:{...AH,Authorization:`Bearer ${j.access_token}`}});
+        const comp=await fetch(`${SB}/rest/v1/companies?owner_email=eq.${encodeURIComponent(email.trim())}&select=id,name,role,status,phone,contact_name`,{headers:{"Content-Type":"application/json",apikey:SK,Authorization:`Bearer ${j.access_token}`}});
         const compData=await comp.json();
         const company=Array.isArray(compData)&&compData.length?compData[0]:null;
         saveSession({access_token:j.access_token,refresh_token:j.refresh_token,user:j.user,company});
