@@ -841,6 +841,392 @@ const NDoc=({d})=><div style={{background:"#0D1117",borderRadius:16,padding:32,b
 const TL=({events})=><div style={{paddingLeft:22,position:"relative"}}><div style={{position:"absolute",left:7,top:8,bottom:8,width:2,background:T.border}}/>{events.map((e,i)=><div key={e.id} style={{position:"relative",marginBottom:16}}><div style={{position:"absolute",left:-22,top:5,width:11,height:11,borderRadius:"50%",background:i===0?T.violet:T.border2,border:"2px solid #06080F",outline:`2px solid ${i===0?T.violet:T.border}`}}/><div style={{fontSize:11,color:T.muted,marginBottom:2}}>{new Date(e.created_at).toLocaleString()}</div><div style={{fontSize:13,fontWeight:600,color:T.muted2}}>{e.event_type.replace(/_/g," ")}</div>{e.description&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>{e.description}</div>}</div>)}</div>;
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   PRINT STYLES
+───────────────────────────────────────────────────────────────────────────── */
+const PRINT_STYLES = `
+@media print {
+  body * { visibility: hidden !important; }
+  .vf-printable, .vf-printable * { visibility: visible !important; }
+  .vf-printable { position: fixed !important; top: 0; left: 0; width: 100%; padding: 40px !important; background: white !important; z-index: 99999; }
+  .vf-no-print { display: none !important; }
+}
+`;
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NOTICE OF VIOLATION FORM
+───────────────────────────────────────────────────────────────────────────── */
+function NoticeOfViolationForm({ caseData, onClose }) {
+  const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const assoc = caseData?.associations || {};
+  const report = caseData?.violation_reports || {};
+  const rule = caseData?.rules || {};
+
+  const [fields, setFields] = useState({
+    toName: "",
+    date: today,
+    unit: report.violator_unit || "",
+    incidentDate: report.incident_date ? new Date(report.incident_date).toLocaleDateString() : "",
+    incidentYear: new Date().getFullYear(),
+    description: report.description || "",
+    actionTaken: "",
+    authorizedAgent: "",
+    assocName: assoc.name || "",
+    assocAddress: assoc.address || "",
+    assocCity: assoc.city || "",
+    assocState: assoc.state || "IL",
+    assocZip: assoc.zip || "",
+  });
+  const set = k => e => setFields(f => ({ ...f, [k]: e.target.value }));
+
+  const inp = (val, onChange, opts = {}) => (
+    <input value={val} onChange={onChange}
+      style={{ border: "none", borderBottom: "1px solid #222", outline: "none", background: "transparent", fontSize: 14, color: "#111", fontFamily: "inherit", padding: "2px 4px", minWidth: opts.wide ? 240 : opts.sm ? 80 : 160, width: opts.full ? "100%" : undefined, ...opts.style }} />
+  );
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 9000, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "32px 16px" }}>
+      <style>{PRINT_STYLES}</style>
+      <div style={{ background: "#fff", width: "100%", maxWidth: 760, borderRadius: 4, boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+        {/* Toolbar */}
+        <div className="vf-no-print" style={{ background: "#1a1a2e", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderRadius: "4px 4px 0 0" }}>
+          <span style={{ color: "#a78bfa", fontWeight: 700, fontSize: 14 }}>📋 Notice of Violation</span>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => window.print()} style={{ background: "#6D28D9", border: "none", color: "#fff", padding: "8px 18px", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>🖨 Print / Save PDF</button>
+            <button onClick={onClose} style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", padding: "8px 14px", borderRadius: 6, cursor: "pointer", fontSize: 13 }}>✕ Close</button>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div className="vf-printable" style={{ padding: "48px 56px", fontFamily: "Georgia, serif", color: "#111", background: "#fff" }}>
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 24, marginBottom: 36, borderBottom: "2px solid #111", paddingBottom: 20 }}>
+            <div style={{ width: 80, height: 80, border: "2px solid #ccc", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 10, color: "#999", textAlign: "center", lineHeight: 1.4 }}>Association Logo</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{inp(fields.assocName, set("assocName"), { wide: true })}</div>
+              <div style={{ fontSize: 13, color: "#333" }}>{inp(fields.assocAddress, set("assocAddress"), { wide: true })} – {inp(fields.assocCity, set("assocCity"), { sm: true })}, {inp(fields.assocState, set("assocState"), { sm: true })} {inp(fields.assocZip, set("assocZip"), { sm: true })}</div>
+            </div>
+          </div>
+
+          <h1 style={{ textAlign: "center", fontSize: 22, fontWeight: 900, letterSpacing: "0.06em", textDecoration: "underline", marginBottom: 32 }}>NOTICE OF VIOLATION</h1>
+
+          {/* To / Date */}
+          <div style={{ display: "flex", gap: 32, marginBottom: 8 }}>
+            <div>To: {inp(fields.toName, set("toName"), { wide: true })}</div>
+            <div>Date: {inp(fields.date, set("date"), { wide: true })}</div>
+          </div>
+          <div style={{ marginLeft: 24, marginBottom: 28, fontSize: 14, lineHeight: 2 }}>
+            <div>{inp(fields.assocAddress, set("assocAddress"), { wide: true })}</div>
+            <div>Unit {inp(fields.unit, set("unit"), { sm: true })}</div>
+            <div>{inp(fields.assocCity, set("assocCity"), { sm: true })}, {inp(fields.assocState, set("assocState"), { sm: true })} {inp(fields.assocZip, set("assocZip"), { sm: true })}</div>
+          </div>
+
+          {/* Body text */}
+          <p style={{ fontSize: 14, lineHeight: 2, marginBottom: 20 }}>
+            You are hereby notified as the Owner of Unit {inp(fields.unit, set("unit"), { sm: true })} that you are charged with the following
+            violation of the Association's Declaration, By-Laws, or Rules and Regulations. The actions
+            complained of occurred on or about {inp(fields.incidentDate, set("incidentDate"), { wide: true })}, {inp(fields.incidentYear, set("incidentYear"), { sm: true })} and are described as follows:
+          </p>
+
+          {/* Description box */}
+          <div style={{ border: "none", borderBottom: "1px solid #111", marginBottom: 8, paddingBottom: 2 }}>
+            <textarea value={fields.description} onChange={set("description")} rows={5}
+              style={{ width: "100%", border: "none", outline: "none", background: "transparent", fontSize: 14, fontFamily: "Georgia, serif", resize: "vertical", lineHeight: 2 }} />
+          </div>
+          {[1, 2, 3].map(i => <div key={i} style={{ borderBottom: "1px solid #111", height: 28, marginBottom: 4 }} />)}
+
+          {/* Legal paragraphs */}
+          <div style={{ marginTop: 24, marginBottom: 20, fontSize: 13, lineHeight: 1.9 }}>
+            <p style={{ marginBottom: 14, fontWeight: 700 }}>
+              If you wish to protest this violation, you must fill out a REQUEST FOR HEARING form, in accordance with the Association's enforcement policies. If you fail to protest within ten (10) days, the violation will be deemed admitted, and you will be assessed costs and expenses for a 1<sup>st</sup> violation, unless otherwise determined by the Board of Directors.
+            </p>
+            <p style={{ marginBottom: 14, fontWeight: 700 }}>
+              Under the rules, if you fail to request or appear at a hearing on these charges, you will be found guilty of default, and assessments, charges, costs, expenses and legal fees may be assessed against you and added to your account.
+            </p>
+            <p style={{ fontWeight: 700 }}>
+              If a violation exists which has not already been corrected, and you fail to make an appropriate correction, you will receive a second notice of violation, after which the association will correct the violation at your expense. In this case, an administrative charge will be added.
+            </p>
+          </div>
+
+          {/* Action Taken */}
+          <div style={{ marginBottom: 28, fontSize: 14 }}>
+            ACTION TAKEN: {inp(fields.actionTaken, set("actionTaken"), { full: true })}
+          </div>
+
+          {/* Signature */}
+          <div style={{ marginTop: 20 }}>
+            <div style={{ borderBottom: "1px solid #111", width: 220, marginBottom: 4 }}>
+              {inp(fields.authorizedAgent, set("authorizedAgent"), { wide: true })}
+            </div>
+            <div style={{ fontSize: 12, color: "#444" }}>By: (Authorized Agent)</div>
+            <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, textTransform: "uppercase" }}>{fields.assocName || "Association Name"}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   REQUEST FOR HEARING FORM
+───────────────────────────────────────────────────────────────────────────── */
+function RequestForHearingForm({ caseData, onClose }) {
+  const today = new Date();
+  const assoc = caseData?.associations || {};
+  const report = caseData?.violation_reports || {};
+
+  const [fields, setFields] = useState({
+    noticeDate: caseData?.notice_date ? new Date(caseData.notice_date).toLocaleDateString() : "",
+    noticeYear: caseData?.notice_date ? new Date(caseData.notice_date).getFullYear() : today.getFullYear(),
+    ownerName: "",
+    address: assoc.address || "",
+    city: assoc.city || "",
+    state: assoc.state || "IL",
+    zip: assoc.zip || "",
+    unit: report.violator_unit || "",
+    phone: "",
+    dateMonth: today.toLocaleString("default", { month: "long" }),
+    dateDay: today.getDate(),
+    dateYear: today.getFullYear(),
+    assocName: assoc.name || "",
+    assocAddress: assoc.address || "",
+    assocCity: assoc.city || "",
+    assocState: assoc.state || "IL",
+    assocZip: assoc.zip || "",
+  });
+  const set = k => e => setFields(f => ({ ...f, [k]: e.target.value }));
+  const inp = (val, onChange, opts = {}) => (
+    <input value={val} onChange={onChange}
+      style={{ border: "none", borderBottom: "1px solid #222", outline: "none", background: "transparent", fontSize: 14, color: "#111", fontFamily: "inherit", padding: "2px 4px", minWidth: opts.wide ? 240 : opts.sm ? 80 : 160, width: opts.full ? "100%" : undefined }} />
+  );
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 9000, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "32px 16px" }}>
+      <style>{PRINT_STYLES}</style>
+      <div style={{ background: "#fff", width: "100%", maxWidth: 760, borderRadius: 4, boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+        <div className="vf-no-print" style={{ background: "#1a1a2e", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderRadius: "4px 4px 0 0" }}>
+          <span style={{ color: "#f472b6", fontWeight: 700, fontSize: 14 }}>⚖️ Request for Hearing</span>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => window.print()} style={{ background: "#6D28D9", border: "none", color: "#fff", padding: "8px 18px", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>🖨 Print / Save PDF</button>
+            <button onClick={onClose} style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", padding: "8px 14px", borderRadius: 6, cursor: "pointer", fontSize: 13 }}>✕ Close</button>
+          </div>
+        </div>
+
+        <div className="vf-printable" style={{ padding: "48px 56px", fontFamily: "Georgia, serif", color: "#111", background: "#fff" }}>
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 24, marginBottom: 36, borderBottom: "2px solid #111", paddingBottom: 20 }}>
+            <div style={{ width: 80, height: 80, border: "2px solid #ccc", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 10, color: "#999", textAlign: "center", lineHeight: 1.4 }}>Association Logo</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{inp(fields.assocName, set("assocName"), { wide: true })}</div>
+              <div style={{ fontSize: 13, color: "#333" }}>{inp(fields.assocAddress, set("assocAddress"), { wide: true })} – {inp(fields.assocCity, set("assocCity"), { sm: true })}, {inp(fields.assocState, set("assocState"), { sm: true })} {inp(fields.assocZip, set("assocZip"), { sm: true })}</div>
+            </div>
+          </div>
+
+          <h1 style={{ textAlign: "center", fontSize: 22, fontWeight: 900, letterSpacing: "0.06em", textDecoration: "underline", marginBottom: 32 }}>REQUEST FOR HEARING</h1>
+
+          <p style={{ fontSize: 14, fontWeight: 700, textDecoration: "underline", marginBottom: 32 }}>Sign and return to the Management office.</p>
+
+          <p style={{ fontSize: 14, lineHeight: 2, marginBottom: 48 }}>
+            I hereby request a hearing on the charges made against me contained in the Notice of Violation
+            dated {inp(fields.noticeDate, set("noticeDate"), { wide: true })} {inp(fields.noticeYear, set("noticeYear"), { sm: true })} alleging a violation of the Declaration, By-Laws or Rules
+            and Regulations of the {inp(fields.assocName, set("assocName"), { wide: true })}.
+          </p>
+
+          {/* Fields grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px 40px", marginBottom: 32 }}>
+            <div>
+              <div style={{ borderBottom: "1px solid #111", paddingBottom: 4, marginBottom: 4, minHeight: 28 }}></div>
+              <div style={{ fontSize: 12, color: "#444" }}>Signature</div>
+            </div>
+            <div>
+              <div style={{ borderBottom: "1px solid #111", paddingBottom: 4, marginBottom: 4 }}>{inp(fields.ownerName, set("ownerName"), { full: true })}</div>
+              <div style={{ fontSize: 12, color: "#444" }}>Owner's Name – Printed</div>
+            </div>
+            <div>
+              <div style={{ borderBottom: "1px solid #111", paddingBottom: 4, marginBottom: 4 }}>{inp(fields.address, set("address"), { full: true })}</div>
+              <div style={{ fontSize: 12, color: "#444" }}>Address</div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 8 }}>
+              <div>
+                <div style={{ borderBottom: "1px solid #111", paddingBottom: 4, marginBottom: 4 }}>{inp(fields.city, set("city"), { full: true })}</div>
+                <div style={{ fontSize: 12, color: "#444" }}>City</div>
+              </div>
+              <div>
+                <div style={{ borderBottom: "1px solid #111", paddingBottom: 4, marginBottom: 4 }}>{inp(fields.state, set("state"), { full: true })}</div>
+                <div style={{ fontSize: 12, color: "#444" }}>State</div>
+              </div>
+              <div>
+                <div style={{ borderBottom: "1px solid #111", paddingBottom: 4, marginBottom: 4 }}>{inp(fields.zip, set("zip"), { full: true })}</div>
+                <div style={{ fontSize: 12, color: "#444" }}>Zip Code</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ borderBottom: "1px solid #111", width: 160, paddingBottom: 4, marginBottom: 4 }}>{inp(fields.unit, set("unit"), { full: true })}</div>
+            <div style={{ fontSize: 12, color: "#444" }}>Unit #</div>
+          </div>
+          <div style={{ marginBottom: 40 }}>
+            <div style={{ borderBottom: "1px solid #111", width: 280, paddingBottom: 4, marginBottom: 4 }}>{inp(fields.phone, set("phone"), { full: true })}</div>
+            <div style={{ fontSize: 12, color: "#444" }}>Telephone</div>
+          </div>
+
+          {/* Date line */}
+          <div style={{ marginBottom: 8 }}>
+            <span style={{ borderBottom: "1px solid #111", display: "inline-block", minWidth: 140, paddingBottom: 4 }}>{inp(fields.dateMonth, set("dateMonth"), { wide: true })}</span>
+            <span style={{ margin: "0 8px", fontSize: 14 }}>, 2</span>
+            <span style={{ borderBottom: "1px solid #111", display: "inline-block", minWidth: 60, paddingBottom: 4 }}>{inp(fields.dateYear, set("dateYear"), { sm: true })}</span>
+          </div>
+          <div style={{ fontSize: 12, color: "#444" }}>Date</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NOTICE OF DETERMINATION FORM
+───────────────────────────────────────────────────────────────────────────── */
+function NoticeOfDeterminationForm({ caseData, onClose }) {
+  const today = new Date();
+  const assoc = caseData?.associations || {};
+  const report = caseData?.violation_reports || {};
+  const rule = caseData?.rules || {};
+
+  const [fields, setFields] = useState({
+    toName: "",
+    date: today.toLocaleDateString(),
+    unit: report.violator_unit || "",
+    complaintViolation: rule.rule_title || "",
+    noticeDay: "",
+    noticeMonth: "",
+    noticeYear: today.getFullYear(),
+    // Checkbox selections
+    det1: false, det2: false, det3: false, det4: false,
+    fine1a: "", fine1b: "",
+    fine2a: "", fine2b: "",
+    repairCost: "",
+    byName: "",
+    byTitle: "",
+    assocName: assoc.name || "",
+    assocAddress: assoc.address || "",
+    assocCity: assoc.city || "",
+    assocState: assoc.state || "IL",
+    assocZip: assoc.zip || "",
+  });
+  const set = k => e => setFields(f => ({ ...f, [k]: typeof e === "object" && e.target ? e.target.value : e }));
+  const tog = k => () => setFields(f => ({ ...f, [k]: !f[k] }));
+
+  const inp = (val, onChange, opts = {}) => (
+    <input value={val} onChange={onChange}
+      style={{ border: "none", borderBottom: "1px solid #222", outline: "none", background: "transparent", fontSize: 14, color: "#111", fontFamily: "inherit", padding: "2px 4px", minWidth: opts.wide ? 240 : opts.sm ? 80 : opts.xs ? 60 : 160, width: opts.full ? "100%" : undefined }} />
+  );
+
+  const Chk = ({ checked, onToggle, children }) => (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 18 }}>
+      <div onClick={onToggle} style={{ width: 18, height: 18, border: "2px solid #111", marginTop: 2, flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", background: checked ? "#111" : "transparent" }}>
+        {checked && <span style={{ color: "#fff", fontSize: 12, lineHeight: 1 }}>✓</span>}
+      </div>
+      <div style={{ fontSize: 14, lineHeight: 1.8, flex: 1 }}>{children}</div>
+    </div>
+  );
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 9000, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "32px 16px" }}>
+      <style>{PRINT_STYLES}</style>
+      <div style={{ background: "#fff", width: "100%", maxWidth: 760, borderRadius: 4, boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+        <div className="vf-no-print" style={{ background: "#1a1a2e", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderRadius: "4px 4px 0 0" }}>
+          <span style={{ color: "#f87171", fontWeight: 700, fontSize: 14 }}>⚖ Notice of Determination by the Board</span>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => window.print()} style={{ background: "#6D28D9", border: "none", color: "#fff", padding: "8px 18px", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>🖨 Print / Save PDF</button>
+            <button onClick={onClose} style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", padding: "8px 14px", borderRadius: 6, cursor: "pointer", fontSize: 13 }}>✕ Close</button>
+          </div>
+        </div>
+
+        <div className="vf-printable" style={{ padding: "48px 56px", fontFamily: "Georgia, serif", color: "#111", background: "#fff" }}>
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 24, marginBottom: 36, borderBottom: "2px solid #111", paddingBottom: 20 }}>
+            <div style={{ width: 80, height: 80, border: "2px solid #ccc", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 10, color: "#999", textAlign: "center", lineHeight: 1.4 }}>Association Logo</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{inp(fields.assocName, set("assocName"), { wide: true })}</div>
+              <div style={{ fontSize: 13, color: "#333" }}>{inp(fields.assocAddress, set("assocAddress"), { wide: true })} – {inp(fields.assocCity, set("assocCity"), { sm: true })}, {inp(fields.assocState, set("assocState"), { sm: true })} {inp(fields.assocZip, set("assocZip"), { sm: true })}</div>
+            </div>
+          </div>
+
+          <h1 style={{ textAlign: "center", fontSize: 20, fontWeight: 900, letterSpacing: "0.04em", textDecoration: "underline", marginBottom: 32 }}>NOTICE OF DETERMINATION BY THE BOARD</h1>
+
+          {/* To / Date */}
+          <div style={{ display: "flex", gap: 32, marginBottom: 8 }}>
+            <div>To: {inp(fields.toName, set("toName"), { wide: true })}</div>
+            <div>Date: {inp(fields.date, set("date"), { wide: true })}</div>
+          </div>
+          <div style={{ marginLeft: 24, marginBottom: 20, fontSize: 14, lineHeight: 2 }}>
+            <div>{inp(fields.assocAddress, set("assocAddress"), { wide: true })}</div>
+            <div>Unit {inp(fields.unit, set("unit"), { sm: true })}</div>
+            <div>{inp(fields.assocCity, set("assocCity"), { sm: true })}, {inp(fields.assocState, set("assocState"), { sm: true })} {inp(fields.assocZip, set("assocZip"), { sm: true })}</div>
+          </div>
+
+          <div style={{ marginBottom: 24, fontSize: 14 }}>
+            Complaint/Violation: {inp(fields.complaintViolation, set("complaintViolation"), { full: true })}
+          </div>
+
+          <p style={{ fontSize: 14, lineHeight: 1.9, marginBottom: 16 }}>
+            On the {inp(fields.noticeDay, set("noticeDay"), { xs: true })} day of {inp(fields.noticeMonth, set("noticeMonth"), { sm: true })}, 2{inp(fields.noticeYear, set("noticeYear"), { xs: true })}, you were notified of a violation of the
+            Declaration, By-Laws, or Rules and Regulations of the Association. If you requested, a copy of the
+            Association rules regarding enforcement was provided for your use.
+          </p>
+          <p style={{ fontSize: 14, lineHeight: 1.9, marginBottom: 28 }}>
+            Pursuant to the Association rules, a hearing was held or waived by you regarding the above-noted complaint. The Board of Directors, after considering the complaint, has taken the following action(s):
+          </p>
+
+          {/* Checkboxes */}
+          <div style={{ marginBottom: 28 }}>
+            <Chk checked={fields.det1} onToggle={tog("det1")}>
+              The Board has determined that a violation of the Association's Declaration, By-Laws, or
+              Rules and Regulations has occurred. Accordingly, a fine of ${inp(fields.fine1a, set("fine1a"), { xs: true })}, plus ${inp(fields.fine1b, set("fine1b"), { xs: true })} for
+              related costs has been assessed against your unit.
+            </Chk>
+            <Chk checked={fields.det2} onToggle={tog("det2")}>
+              The Board has determined that a second or subsequent violation has occurred. Accordingly,
+              a fine of ${inp(fields.fine2a, set("fine2a"), { xs: true })}, plus ${inp(fields.fine2b, set("fine2b"), { xs: true })} for related costs has been assessed against your unit.
+            </Chk>
+            <Chk checked={fields.det3} onToggle={tog("det3")}>
+              The costs, determined by the Board, for correction of the violation or for repair of damage to
+              common elements is ${inp(fields.repairCost, set("repairCost"), { sm: true })}, which will be assessed to your unit.
+            </Chk>
+            <Chk checked={fields.det4} onToggle={tog("det4")}>
+              The Board has determined that no offense has been committed.
+            </Chk>
+          </div>
+
+          {/* Signature block */}
+          <div style={{ marginTop: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20 }}>{fields.assocName || "Association Name"}</div>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>By:</span>
+                <div style={{ borderBottom: "1px solid #111", flex: 1, minWidth: 260, paddingBottom: 4 }}>{inp(fields.byName, set("byName"), { full: true })}</div>
+              </div>
+            </div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>Title:</span>
+                <div style={{ borderBottom: "1px solid #111", flex: 1, minWidth: 260, paddingBottom: 4 }}>{inp(fields.byTitle, set("byTitle"), { full: true })}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    ASSOCIATIONS TAB
 ───────────────────────────────────────────────────────────────────────────── */
 function AssociationsTab({assocs,companyId,onSave}) {
@@ -1266,7 +1652,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
 
 function Dashboard({onBack,session,onSignOut}) {
   const company=session?.company;const cid=company?.id;const cFilter=cid?`&company_id=eq.${cid}`:"";
-  const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);
+  const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);const [activeForm,setActiveForm]=useState(null);
   const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc${cFilter}`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc${cFilter}`),db(`associations?select=*&order=name.asc${cFilter}`),db(`rules?select=*&order=rule_title.asc${cFilter}`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
   useEffect(()=>{load();},[]);
   const log=async(cid,type,desc)=>db("case_events",{method:"POST",body:JSON.stringify({case_id:cid,event_type:type,description:desc})});
@@ -1436,8 +1822,18 @@ function Dashboard({onBack,session,onSignOut}) {
             {selCase.status==="HEARING_REQUESTED"&&<><VBtn variant="danger" onClick={()=>updateStatus(selCase.id,"FINAL_VIOLATION")} disabled={saving} style={{fontSize:13}}>Issue Final Violation</VBtn><VBtn variant="success" onClick={()=>updateStatus(selCase.id,"CLOSED")} disabled={saving} style={{fontSize:13}}>Close Case</VBtn></>}
             {selCase.status==="FINAL_VIOLATION"&&<VBtn variant="ghost" onClick={()=>updateStatus(selCase.id,"CLOSED")} disabled={saving} style={{fontSize:13}}>Close Case</VBtn>}
           </div>
+          <div style={{borderTop:`1px solid ${T.border}`,marginTop:14,paddingTop:14}}><div style={{fontSize:11,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.09em",marginBottom:10}}>📄 Legal Forms</div>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              <VBtn variant="ghost" onClick={()=>{setSelCase(null);setActiveForm({type:"violation",data:selCase});}} style={{fontSize:12,padding:"8px 14px"}}>📋 Notice of Violation</VBtn>
+              <VBtn variant="ghost" onClick={()=>{setSelCase(null);setActiveForm({type:"hearing",data:selCase});}} style={{fontSize:12,padding:"8px 14px"}}>⚖️ Request for Hearing</VBtn>
+              <VBtn variant="ghost" onClick={()=>{setSelCase(null);setActiveForm({type:"determination",data:selCase});}} style={{fontSize:12,padding:"8px 14px"}}>📜 Notice of Determination</VBtn>
+            </div>
+          </div>
         </div>
       </Modal>}
+      {activeForm?.type==="violation"&&<NoticeOfViolationForm caseData={activeForm.data} onClose={()=>setActiveForm(null)}/>}
+      {activeForm?.type==="hearing"&&<RequestForHearingForm caseData={activeForm.data} onClose={()=>setActiveForm(null)}/>}
+      {activeForm?.type==="determination"&&<NoticeOfDeterminationForm caseData={activeForm.data} onClose={()=>setActiveForm(null)}/>}
       {noticeData&&<Modal title="Violation Notice Generated" onClose={()=>setNoticeData(null)} wide><NDoc d={noticeData}/><div style={{display:"flex",gap:10,marginTop:18}}><VBtn onClick={()=>{setNoticeData(null);setTab("cases");}} style={{flex:1,justifyContent:"center"}}>View in Cases</VBtn><VBtn variant="ghost" onClick={()=>setNoticeData(null)}>Close</VBtn></div></Modal>}
     </div>
   );
