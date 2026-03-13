@@ -8,7 +8,6 @@ const SK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const SUPA_URL = SB;
 const SUPA_KEY = SK;
 const SH = {"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true",apikey:SK,Authorization:`Bearer ${SK}`,Prefer:"return=representation"};
-function getAuthHeaders(){const s=loadSession();const token=s?.access_token||SK;return{"Content-Type":"application/json",apikey:SK,Authorization:`Bearer ${token}`,Prefer:"return=representation"};}
 async function db(p,o={}){const r=await fetch(`${SB}/rest/v1/${p}`,{headers:getAuthHeaders(),...o});if(r.status===204)return null;const j=await r.json();if(!r.ok)throw new Error(j?.message||"err");return j;}
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -50,6 +49,7 @@ function loadSession(){
   }catch(_){return null;}
 }
 function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(_){}}
+function getAuthHeaders(extra={}){const s=loadSession();const token=s?.access_token||SK;return{"Content-Type":"application/json",apikey:SK,Authorization:`Bearer ${token}`,Prefer:"return=representation",...extra};}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    MANAGER LOGIN PAGE
