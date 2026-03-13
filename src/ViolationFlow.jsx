@@ -1663,7 +1663,7 @@ function Dashboard({onBack,session,onSignOut}) {
   const pending=reports.filter(r=>!cases.find(c=>c.report_id===r.id));
   const stats={p:pending.length,a:cases.filter(c=>["NOTICE_SENT","UNDER_REVIEW","HEARING_REQUESTED"].includes(c.status)).length,f:cases.filter(c=>c.status==="FINAL_VIOLATION").length,cl:cases.filter(c=>c.status==="CLOSED").length};
   const CD=({dl})=>{if(!dl)return null;const d=Math.ceil((new Date(dl)-new Date())/86400000);if(d<0)return<span style={{color:"#f87171",fontSize:11,fontWeight:700}}>EXPIRED</span>;if(d<=2)return<span style={{color:T.gold,fontSize:11,fontWeight:700}}>{d}d ⚠</span>;return<span style={{color:T.muted,fontSize:11}}>{d}d</span>;};
-  const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"associations",icon:"🏢",label:"Associations"},{id:"owners",icon:"👤",label:"Owners"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"}];
+  const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"forms",icon:"📄",label:"Legal Forms"},{id:"associations",icon:"🏢",label:"Associations"},{id:"owners",icon:"👤",label:"Owners"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"}];
   const bars=[42,68,35,78,55,90,62,85,45,88,72,95];
   return(
     <div style={{fontFamily:"'Inter',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text}}>
@@ -1785,6 +1785,27 @@ function Dashboard({onBack,session,onSignOut}) {
             </GlassCard>
           </div>}
 
+          {tab==="forms"&&<div>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:8}}>Legal Forms</h2>
+            <div style={{fontSize:13,color:T.muted,marginBottom:24}}>Fill out and print official violation documents. All fields are editable before printing.</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>
+              {[
+                {type:"violation",icon:"📋",title:"Notice of Violation",desc:"Notify a unit owner of a rule violation and their right to request a hearing.",color:T.gold},
+                {type:"hearing",icon:"⚖️",title:"Request for Hearing",desc:"Form for a unit owner to contest a violation and request a formal board hearing.",color:"#f472b6"},
+                {type:"determination",icon:"📜",title:"Notice of Determination",desc:"Board's final decision after a hearing — includes fine amounts and outcome.",color:"#f87171"},
+              ].map(f=>(
+                <div key={f.type} onClick={()=>setActiveForm({type:f.type,data:{associations:{},violation_reports:{},rules:{}}})}
+                  style={{background:T.bg2,border:`1px solid ${T.border}`,borderTop:`3px solid ${f.color}`,borderRadius:12,padding:28,cursor:"pointer",transition:"all 0.2s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background=T.bg3}
+                  onMouseLeave={e=>e.currentTarget.style.background=T.bg2}>
+                  <div style={{fontSize:32,marginBottom:14}}>{f.icon}</div>
+                  <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:16,fontWeight:700,color:T.text,marginBottom:8}}>{f.title}</div>
+                  <div style={{fontSize:13,color:T.muted,lineHeight:1.6,marginBottom:20}}>{f.desc}</div>
+                  <div style={{display:"inline-block",background:`rgba(${f.type==="violation"?"245,158,11":f.type==="hearing"?"244,114,182":"248,113,113"},0.12)`,color:f.color,border:`1px solid ${f.color}33`,borderRadius:6,padding:"6px 14px",fontSize:12,fontWeight:600}}>Open Form →</div>
+                </div>
+              ))}
+            </div>
+          </div>}
           {tab==="analytics"&&<div>
             <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Analytics</h2>
             <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:16}}>
