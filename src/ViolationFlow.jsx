@@ -7,13 +7,13 @@ const SB = "https://agapaabzdbznfibnxrxd.supabase.co";
 const SK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnYXBhYWJ6ZGJ6bmZpYm54cnhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NjA5NjQsImV4cCI6MjA4ODMzNjk2NH0.ZqkQZsk-m0PnZAQZGf4wvSePVuls6cSt9fUl73lqthw";
 const SUPA_URL = SB;
 const SUPA_KEY = SK;
-const SH = {"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true",apikey:SK,Authorization:`Bearer ${SK}`,Prefer:"return=representation"};
+const SH = {"Content-Type":"application/json","x-api-key":process.env.REACT_APP_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true",apikey:SK,Authorization:`Bearer ${SK}`,Prefer:"return=representation"};
 async function db(p,o={}){const r=await fetch(`${SB}/rest/v1/${p}`,{headers:SH,...o});if(r.status===204)return null;const j=await r.json();if(!r.ok)throw new Error(j?.message||"err");return j;}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SUPABASE AUTH
 ───────────────────────────────────────────────────────────────────────────── */
-const AH = {"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true",apikey:SK};
+const AH = {"Content-Type":"application/json","x-api-key":process.env.REACT_APP_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true",apikey:SK};
 async function authSignIn(email,password){
   const r=await fetch(`${SB}/auth/v1/token?grant_type=password`,{method:"POST",headers:AH,body:JSON.stringify({email,password})});
   const j=await r.json();if(!r.ok)throw new Error(j?.error_description||j?.msg||"Invalid email or password.");
@@ -576,7 +576,7 @@ Never give legal advice. Recommend consulting an attorney for legal questions.`;
     try{
       const history=msgs.map(m=>({role:m.role==="assistant"?"assistant":"user",content:m.text}));
       history.push({role:"user",content:msg});
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,system:SYS,messages:history})});
+      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":process.env.REACT_APP_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,system:SYS,messages:history})});
       const data=await res.json();
       const reply=data.content?.find(c=>c.type==="text")?.text||"I had trouble with that. Email us at support@violationflow.com";
       setMsgs(m=>[...m,{role:"assistant",text:reply}]);
@@ -658,7 +658,7 @@ function ResidentForm({onBack}) {
     if(Object.keys(e).length){setErrs(e);return;}
     setSaving(true);
     try{
-      const res=await fetch(`${SUPA_URL}/auth/v1/signup`,{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true","apikey":SUPA_KEY},body:JSON.stringify({email:reg.email,password:reg.password,data:{owner_name:reg.owner_name,assoc_name:reg.assoc_name,address:reg.address,unit:reg.unit,city:reg.city,state:reg.state,zip:reg.zip,phone:reg.phone}})});
+      const res=await fetch(`${SUPA_URL}/auth/v1/signup`,{method:"POST",headers:{"Content-Type":"application/json","x-api-key":process.env.REACT_APP_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true","apikey":SUPA_KEY},body:JSON.stringify({email:reg.email,password:reg.password,data:{owner_name:reg.owner_name,assoc_name:reg.assoc_name,address:reg.address,unit:reg.unit,city:reg.city,state:reg.state,zip:reg.zip,phone:reg.phone}})});
       const data=await res.json();
       if(data.error){setErrs({submit:data.error.message||data.error});setSaving(false);return;}
       setRegDone(true);
@@ -1532,7 +1532,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
       }
 
       if(extractedText.trim()){
-        const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:`Extract all HOA/Condo violation rules from this document. Return a JSON array where each object has: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY valid JSON array, no markdown.
+        const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":process.env.REACT_APP_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:`Extract all HOA/Condo violation rules from this document. Return a JSON array where each object has: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY valid JSON array, no markdown.
 
 ${extractedText.slice(0,15000)}`}]})});
         const data=await resp.json();
@@ -1549,7 +1549,7 @@ ${extractedText.slice(0,15000)}`}]})});
       const bytes=new Uint8Array(ab2);let binary="";
       for(let i=0;i<Math.min(bytes.length,400000);i++)binary+=String.fromCharCode(bytes[i]);
       const base64=btoa(binary);
-      const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA/Condo violation rules as a JSON array. Each object must have: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY valid JSON array, no markdown."}]}]})});
+      const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":process.env.REACT_APP_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA/Condo violation rules as a JSON array. Each object must have: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY valid JSON array, no markdown."}]}]})});
       const data=await resp.json();
       if(!resp.ok){alert("API Error: "+JSON.stringify(data));setAiLoading(false);return;}
       const text=data.content?.find(c=>c.type==="text")?.text||"";
