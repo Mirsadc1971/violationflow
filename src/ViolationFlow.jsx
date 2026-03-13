@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react";
 ───────────────────────────────────────────────────────────────────────────── */
 const SB = "https://agapaabzdbznfibnxrxd.supabase.co";
 const SK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnYXBhYWJ6ZGJ6bmZpYm54cnhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NjA5NjQsImV4cCI6MjA4ODMzNjk2NH0.ZqkQZsk-m0PnZAQZGf4wvSePVuls6cSt9fUl73lqthw";
+const SUPA_URL = SB;
+const SUPA_KEY = SK;
 const SH = {"Content-Type":"application/json",apikey:SK,Authorization:`Bearer ${SK}`,Prefer:"return=representation"};
 async function db(p,o={}){const r=await fetch(`${SB}/rest/v1/${p}`,{headers:SH,...o});if(r.status===204)return null;const j=await r.json();if(!r.ok)throw new Error(j?.message||"err");return j;}
 
@@ -626,24 +628,143 @@ Never give legal advice. Recommend consulting an attorney for legal questions.`;
    RESIDENT FORM
 ───────────────────────────────────────────────────────────────────────────── */
 function ResidentForm({onBack}) {
-  const [search,setSearch]=useState("");const [assocs,setAssocs]=useState([]);const [assoc,setAssoc]=useState(null);const [rules,setRules]=useState([]);const [step,setStep]=useState(1);const [errs,setErrs]=useState({});const [saving,setSaving]=useState(false);
+  const [search,setSearch]=useState("");const [assocs,setAssocs]=useState([]);const [assoc,setAssoc]=useState(null);const [rules,setRules]=useState([]);const [step,setStep]=useState(0);const [errs,setErrs]=useState({});const [saving,setSaving]=useState(false);
+  const [reg,setReg]=useState({assoc_name:"",owner_name:"",address:"",unit:"",city:"",state:"",zip:"",email:"",phone:"",password:""});
+  const [regDone,setRegDone]=useState(false);
   const [form,setForm]=useState({reporter_name:"",reporter_unit:"",reporter_email:"",reporter_phone:"",violator_unit:"",rule_id:"",description:"",incident_date:"",incident_time:"",location:"",previously_reported:"no",requested_action:"Warning",signature:"",cert1:false,cert2:false,cert3:false});
   useEffect(()=>{if(search.length>=3)db(`associations?name=ilike.${search}%&select=id,name,hearing_days,city,state&limit=8`).then(d=>setAssocs(Array.isArray(d)?d:[]));else setAssocs([]);},[search]);
   const pick=async a=>{setAssoc(a);const r=await db(`rules?association_id=eq.${a.id}&active=eq.true&select=*&order=category.asc`);setRules(Array.isArray(r)?r:[]);setStep(2);};
   const validate=()=>{const e={};if(!form.reporter_name.trim())e.reporter_name="Required";if(!form.reporter_unit.trim())e.reporter_unit="Required";if(!form.reporter_email.trim())e.reporter_email="Required";if(!form.violator_unit.trim())e.violator_unit="Required";if(!form.rule_id)e.rule_id="Select a rule";if(!form.description.trim())e.description="Required";if(!form.incident_date)e.incident_date="Required";if(!form.signature.trim())e.signature="Required";if(!form.cert1||!form.cert2||!form.cert3)e.cert="All certifications required";return e;};
-  const submit=async()=>{const e=validate();if(Object.keys(e).length){setErrs(e);return;}setSaving(true);try{const d=await db(`violation_reports?reporter_unit=eq.${form.reporter_unit}&violator_unit=eq.${form.violator_unit}&rule_id=eq.${form.rule_id}&created_at=gte.${new Date(Date.now()-86400000).toISOString()}&select=id`);if(d?.length>0){setErrs({submit:"Duplicate report within 24 hours."});setSaving(false);return;}await db("violation_reports",{method:"POST",body:JSON.stringify({association_id:assoc.id,reporter_name:form.reporter_name,reporter_unit:form.reporter_unit,reporter_email:form.reporter_email,violator_unit:form.violator_unit,rule_id:form.rule_id,description:form.description,incident_date:form.incident_date,signature:form.signature})});setStep(3);}catch(err){setErrs({submit:err.message});}setSaving(false);};
+  const submit=async()=>{const e=validate();if(Object.keys(e).length){setErrs(e);return;}setSaving(true);try{const d=await db(`violation_reports?reporter_unit=eq.${form.reporter_unit}&violator_unit=eq.${form.violator_unit}&rule_id=eq.${form.rule_id}&created_at=gte.${new Date(Date.now()-86400000).toISOString()}&select=id`);if(d?.length>0){setErrs({submit:"Duplicate report within 24 hours."});setSaving(false);return;}await db("violation_reports",{method:"POST",body:JSON.stringify({association_id:assoc.id,reporter_name:form.reporter_name,reporter_unit:form.reporter_unit,reporter_email:form.reporter_email,violator_unit:form.violator_unit,rule_id:form.rule_id,description:form.description,incident_date:form.incident_date,signature:form.signature})});setStep(4);}catch(err){setErrs({submit:err.message});}setSaving(false);};
   const selRule=rules.find(r=>r.id===form.rule_id);
   const grouped=rules.reduce((a,r)=>{(a[r.category]=a[r.category]||[]).push(r);return a;},{});
-  const set=k=>e=>setForm(f=>({...f,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
+  const setF=k=>e=>setForm(f=>({...f,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
+  const setR=k=>e=>setReg(r=>({...r,[k]:e.target.value}));
+
+  const submitReg=async()=>{
+    const e={};
+    if(!reg.assoc_name.trim())e.assoc_name="Required";
+    if(!reg.owner_name.trim())e.owner_name="Required";
+    if(!reg.address.trim())e.address="Required";
+    if(!reg.unit.trim())e.unit="Required";
+    if(!reg.city.trim())e.city="Required";
+    if(!reg.state.trim())e.state="Required";
+    if(!reg.zip.trim())e.zip="Required";
+    if(!reg.email.trim())e.email="Required";
+    if(!reg.phone.trim())e.phone="Required";
+    if(!reg.password||reg.password.length<8)e.password="Min 8 characters";
+    if(Object.keys(e).length){setErrs(e);return;}
+    setSaving(true);
+    try{
+      const res=await fetch(`${SUPA_URL}/auth/v1/signup`,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPA_KEY},body:JSON.stringify({email:reg.email,password:reg.password,data:{owner_name:reg.owner_name,assoc_name:reg.assoc_name,address:reg.address,unit:reg.unit,city:reg.city,state:reg.state,zip:reg.zip,phone:reg.phone}})});
+      const data=await res.json();
+      if(data.error){setErrs({submit:data.error.message||data.error});setSaving(false);return;}
+      setRegDone(true);
+      setStep(-1);// verification pending screen
+    }catch(err){setErrs({submit:err.message});}
+    setSaving(false);
+  };
+
+  const inp=(label,key,type="text",placeholder="",req=true)=>(
+    <div style={{marginBottom:16}}>
+      <label style={{display:"block",fontSize:13,fontWeight:600,color:"#374151",marginBottom:6}}>{label}{req&&<span style={{color:"#EF4444"}}> *</span>}</label>
+      <input type={type} value={reg[key]} onChange={setR(key)} placeholder={placeholder}
+        style={{width:"100%",padding:"11px 14px",fontSize:14,border:`1.5px solid ${errs[key]?"#EF4444":"#D1D5DB"}`,borderRadius:8,outline:"none",fontFamily:"inherit",boxSizing:"border-box",color:"#111827",background:"#fff",transition:"border 0.2s"}}
+        onFocus={e=>e.target.style.borderColor="#111827"} onBlur={e=>e.target.style.borderColor=errs[key]?"#EF4444":"#D1D5DB"}/>
+      {errs[key]&&<div style={{fontSize:12,color:"#EF4444",marginTop:4}}>{errs[key]}</div>}
+    </div>
+  );
+
   return(
-    <div style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',sans-serif"}}>
+    <div style={{minHeight:"100vh",background:"#F9FAFB",fontFamily:"'Inter',sans-serif"}}>
       <style>{STYLES}</style>
-      <nav style={{background:"rgba(6,8,15,0.95)",backdropFilter:"blur(20px)",borderBottom:`1px solid ${T.border}`,padding:"14px 32px",display:"flex",alignItems:"center",gap:16,position:"sticky",top:0,zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={onBack}><ScaleLogo size={26}/><span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:18,fontWeight:700,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></span></div>
+      <nav style={{background:"#fff",borderBottom:"1px solid #E5E7EB",padding:"14px 32px",display:"flex",alignItems:"center",gap:16,position:"sticky",top:0,zIndex:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={onBack}>
+          <ScaleLogo size={22}/>
+          <span style={{fontFamily:"'Georgia',serif",fontSize:17,fontWeight:700,color:"#111827"}}>ViolationFlow</span>
+        </div>
         <div style={{flex:1}}/>
-        <Pill>HOA & Condo Violation Portal</Pill>
+        <span style={{fontSize:13,color:"#6B7280"}}>HOA &amp; Condo Violation Portal</span>
       </nav>
-      <div style={{maxWidth:720,margin:"0 auto",padding:"48px 20px"}}>
+      <div style={{maxWidth:640,margin:"0 auto",padding:"48px 20px"}}>
+
+        {/* ── STEP 0: REGISTRATION ── */}
+        {step===0&&(
+          <div>
+            <div style={{textAlign:"center",marginBottom:36}}>
+              <div style={{fontFamily:"'Georgia',serif",fontSize:28,fontWeight:700,color:"#111827",marginBottom:8}}>Create Your Account</div>
+              <p style={{color:"#6B7280",fontSize:15,lineHeight:1.7}}>Register to submit a violation report. A verification email will be sent before you can proceed.</p>
+            </div>
+            <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:"36px 40px",boxShadow:"0 2px 12px rgba(0,0,0,0.06)"}}>
+              {errs.submit&&<div style={{background:"#FEF2F2",border:"1px solid #FECACA",borderRadius:8,padding:"12px 16px",marginBottom:20,color:"#DC2626",fontSize:13}}>⚠ {errs.submit}</div>}
+              <div style={{fontSize:11,fontWeight:700,color:"#6B7280",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:16}}>Association Information</div>
+              {inp("Association Name","assoc_name","text","e.g. Jefferson Court Condominium")}
+              <div style={{fontSize:11,fontWeight:700,color:"#6B7280",letterSpacing:"0.08em",textTransform:"uppercase",margin:"24px 0 16px"}}>Owner Information</div>
+              {inp("Full Name","owner_name","text","Your legal name")}
+              {inp("Street Address","address","text","e.g. 123 Main St")}
+              <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:12}}>
+                <div>{inp("Unit / Apt","unit","text","e.g. Unit 4B")}</div>
+                <div>{inp("Zip Code","zip","text","e.g. 60025")}</div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:12}}>
+                <div>{inp("City","city","text","e.g. Glenview")}</div>
+                <div>{inp("State","state","text","e.g. IL")}</div>
+              </div>
+              <div style={{fontSize:11,fontWeight:700,color:"#6B7280",letterSpacing:"0.08em",textTransform:"uppercase",margin:"24px 0 16px"}}>Contact &amp; Login</div>
+              {inp("Email Address","email","email","you@email.com")}
+              {inp("Cell Phone","phone","tel","e.g. (847) 555-1234")}
+              {inp("Password","password","password","Min 8 characters")}
+              <div style={{background:"#F0F9FF",border:"1px solid #BAE6FD",borderRadius:8,padding:"12px 16px",marginBottom:24,fontSize:13,color:"#0369A1",lineHeight:1.6}}>
+                📧 After registering, a verification email will be sent to your address. You must verify before proceeding to payment and filing your report.
+              </div>
+              <button onClick={submitReg} disabled={saving}
+                style={{width:"100%",padding:"13px",background:"#111827",color:"#fff",border:"none",borderRadius:8,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",opacity:saving?0.7:1,transition:"all 0.2s"}}
+                onMouseEnter={e=>e.currentTarget.style.background="#000"}
+                onMouseLeave={e=>e.currentTarget.style.background="#111827"}>
+                {saving?"Creating Account...":"Create Account & Send Verification Email"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP -1: VERIFICATION PENDING ── */}
+        {step===-1&&(
+          <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:"56px 40px",textAlign:"center",boxShadow:"0 2px 12px rgba(0,0,0,0.06)"}}>
+            <div style={{width:72,height:72,background:"#F0FDF4",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",fontSize:32,border:"1px solid #BBF7D0"}}>📧</div>
+            <div style={{fontFamily:"'Georgia',serif",fontSize:26,fontWeight:700,color:"#111827",marginBottom:12}}>Check Your Email</div>
+            <p style={{color:"#6B7280",fontSize:15,lineHeight:1.8,marginBottom:8,maxWidth:420,margin:"0 auto 16px"}}>We sent a verification link to <strong style={{color:"#111827"}}>{reg.email}</strong>.</p>
+            <p style={{color:"#6B7280",fontSize:14,lineHeight:1.7,maxWidth:420,margin:"0 auto 32px"}}>Click the link in your email to verify your account. Once verified, return here to complete payment and file your violation report.</p>
+            <div style={{background:"#FFF7ED",border:"1px solid #FED7AA",borderRadius:10,padding:"16px 20px",maxWidth:420,margin:"0 auto 32px",fontSize:13,color:"#92400E",lineHeight:1.7}}>
+              ⚠ After verifying your email, you will be directed to complete a <strong>$9.99 payment</strong> before filing your report.
+            </div>
+            <button onClick={()=>setStep(1)}
+              style={{background:"#111827",color:"#fff",border:"none",borderRadius:8,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#000"}
+              onMouseLeave={e=>e.currentTarget.style.background="#111827"}>
+              I've Verified — Continue to Payment
+            </button>
+            <div style={{marginTop:16}}><button onClick={onBack} style={{background:"none",border:"none",color:"#9CA3AF",fontSize:13,cursor:"pointer",fontFamily:"inherit",textDecoration:"underline"}}>Back to home</button></div>
+          </div>
+        )}
+
+        {/* ── STRIPE PAYMENT PLACEHOLDER ── */}
+        {step===1&&(
+          <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:"56px 40px",textAlign:"center",boxShadow:"0 2px 12px rgba(0,0,0,0.06)"}}>
+            <div style={{width:72,height:72,background:"#F9FAFB",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",fontSize:32,border:"1px solid #E5E7EB"}}>💳</div>
+            <div style={{fontFamily:"'Georgia',serif",fontSize:26,fontWeight:700,color:"#111827",marginBottom:12}}>Complete Payment</div>
+            <p style={{color:"#6B7280",fontSize:15,lineHeight:1.8,marginBottom:32,maxWidth:400,margin:"0 auto 32px"}}>A one-time payment of <strong style={{color:"#111827"}}>$9.99</strong> is required to file your violation report.</p>
+            <div style={{background:"#F3F4F6",border:"2px dashed #D1D5DB",borderRadius:12,padding:"32px",marginBottom:32,color:"#9CA3AF",fontSize:14}}>
+              🔧 Stripe payment integration coming soon.<br/>
+              <span style={{fontSize:12,marginTop:8,display:"block"}}>This placeholder will be replaced with the Stripe checkout.</span>
+            </div>
+            <button onClick={()=>setStep(2)}
+              style={{background:"#111827",color:"#fff",border:"none",borderRadius:8,padding:"13px 32px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#000"}
+              onMouseLeave={e=>e.currentTarget.style.background="#111827"}>
+              Continue to File Report →
+            </button>
+          </div>
+        )}
         {step===1&&(
           <div className="hero-fade">
             <div style={{textAlign:"center",marginBottom:36}}>
@@ -655,7 +776,7 @@ function ResidentForm({onBack}) {
               {assocs.length>0&&<div style={{marginTop:12,border:`1px solid ${T.border}`,borderRadius:14,overflow:"hidden"}}>
                 {assocs.map(a=><div key={a.id} onClick={()=>pick(a)} style={{padding:"14px 18px",cursor:"pointer",borderBottom:`1px solid ${T.border}`,transition:"background 0.15s"}} onMouseEnter={e=>e.currentTarget.style.background="rgba(124,58,237,0.08)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}><div style={{fontWeight:600,color:T.text,fontSize:14}}>{a.name}</div><div style={{fontSize:12,color:T.muted,marginTop:2}}>{a.city&&a.state?`${a.city}, ${a.state}`:"Community"} · {a.hearing_days}-day hearing window</div></div>)}
               </div>}
-              {search.length>=3&&!assocs.length&&<div style={{marginTop:12,padding:"14px 16px",background:"rgba(245,158,11,0.08)",borderRadius:10,border:"1px solid rgba(245,158,11,0.2)",color:"#fbbf24",fontSize:13}}>No communities found. Contact your property manager.</div>}
+              {search.length>=3&&!assocs.length&&<div style={{marginTop:12,padding:"16px 20px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",fontSize:13,color:"#374151",lineHeight:1.7}}>Your association is not yet using ViolationFlow. We encourage you to bring it to your board.<br/><br/><strong>In the meantime, you can still register and report your violation directly — $9.99.</strong></div>}
             </GlassCard>
           </div>
         )}
@@ -693,14 +814,17 @@ function ResidentForm({onBack}) {
             </GlassCard>
           </div>
         )}
-        {step===3&&(
-          <GlassCard style={{padding:64,textAlign:"center"}} hover={false}>
-            <div style={{width:80,height:80,background:"rgba(124,58,237,0.15)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",border:`1px solid rgba(124,58,237,0.4)`,fontSize:36}}>✓</div>
-            <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Report Submitted</div>
-            <p style={{color:T.muted,lineHeight:1.8,marginBottom:32,maxWidth:400,margin:"0 auto 32px"}}>Your violation report has been received and will be reviewed by your property manager.</p>
-            <VBtn onClick={()=>{setStep(1);setSearch("");setAssoc(null);setForm({reporter_name:"",reporter_unit:"",reporter_email:"",reporter_phone:"",violator_unit:"",rule_id:"",description:"",incident_date:"",incident_time:"",location:"",previously_reported:"no",requested_action:"Warning",signature:"",cert1:false,cert2:false,cert3:false});setErrs({});}}>Submit Another Report</VBtn>
-            <div style={{marginTop:16}}><button onClick={onBack} style={{background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",textDecoration:"underline",fontFamily:"inherit"}}>Back to home</button></div>
-          </GlassCard>
+        {step===4&&(
+          <div style={{background:"#fff",border:"1px solid #E5E7EB",borderRadius:16,padding:"56px 40px",textAlign:"center",boxShadow:"0 2px 12px rgba(0,0,0,0.06)"}}>
+            <div style={{width:72,height:72,background:"#F0FDF4",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",fontSize:32,border:"1px solid #BBF7D0"}}>✓</div>
+            <div style={{fontFamily:"'Georgia',serif",fontSize:26,fontWeight:700,color:"#111827",marginBottom:12}}>Report Submitted</div>
+            <p style={{color:"#6B7280",lineHeight:1.8,marginBottom:32,maxWidth:400,margin:"0 auto 32px"}}>Your violation report has been received and will be reviewed by your property manager.</p>
+            <button onClick={()=>{setStep(0);setSearch("");setAssoc(null);setForm({reporter_name:"",reporter_unit:"",reporter_email:"",reporter_phone:"",violator_unit:"",rule_id:"",description:"",incident_date:"",incident_time:"",location:"",previously_reported:"no",requested_action:"Warning",signature:"",cert1:false,cert2:false,cert3:false});setErrs({});}}
+              style={{background:"#111827",color:"#fff",border:"none",borderRadius:8,padding:"12px 28px",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+              Submit Another Report
+            </button>
+            <div style={{marginTop:16}}><button onClick={onBack} style={{background:"none",border:"none",color:"#9CA3AF",fontSize:13,cursor:"pointer",textDecoration:"underline",fontFamily:"inherit"}}>Back to home</button></div>
+          </div>
         )}
       </div>
     </div>
@@ -1661,8 +1785,9 @@ export default function App() {
   const [modal,setModal] = useState(null);
   const [annual,setAnnual] = useState(false);
   const [activeFeature,setActiveFeature] = useState(0);
-  const [session,setSession] = useState(null); // always start null
+  const [session,setSession] = useState(null);
   const [sessionChecked,setSessionChecked] = useState(false);
+  const [buildingSearch, setBuildingSearch] = useState("");
 
   // On mount — check if a valid saved session exists
   useEffect(()=>{
@@ -1715,8 +1840,6 @@ export default function App() {
     {icon:"⚖️",title:"Consistent Enforcement Tracking",desc:"Ensure violations are enforced consistently across the community."},
   ];
 
-  // ── LANDING PAGE ──
-  const [buildingSearch, setBuildingSearch] = useState("");
   const mockBuildings = [
     "Jefferson Court Condominium",
     "Brandon Shores Condominium", 
@@ -1838,8 +1961,7 @@ export default function App() {
       {/* ── HERO ── */}
       <section style={{paddingTop:120,paddingBottom:80,background:"linear-gradient(180deg,#F8FAFC 0%,#ffffff 100%)",borderBottom:"1px solid #E5E7EB"}}>
         <div style={{maxWidth:900,margin:"0 auto",padding:"0 32px",textAlign:"center"}}>
-          <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"#FEF3C7",border:"1px solid #FDE68A",borderRadius:99,padding:"6px 18px",fontSize:15,fontWeight:600,color:"#92400E",marginBottom:24,letterSpacing:"0.01em"}}>
-            <span style={{width:6,height:6,borderRadius:"50%",background:"#111827",display:"inline-block"}}/>
+          <div style={{display:"inline-flex",alignItems:"center",background:"#111827",border:"1px solid #111827",borderRadius:99,padding:"6px 18px",fontSize:15,fontWeight:600,color:"#fff",marginBottom:24,letterSpacing:"0.01em"}}>
             HOA &amp; Condominium Enforcement Platform
           </div>
           <h1 style={{fontFamily:"'Georgia',serif",fontSize:"clamp(36px,5.5vw,68px)",fontWeight:700,lineHeight:1.1,color:"#111827",marginBottom:20,letterSpacing:"-0.02em"}}>
@@ -1861,9 +1983,6 @@ export default function App() {
               onMouseLeave={e=>{e.currentTarget.style.borderColor="#D1D5DB";e.currentTarget.style.background="#fff";}}>
               🏢 For Boards &amp; Property Managers
             </button>
-          </div>
-          <div style={{fontSize:12,color:"#9CA3AF",marginBottom:64}}>
-            $9.99 per report &nbsp;·&nbsp; Sent to association management &nbsp;·&nbsp; No account required
           </div>
         </div>
       </section>
