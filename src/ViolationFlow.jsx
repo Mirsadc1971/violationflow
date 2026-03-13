@@ -44,7 +44,7 @@ function loadSession(){
     if(!raw)return null;
     const s=JSON.parse(raw);
     // Expire after 8 hours
-    if(Date.now()-s.saved_at>8*60*60*1000){localStorage.removeItem(SESSION_KEY);return null;}
+    if(Date.now()-s.saved_at>30*24*60*60*1000){localStorage.removeItem(SESSION_KEY);return null;}
     return s;
   }catch(_){return null;}
 }
