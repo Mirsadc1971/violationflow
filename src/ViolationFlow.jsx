@@ -1514,71 +1514,52 @@ function RulesTab({assocs,rules,companyId,onSave}) {
     if(!aiAssocId){alert("Please select an association first.");return;}
     setAiLoading(true);setAiResult(null);
     try{
-      const arrayBuffer=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsArrayBuffer(file);});
-      let pdfText="";
-      // Try to extract text using pdf.js if available
-      if(window.pdfjsLib){
-        try{
-          window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-          const pdf=await window.pdfjsLib.getDocument({data:arrayBuffer}).promise;
-          for(let i=1;i<=Math.min(pdf.numPages,30);i++){
-            const page=await pdf.getPage(i);
-            const tc=await page.getTextContent();
-            pdfText+=tc.items.map(s=>s.str).join(" ")+"\n";
-          }
-        }catch(pdfErr){pdfText="";}
-      }
-      // If no text extracted, send as base64 directly
-      if(!pdfText.trim()){
-        // fallback: send as base64 but truncate
-        const base64=btoa(String.fromCharCode(...new Uint8Array(arrayBuffer.slice(0,500000))));
-        const resp2=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA violation rules as a JSON array. Each object must have: rule_title, rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description, fine_amount (number). Return ONLY valid JSON array, no markdown."}]}]})});
-        const data2=await resp2.json();
-        if(!resp2.ok){alert("API Error: "+JSON.stringify(data2));setAiLoading(false);return;}
-        const t=data2.content?.find(c=>c.type==="text")?.text||"";
-        const s=t.indexOf("[");const en=t.lastIndexOf("]");
-        if(s===-1){alert("Could not extract rules. AI said: "+t.slice(0,300));setAiLoading(false);return;}
-        setAiResult(JSON.parse(t.slice(s,en+1)));
-        setAiLoading(false);return;
-      }
-      if(!pdfText.trim()){
-        // Send as base64 directly
-        const bytes=new Uint8Array(arrayBuffer);
-        let binary="";
-        for(let i=0;i<Math.min(bytes.length,400000);i++)binary+=String.fromCharCode(bytes[i]);
-        const base64=btoa(binary);
-        const resp2=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA/Condo violation rules as a JSON array. Each object must have: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY a valid JSON array, no markdown."}]}]})});
-        const data2=await resp2.json();
-        if(!resp2.ok){alert("API Error: "+JSON.stringify(data2));setAiLoading(false);return;}
-        const t2=data2.content?.find(c=>c.type==="text")?.text||"";
-        const s2=t2.indexOf("[");const e2=t2.lastIndexOf("]");
-        if(s2===-1){alert("Could not extract rules: "+t2.slice(0,300));setAiLoading(false);return;}
-        setAiResult(JSON.parse(t2.slice(s2,e2+1)));
-        setAiLoading(false);return;
-      }
-      // Send extracted text to AI
-      const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({
-        model:"claude-haiku-4-5-20251001",max_tokens:8000,
-        messages:[{role:"user",content:[
-          {type:"text",text:`Extract all HOA/Condo violation rules from this document text. Return a JSON array where each object has: rule_title (max 60 chars), rule_section (topic like Garage/Pets/Smoking), category (one of: Parking, Noise, Pets, Landscaping, Structural, Common Areas, Trash, Leasing, General), description (one sentence), fine_amount (number, 100 if not specified). Return ONLY valid JSON array, no markdown, no explanation.
+      const ext=file.name.split(".").pop().toLowerCase();
+      let extractedText="";
 
-DOCUMENT TEXT:
-${pdfText.slice(0,15000)}`}
-        ]}]
-      })});
+      if(ext==="txt"){
+        extractedText=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(file);});
+      } else if(ext==="docx"){
+        const ab=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsArrayBuffer(file);});
+        // Use mammoth.js if available, otherwise prompt user to use txt
+        if(window.mammoth){
+          const result=await window.mammoth.extractRawText({arrayBuffer:ab});
+          extractedText=result.value;
+        } else {
+          alert("Please save your Word document as a .txt file and upload that instead.");
+          setAiLoading(false);return;
+        }
+      }
+
+      if(extractedText.trim()){
+        const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:`Extract all HOA/Condo violation rules from this document. Return a JSON array where each object has: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY valid JSON array, no markdown.
+
+${extractedText.slice(0,15000)}`}]})});
+        const data=await resp.json();
+        if(!resp.ok){alert("API Error: "+JSON.stringify(data));setAiLoading(false);return;}
+        const text=data.content?.find(c=>c.type==="text")?.text||"";
+        const s=text.indexOf("[");const e=text.lastIndexOf("]");
+        if(s===-1){alert("Could not extract rules. AI said: "+text.slice(0,300));setAiLoading(false);return;}
+        setAiResult(JSON.parse(text.slice(s,e+1)));
+        setAiLoading(false);return;
+      }
+
+      // PDF fallback - send as base64
+      const ab2=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsArrayBuffer(file);});
+      const bytes=new Uint8Array(ab2);let binary="";
+      for(let i=0;i<Math.min(bytes.length,400000);i++)binary+=String.fromCharCode(bytes[i]);
+      const base64=btoa(binary);
+      const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA/Condo violation rules as a JSON array. Each object must have: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY valid JSON array, no markdown."}]}]})});
       const data=await resp.json();
       if(!resp.ok){alert("API Error: "+JSON.stringify(data));setAiLoading(false);return;}
       const text=data.content?.find(c=>c.type==="text")?.text||"";
-      if(!text){alert("AI returned no text. Response: "+JSON.stringify(data));setAiLoading(false);return;}
-      const clean=text.replace(/```json|```/g,"").trim();
-      const jsonStart=clean.indexOf("[");const jsonEnd=clean.lastIndexOf("]");
-      if(jsonStart===-1){alert("No JSON array found in response. AI said: "+text.slice(0,500));setAiLoading(false);return;}
-      const parsed=JSON.parse(clean.slice(jsonStart,jsonEnd+1));
-      setAiResult(parsed);
+      const s=text.indexOf("[");const en=text.lastIndexOf("]");
+      if(s===-1){alert("No rules found. Try saving as .txt and uploading that.");setAiLoading(false);return;}
+      setAiResult(JSON.parse(text.slice(s,en+1)));
     }catch(e){alert("Error: "+e.message);}
     setAiLoading(false);
   };
-
+  const handlePDF_OLD=async e=>{
   const importRules=async()=>{
     if(!aiResult?.length)return;
     setImporting(true);
@@ -1621,7 +1602,7 @@ ${pdfText.slice(0,15000)}`}
           <div>
             <label style={{display:"inline-flex",alignItems:"center",gap:8,background:`linear-gradient(135deg,${T.violet},${T.indigo})`,color:"#fff",padding:"12px 20px",borderRadius:12,cursor:aiLoading?"not-allowed":"pointer",fontSize:13,fontWeight:600,opacity:aiLoading?0.6:1}}>
               {aiLoading?"🔄 Extracting rules...":"📄 Upload PDF Rulebook"}
-              <input type="file" accept=".pdf" onChange={handlePDF} style={{display:"none"}} disabled={aiLoading}/>
+              <input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handlePDF} style={{display:"none"}} disabled={aiLoading}/>
             </label>
           </div>
         </div>
