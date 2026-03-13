@@ -1514,19 +1514,22 @@ function RulesTab({assocs,rules,companyId,onSave}) {
     if(!aiAssocId){alert("Please select an association first.");return;}
     setAiLoading(true);setAiResult(null);
     try{
-      // Extract text from PDF using FileReader + pdfjsLib
       const arrayBuffer=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsArrayBuffer(file);});
       let pdfText="";
-      try{
-        const pdfjsLib=window.pdfjsLib||await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
-        if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-        const pdf=await pdfjsLib.getDocument({data:arrayBuffer}).promise;
-        for(let i=1;i<=Math.min(pdf.numPages,30);i++){
-          const page=await pdf.getPage(i);
-          const tc=await page.getTextContent();
-          pdfText+=tc.items.map(s=>s.str).join(" ")+"\n";
-        }
-      }catch(pdfErr){
+      // Try to extract text using pdf.js if available
+      if(window.pdfjsLib){
+        try{
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+          const pdf=await window.pdfjsLib.getDocument({data:arrayBuffer}).promise;
+          for(let i=1;i<=Math.min(pdf.numPages,30);i++){
+            const page=await pdf.getPage(i);
+            const tc=await page.getTextContent();
+            pdfText+=tc.items.map(s=>s.str).join(" ")+"\n";
+          }
+        }catch(pdfErr){pdfText="";}
+      }
+      // If no text extracted, send as base64 directly
+      if(!pdfText.trim()){
         // fallback: send as base64 but truncate
         const base64=btoa(String.fromCharCode(...new Uint8Array(arrayBuffer.slice(0,500000))));
         const resp2=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA violation rules as a JSON array. Each object must have: rule_title, rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description, fine_amount (number). Return ONLY valid JSON array, no markdown."}]}]})});
@@ -1538,7 +1541,21 @@ function RulesTab({assocs,rules,companyId,onSave}) {
         setAiResult(JSON.parse(t.slice(s,en+1)));
         setAiLoading(false);return;
       }
-      if(!pdfText.trim()){alert("Could not read text from PDF.");setAiLoading(false);return;}
+      if(!pdfText.trim()){
+        // Send as base64 directly
+        const bytes=new Uint8Array(arrayBuffer);
+        let binary="";
+        for(let i=0;i<Math.min(bytes.length,400000);i++)binary+=String.fromCharCode(bytes[i]);
+        const base64=btoa(binary);
+        const resp2=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:8000,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},{type:"text",text:"Extract all HOA/Condo violation rules as a JSON array. Each object must have: rule_title (max 60 chars), rule_section, category (Parking/Noise/Pets/Landscaping/Structural/Common Areas/Trash/Leasing/General), description (one sentence), fine_amount (number, 100 if not stated). Return ONLY a valid JSON array, no markdown."}]}]})});
+        const data2=await resp2.json();
+        if(!resp2.ok){alert("API Error: "+JSON.stringify(data2));setAiLoading(false);return;}
+        const t2=data2.content?.find(c=>c.type==="text")?.text||"";
+        const s2=t2.indexOf("[");const e2=t2.lastIndexOf("]");
+        if(s2===-1){alert("Could not extract rules: "+t2.slice(0,300));setAiLoading(false);return;}
+        setAiResult(JSON.parse(t2.slice(s2,e2+1)));
+        setAiLoading(false);return;
+      }
       // Send extracted text to AI
       const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({
         model:"claude-haiku-4-5-20251001",max_tokens:8000,
