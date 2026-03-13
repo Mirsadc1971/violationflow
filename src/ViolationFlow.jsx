@@ -1559,7 +1559,6 @@ ${extractedText.slice(0,15000)}`}]})});
     }catch(e){alert("Error: "+e.message);}
     setAiLoading(false);
   };
-  const handlePDF_OLD=async e=>{
   const importRules=async()=>{
     if(!aiResult?.length)return;
     setImporting(true);
