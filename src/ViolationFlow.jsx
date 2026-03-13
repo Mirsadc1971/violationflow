@@ -2141,7 +2141,7 @@ function AdminDashboard({session,onSignOut,onBack}) {
         </div>
         {showActions&&(
           <div style={{display:"flex",gap:8,marginLeft:16,flexShrink:0}}>
-            <button onClick={()=>{setApproveModal(c);setApproveFields({plan:"starter",notes:""));}} style={{background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:9,padding:"8px 16px",color:"#34d399",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Approve</button>
+            <button onClick={()=>{setApproveModal(c);setApproveFields({plan:"starter",notes:""});}} style={{background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:9,padding:"8px 16px",color:"#34d399",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Approve</button>
             <button onClick={()=>{setRejectModal(c.id);setRejectReason("");}} style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:9,padding:"8px 16px",color:"#f87171",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Reject</button>
           </div>
         )}
