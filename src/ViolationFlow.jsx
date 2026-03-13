@@ -1535,7 +1535,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
     setImporting(true);
     try{
       for(const r of aiResult){
-        await db("rules",{method:"POST",body:JSON.stringify({association_id:aiAssocId,rule_title:r.rule_title,rule_section:r.rule_section||"",category:r.category||"General",description:r.description||"",fine_amount:parseFloat(r.fine_amount)||0,active:true})});
+        await db("rules",{method:"POST",body:JSON.stringify({association_id:aiAssocId,rule_title:r.rule_title,rule_section:r.rule_section||"",category:r.category||"General",description:r.description||"",fine_amount:parseFloat(r.fine_amount)||0,active:true,company_id:companyId||null})});
       }
       setAiResult(null);onSave();
       alert(`Successfully imported ${aiResult.length} rules!`);
@@ -1653,7 +1653,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
 function Dashboard({onBack,session,onSignOut}) {
   const company=session?.company;const cid=company?.id;const cFilter=cid?`&company_id=eq.${cid}`:"";
   const [tab,setTab]=useState("reports");const [reports,setReports]=useState([]);const [cases,setCases]=useState([]);const [assocs,setAssocs]=useState([]);const [rules,setRules]=useState([]);const [leads,setLeads]=useState([]);const [loading,setLoading]=useState(true);const [selCase,setSelCase]=useState(null);const [evts,setEvts]=useState([]);const [noticeData,setNoticeData]=useState(null);const [saving,setSaving]=useState(false);const [activeForm,setActiveForm]=useState(null);
-  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc${cFilter}`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc${cFilter}`),db(`associations?select=*&order=name.asc${cFilter}`),db(`rules?select=*&order=rule_title.asc${cFilter}`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
+  const load=async()=>{setLoading(true);const[r,c,a,ru,l]=await Promise.all([db(`violation_reports?select=*,rules(*),associations(*)&order=created_at.desc`),db(`violation_cases?select=*,violation_reports(*),rules(*),associations(*)&order=created_at.desc`),db(`associations?select=*&order=name.asc`),db(`rules?select=*&order=rule_title.asc`),db("leads?select=*&order=created_at.desc&limit=50").catch(()=>[])]);setReports(Array.isArray(r)?r:[]);setCases(Array.isArray(c)?c:[]);setAssocs(Array.isArray(a)?a:[]);setRules(Array.isArray(ru)?ru:[]);setLeads(Array.isArray(l)?l:[]);setLoading(false);};
   useEffect(()=>{load();},[]);
   const log=async(cid,type,desc)=>db("case_events",{method:"POST",body:JSON.stringify({case_id:cid,event_type:type,description:desc})});
   const openCase=async c=>{setSelCase(c);const e=await db(`case_events?case_id=eq.${c.id}&order=created_at.asc`);setEvts(Array.isArray(e)?e:[]);};
