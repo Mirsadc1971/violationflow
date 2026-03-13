@@ -1524,8 +1524,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
         for(let i=1;i<=Math.min(pdf.numPages,30);i++){
           const page=await pdf.getPage(i);
           const tc=await page.getTextContent();
-          pdfText+=tc.items.map(s=>s.str).join(" ")+"
-";
+          pdfText+=tc.items.map(s=>s.str).join(" ")+"\n";
         }
       }catch(pdfErr){
         // fallback: send as base64 but truncate
