@@ -1309,7 +1309,7 @@ function OwnersTab({assocs,companyId,onSave}) {
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
   const [search,setSearch]=useState("");
-  const [filterAssoc,setFilterAssoc]=useState(assocs[0]?.id||"");
+  const [filterAssoc,setFilterAssoc]=useState("");useEffect(()=>{if(!filterAssoc&&assocs.length)setFilterAssoc(assocs[0].id);},[assocs]);
   const [f,setF]=useState({association_id:"",unit_number:"",owner_name:"",email:"",phone:"",mailing_address:"",mailing_city:"",mailing_state:"",mailing_zip:""});
   const set=k=>e=>setF(p=>({...p,[k]:e.target.value}));
   useEffect(()=>{db("unit_owners?select=*,associations(name)&order=unit_number.asc").then(d=>{setOwners(Array.isArray(d)?d:[]);setLoading(false);}).catch(()=>setLoading(false));},[]);
@@ -1486,7 +1486,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
   const [editing,setEditing]=useState(null);
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
-  const [filterAssoc,setFilterAssoc]=useState(assocs[0]?.id||"");
+  const [filterAssoc,setFilterAssoc]=useState("");useEffect(()=>{if(!filterAssoc&&assocs.length)setFilterAssoc(assocs[0].id);},[assocs]);
   const [aiLoading,setAiLoading]=useState(false);
   const [aiResult,setAiResult]=useState(null);
   const [aiAssocId,setAiAssocId]=useState("");
