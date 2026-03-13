@@ -1561,10 +1561,11 @@ ${extractedText.slice(0,15000)}`}]})});
   };
   const importRules=async()=>{
     if(!aiResult?.length)return;
+    if(!companyId){alert("Company ID not loaded. Please sign out and sign back in.");return;}
     setImporting(true);
     try{
       for(const r of aiResult){
-        await db("rules",{method:"POST",body:JSON.stringify({association_id:aiAssocId,rule_title:r.rule_title,rule_section:r.rule_section||"",category:r.category||"General",description:r.description||"",fine_amount:parseFloat(r.fine_amount)||0,active:true,company_id:companyId||null})});
+        await db("rules",{method:"POST",body:JSON.stringify({association_id:aiAssocId,rule_title:r.rule_title,rule_section:r.rule_section||"",category:r.category||"General",description:r.description||"",fine_amount:parseFloat(r.fine_amount)||0,active:true,company_id:companyId})});
       }
       setAiResult(null);onSave();
       alert(`Successfully imported ${aiResult.length} rules!`);
