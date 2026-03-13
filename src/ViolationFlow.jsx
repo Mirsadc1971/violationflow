@@ -106,7 +106,7 @@ function ManagerLogin({onSuccess,onBack}) {
   };
 
   return(
-    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:24,fontFamily:"'DM Sans',sans-serif",position:"relative",overflow:"hidden"}}>
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:24,fontFamily:"'Inter',sans-serif",position:"relative",overflow:"hidden"}}>
       <style>{STYLES}</style>
       <MeshBG/>
       <Stars/>
@@ -115,10 +115,10 @@ function ManagerLogin({onSuccess,onBack}) {
         <div style={{textAlign:"center",marginBottom:36}}>
           <div style={{display:"inline-flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={onBack}>
             <ScaleLogo size={40} gold/>
-            <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:24,fontWeight:800,color:T.text}}>Violation<span style={{background:"linear-gradient(90deg,#a78bfa,#818cf8)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Flow</span></span>
+            <span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:24,fontWeight:800,color:T.text}}>Violation<span style={{background:"linear-gradient(90deg,#a78bfa,#818cf8)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Flow</span></span>
           </div>
           <div style={{marginTop:12}}>
-            <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,color:T.text,marginBottom:4}}>
+            <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:22,fontWeight:700,color:T.text,marginBottom:4}}>
               {mode==="login"&&"Manager Sign In"}
               {mode==="signup"&&"Create Manager Account"}
               {mode==="reset"&&"Reset Your Password"}
@@ -224,58 +224,66 @@ function ManagerLogin({onSuccess,onBack}) {
    DESIGN TOKENS
 ───────────────────────────────────────────────────────────────────────────── */
 const T = {
-  bg:       "#06080F",
-  bg2:      "#0D1117",
-  bg3:      "#111827",
-  violet:   "#7C3AED",
-  indigo:   "#4F46E5",
+  bg:       "#050508",
+  bg2:      "#08090E",
+  bg3:      "#0E0F18",
+  violet:   "#6D28D9",
+  indigo:   "#4338CA",
+  vivid:    "#8B5CF6",
   gold:     "#F59E0B",
-  border:   "rgba(255,255,255,0.07)",
-  border2:  "rgba(255,255,255,0.12)",
-  text:     "#F8FAFC",
-  muted:    "#64748B",
-  muted2:   "#94A3B8",
-  glass:    "rgba(255,255,255,0.04)",
-  glass2:   "rgba(255,255,255,0.08)",
+  border:   "rgba(255,255,255,0.06)",
+  border2:  "rgba(255,255,255,0.11)",
+  text:     "#FAFAFA",
+  muted:    "#5A6478",
+  muted2:   "#8B93A8",
+  glass:    "rgba(255,255,255,0.03)",
+  glass2:   "rgba(255,255,255,0.06)",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
    GLOBAL STYLES
 ───────────────────────────────────────────────────────────────────────────── */
 const STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;font-size:16px;}
-body{background:${T.bg};color:${T.text};font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:${T.bg};}
-::-webkit-scrollbar-thumb{background:${T.violet};border-radius:4px;}
-::selection{background:${T.violet};color:#fff;}
+html{scroll-behavior:smooth;}
+body{background:#050508;color:#FAFAFA;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:#050508;}
+::-webkit-scrollbar-thumb{background:rgba(109,40,217,0.5);border-radius:4px;}
+::selection{background:rgba(109,40,217,0.4);color:#fff;}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.05)}66%{transform:translate(-20px,20px) scale(0.97)}}
-@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-50px,25px) scale(1.03)}66%{transform:translate(30px,-15px) scale(0.98)}}
-@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(0.97)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-40px) scale(1.08)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,30px) scale(1.05)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-20px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-@keyframes barGrow{from{height:0}to{height:var(--h)}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(124,58,237,0.3)}50%{box-shadow:0 0 40px rgba(124,58,237,0.6),0 0 80px rgba(124,58,237,0.2)}}
-@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes starTwinkle{0%,100%{opacity:0.2;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 30px rgba(109,40,217,0.25),0 0 60px rgba(109,40,217,0.1)}50%{box-shadow:0 0 50px rgba(109,40,217,0.4),0 0 100px rgba(109,40,217,0.15)}}
 @keyframes lineGrow{from{width:0}to{width:100%}}
-@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes barGrow{from{height:0}to{height:var(--h)}}
 
-.hero-fade{animation:fadeUp 0.7s ease both;}
-.hero-fade-2{animation:fadeUp 0.7s 0.15s ease both;}
-.hero-fade-3{animation:fadeUp 0.7s 0.3s ease both;}
-.hero-fade-4{animation:fadeUp 0.7s 0.45s ease both;}
-.float{animation:floatY 5s ease-in-out infinite;}
-.shimmer-text{background:linear-gradient(90deg,#fff 0%,#c4b5fd 30%,#818cf8 50%,#c4b5fd 70%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite;}
+.hero-fade{animation:fadeUp 0.8s ease both;}
+.hero-fade-2{animation:fadeUp 0.8s 0.12s ease both;}
+.hero-fade-3{animation:fadeUp 0.8s 0.24s ease both;}
+.hero-fade-4{animation:fadeUp 0.8s 0.36s ease both;}
+.float{animation:floatY 6s ease-in-out infinite;}
+
+.shimmer-text{
+  background:linear-gradient(90deg,#fff 0%,#c4b5fd 30%,#8B5CF6 50%,#c4b5fd 70%,#fff 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:shimmer 5s linear infinite;
+}
+.card-hover{transition:all 0.3s cubic-bezier(0.4,0,0.2,1);}
+.card-hover:hover{transform:translateY(-6px);}
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -283,23 +291,15 @@ body{background:${T.bg};color:${T.text};font-family:'DM Sans',system-ui,sans-ser
 ───────────────────────────────────────────────────────────────────────────── */
 const ScaleLogo = ({size=28,gold=false}) => (
   <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-    <circle cx="16" cy="16" r="15" fill={gold?"rgba(245,158,11,0.15)":"rgba(124,58,237,0.15)"} stroke={gold?"#F59E0B":"#7C3AED"} strokeWidth="1"/>
-    {/* Pillar */}
-    <rect x="15.2" y="8" width="1.6" height="16" rx="0.8" fill={gold?"#F59E0B":"#a78bfa"}/>
-    {/* Base */}
-    <rect x="11" y="23" width="10" height="1.5" rx="0.75" fill={gold?"#F59E0B":"#a78bfa"}/>
-    {/* Top bar */}
-    <rect x="9" y="9.5" width="14" height="1.2" rx="0.6" fill={gold?"#F59E0B":"#a78bfa"}/>
-    {/* Left chain */}
-    <line x1="10" y1="10.5" x2="8" y2="14.5" stroke={gold?"#F59E0B":"#a78bfa"} strokeWidth="1" strokeLinecap="round"/>
-    {/* Right chain */}
-    <line x1="22" y1="10.5" x2="24" y2="14.5" stroke={gold?"#F59E0B":"#a78bfa"} strokeWidth="1" strokeLinecap="round"/>
-    {/* Left pan */}
-    <path d="M5.5 14.5 Q8 17 10.5 14.5" stroke={gold?"#F59E0B":"#a78bfa"} strokeWidth="1" fill="none" strokeLinecap="round"/>
-    {/* Right pan */}
-    <path d="M21.5 14.5 Q24 17 26.5 14.5" stroke={gold?"#F59E0B":"#a78bfa"} strokeWidth="1" fill="none" strokeLinecap="round"/>
-    {/* Center dot */}
-    <circle cx="16" cy="8.5" r="1.2" fill={gold?"#F59E0B":"#7C3AED"}/>
+    <circle cx="16" cy="16" r="15" fill={gold?"rgba(245,158,11,0.12)":"rgba(109,40,217,0.12)"} stroke={gold?"#F59E0B":"#6D28D9"} strokeWidth="1"/>
+    <rect x="15.2" y="8" width="1.6" height="16" rx="0.8" fill={gold?"#F59E0B":"#8B5CF6"}/>
+    <rect x="11" y="23" width="10" height="1.5" rx="0.75" fill={gold?"#F59E0B":"#8B5CF6"}/>
+    <rect x="9" y="9.5" width="14" height="1.2" rx="0.6" fill={gold?"#F59E0B":"#8B5CF6"}/>
+    <line x1="10" y1="10.5" x2="8" y2="14.5" stroke={gold?"#F59E0B":"#8B5CF6"} strokeWidth="1" strokeLinecap="round"/>
+    <line x1="22" y1="10.5" x2="24" y2="14.5" stroke={gold?"#F59E0B":"#8B5CF6"} strokeWidth="1" strokeLinecap="round"/>
+    <path d="M5.5 14.5 Q8 17 10.5 14.5" stroke={gold?"#F59E0B":"#8B5CF6"} strokeWidth="1" fill="none" strokeLinecap="round"/>
+    <path d="M21.5 14.5 Q24 17 26.5 14.5" stroke={gold?"#F59E0B":"#8B5CF6"} strokeWidth="1" fill="none" strokeLinecap="round"/>
+    <circle cx="16" cy="8.5" r="1.2" fill={gold?"#F59E0B":"#6D28D9"}/>
   </svg>
 );
 
@@ -307,53 +307,53 @@ const ScaleLogo = ({size=28,gold=false}) => (
    ATOM COMPONENTS
 ───────────────────────────────────────────────────────────────────────────── */
 const Pill = ({children,style:s}) => (
-  <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(124,58,237,0.12)",border:"1px solid rgba(124,58,237,0.3)",borderRadius:99,padding:"6px 16px",fontSize:12,color:"#c4b5fd",fontWeight:600,letterSpacing:"0.06em",...s}}>
+  <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(109,40,217,0.1)",border:"1px solid rgba(109,40,217,0.22)",borderRadius:99,padding:"4px 13px",fontSize:11,color:"#a78bfa",fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",...s}}>
     {children}
   </div>
 );
 
 const GlassCard = ({children,style:s,hover=true,...p}) => (
-  <div {...p} style={{background:T.glass,border:`1px solid ${T.border}`,borderRadius:20,backdropFilter:"blur(12px)",transition:"all 0.3s",...s}}
-    onMouseEnter={hover?e=>{e.currentTarget.style.border=`1px solid ${T.border2}`;e.currentTarget.style.background=T.glass2;e.currentTarget.style.transform="translateY(-2px)";}:undefined}
-    onMouseLeave={hover?e=>{e.currentTarget.style.border=`1px solid ${T.border}`;e.currentTarget.style.background=T.glass;e.currentTarget.style.transform="translateY(0)";}:undefined}>
+  <div {...p} style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:18,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)",...s}}
+    onMouseEnter={hover?e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.12)";e.currentTarget.style.background="rgba(255,255,255,0.05)";e.currentTarget.style.transform="translateY(-3px)";}:undefined}
+    onMouseLeave={hover?e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.07)";e.currentTarget.style.background="rgba(255,255,255,0.025)";e.currentTarget.style.transform="translateY(0)";}:undefined}>
     {children}
   </div>
 );
 
 const VBtn = ({children,style:s,variant="solid",...p}) => {
-  const base = {display:"inline-flex",alignItems:"center",gap:8,padding:"12px 28px",borderRadius:12,fontFamily:"inherit",fontSize:14,fontWeight:600,cursor:p.disabled?"not-allowed":"pointer",transition:"all 0.2s",border:"none",...s};
+  const base = {display:"inline-flex",alignItems:"center",gap:8,padding:"11px 24px",borderRadius:10,fontFamily:"inherit",fontSize:14,fontWeight:600,cursor:p.disabled?"not-allowed":"pointer",transition:"all 0.2s cubic-bezier(0.4,0,0.2,1)",border:"none",letterSpacing:"0.01em",...s};
   const variants = {
-    solid:{background:`linear-gradient(135deg,${T.violet},${T.indigo})`,color:"#fff",boxShadow:"0 4px 20px rgba(124,58,237,0.35)"},
-    ghost:{background:"transparent",color:T.text,border:`1px solid ${T.border2}`},
-    gold:{background:`linear-gradient(135deg,#F59E0B,#D97706)`,color:"#fff",boxShadow:"0 4px 20px rgba(245,158,11,0.3)"},
-    danger:{background:"rgba(239,68,68,0.12)",color:"#f87171",border:"1px solid rgba(239,68,68,0.2)"},
-    success:{background:"rgba(16,185,129,0.12)",color:"#34d399",border:"1px solid rgba(16,185,129,0.2)"},
+    solid:{background:"linear-gradient(135deg,#6D28D9 0%,#4338CA 100%)",color:"#fff",boxShadow:"0 1px 0 rgba(255,255,255,0.08) inset,0 4px 20px rgba(109,40,217,0.4)"},
+    ghost:{background:"rgba(255,255,255,0.04)",color:"#FAFAFA",border:"1px solid rgba(255,255,255,0.1)"},
+    gold:{background:"linear-gradient(135deg,#F59E0B 0%,#D97706 100%)",color:"#fff",boxShadow:"0 4px 20px rgba(245,158,11,0.4)"},
+    danger:{background:"rgba(239,68,68,0.1)",color:"#f87171",border:"1px solid rgba(239,68,68,0.2)"},
+    success:{background:"rgba(16,185,129,0.1)",color:"#34d399",border:"1px solid rgba(16,185,129,0.2)"},
   };
   return (
     <button {...p} style={{...base,...variants[variant]}}
-      onMouseEnter={e=>{if(!p.disabled){if(variant==="solid")e.currentTarget.style.boxShadow="0 8px 32px rgba(124,58,237,0.5)";e.currentTarget.style.transform="translateY(-1px)";}}}
-      onMouseLeave={e=>{if(variant==="solid")e.currentTarget.style.boxShadow="0 4px 20px rgba(124,58,237,0.35)";e.currentTarget.style.transform="translateY(0)";}}>
+      onMouseEnter={e=>{if(!p.disabled){e.currentTarget.style.transform="translateY(-1px) scale(1.01)";if(variant==="solid")e.currentTarget.style.boxShadow="0 1px 0 rgba(255,255,255,0.08) inset,0 8px 36px rgba(109,40,217,0.55)";if(variant==="gold")e.currentTarget.style.boxShadow="0 8px 32px rgba(245,158,11,0.55)";if(variant==="ghost"){e.currentTarget.style.background="rgba(255,255,255,0.08)";e.currentTarget.style.borderColor="rgba(255,255,255,0.2)";}if(variant==="success")e.currentTarget.style.background="rgba(16,185,129,0.18)";}}}
+      onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";if(variant==="solid")e.currentTarget.style.boxShadow="0 1px 0 rgba(255,255,255,0.08) inset,0 4px 20px rgba(109,40,217,0.4)";if(variant==="gold")e.currentTarget.style.boxShadow="0 4px 20px rgba(245,158,11,0.4)";if(variant==="ghost"){e.currentTarget.style.background="rgba(255,255,255,0.04)";e.currentTarget.style.borderColor="rgba(255,255,255,0.1)";}if(variant==="success")e.currentTarget.style.background="rgba(16,185,129,0.1)";}}>
       {children}
     </button>
   );
 };
 
 const DarkInp = ({style,...p}) => (
-  <input {...p} style={{width:"100%",padding:"12px 16px",background:"rgba(255,255,255,0.05)",border:`1.5px solid ${T.border2}`,borderRadius:12,fontFamily:"inherit",fontSize:14,color:T.text,outline:"none",boxSizing:"border-box",transition:"border 0.2s",...style}}
-    onFocus={e=>{e.target.style.borderColor=T.violet;e.target.style.boxShadow=`0 0 0 3px rgba(124,58,237,0.15)`;}}
-    onBlur={e=>{e.target.style.borderColor=T.border2;e.target.style.boxShadow="none";}}/>
+  <input {...p} style={{width:"100%",padding:"12px 16px",background:"rgba(255,255,255,0.04)",border:"1.5px solid rgba(255,255,255,0.08)",borderRadius:10,fontFamily:"inherit",fontSize:14,color:"#FAFAFA",outline:"none",boxSizing:"border-box",transition:"all 0.2s",...style}}
+    onFocus={e=>{e.target.style.borderColor="rgba(109,40,217,0.6)";e.target.style.boxShadow="0 0 0 3px rgba(109,40,217,0.12)";e.target.style.background="rgba(255,255,255,0.06)";}}
+    onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,0.08)";e.target.style.boxShadow="none";e.target.style.background="rgba(255,255,255,0.04)";}}/>
 );
 const DarkSel = ({children,...p}) => (
-  <select {...p} style={{width:"100%",padding:"12px 16px",background:"#0D1117",border:`1.5px solid ${T.border2}`,borderRadius:12,fontFamily:"inherit",fontSize:14,color:T.text,outline:"none",boxSizing:"border-box"}}>{children}</select>
+  <select {...p} style={{width:"100%",padding:"12px 16px",background:"#0A0B12",border:"1.5px solid rgba(255,255,255,0.08)",borderRadius:10,fontFamily:"inherit",fontSize:14,color:"#FAFAFA",outline:"none",boxSizing:"border-box"}}>{children}</select>
 );
 const DarkTxt = (p) => (
-  <textarea {...p} style={{width:"100%",padding:"12px 16px",background:"rgba(255,255,255,0.05)",border:`1.5px solid ${T.border2}`,borderRadius:12,fontFamily:"inherit",fontSize:14,color:T.text,outline:"none",minHeight:100,resize:"vertical",boxSizing:"border-box"}}
-    onFocus={e=>{e.target.style.borderColor=T.violet;}}
-    onBlur={e=>{e.target.style.borderColor=T.border2;}}/>
+  <textarea {...p} style={{width:"100%",padding:"12px 16px",background:"rgba(255,255,255,0.04)",border:"1.5px solid rgba(255,255,255,0.08)",borderRadius:10,fontFamily:"inherit",fontSize:14,color:"#FAFAFA",outline:"none",minHeight:100,resize:"vertical",boxSizing:"border-box"}}
+    onFocus={e=>{e.target.style.borderColor="rgba(109,40,217,0.6)";}}
+    onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,0.08)";}}/>
 );
 const Fld = ({label,req,err,children}) => (
   <div style={{marginBottom:16}}>
-    <label style={{display:"block",fontSize:12,fontWeight:600,color:T.muted2,marginBottom:6,letterSpacing:"0.05em",textTransform:"uppercase"}}>{label}{req&&<span style={{color:"#f87171",marginLeft:3}}>*</span>}</label>
+    <label style={{display:"block",fontSize:11,fontWeight:600,color:"#8B93A8",marginBottom:6,letterSpacing:"0.07em",textTransform:"uppercase"}}>{label}{req&&<span style={{color:"#f87171",marginLeft:3}}>*</span>}</label>
     {children}
     {err&&<div style={{color:"#f87171",fontSize:11,marginTop:5}}>⚠ {err}</div>}
   </div>
@@ -364,24 +364,22 @@ const Fld = ({label,req,err,children}) => (
 ───────────────────────────────────────────────────────────────────────────── */
 const MeshBG = () => (
   <div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none",zIndex:0}}>
-    {/* Dot grid */}
-    <div style={{position:"absolute",inset:0,backgroundImage:`radial-gradient(rgba(124,58,237,0.15) 1px,transparent 1px)`,backgroundSize:"32px 32px",opacity:0.4}}/>
-    {/* Gradient blobs */}
-    <div style={{position:"absolute",width:700,height:700,borderRadius:"50%",background:"radial-gradient(circle,rgba(124,58,237,0.18) 0%,transparent 70%)",top:-200,left:"10%",animation:"drift1 18s ease-in-out infinite"}}/>
-    <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(79,70,229,0.15) 0%,transparent 70%)",top:100,right:"5%",animation:"drift2 22s ease-in-out infinite"}}/>
-    <div style={{position:"absolute",width:400,height:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(245,158,11,0.07) 0%,transparent 70%)",bottom:0,left:"40%",animation:"drift3 15s ease-in-out infinite"}}/>
-    {/* Glow line */}
-    <div style={{position:"absolute",top:"60%",left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,rgba(124,58,237,0.3),transparent)`}}/>
+    <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(rgba(109,40,217,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(109,40,217,0.04) 1px,transparent 1px)",backgroundSize:"56px 56px"}}/>
+    <div style={{position:"absolute",width:1000,height:1000,borderRadius:"50%",background:"radial-gradient(circle,rgba(109,40,217,0.1) 0%,transparent 60%)",top:-400,left:"-5%",animation:"drift1 25s ease-in-out infinite"}}/>
+    <div style={{position:"absolute",width:800,height:800,borderRadius:"50%",background:"radial-gradient(circle,rgba(67,56,202,0.08) 0%,transparent 60%)",bottom:-300,right:"-5%",animation:"drift2 30s ease-in-out infinite"}}/>
+    <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(245,158,11,0.05) 0%,transparent 65%)",top:"35%",right:"20%",animation:"drift3 22s ease-in-out infinite"}}/>
+    <div style={{position:"absolute",top:"28%",left:0,right:0,height:"1px",background:"linear-gradient(90deg,transparent,rgba(109,40,217,0.12),transparent)"}}/>
+    <div style={{position:"absolute",top:"72%",left:0,right:0,height:"1px",background:"linear-gradient(90deg,transparent,rgba(109,40,217,0.07),transparent)"}}/>
   </div>
 );
 
 /* Stars */
 const Stars = () => {
-  const stars = Array.from({length:40},(_,i)=>({x:Math.random()*100,y:Math.random()*100,s:Math.random()*2+0.5,d:Math.random()*3+1}));
+  const stars = Array.from({length:30},(_,i)=>({x:Math.random()*100,y:Math.random()*100,s:Math.random()*1.5+0.5,d:Math.random()*3+2}));
   return (
     <div style={{position:"absolute",inset:0,pointerEvents:"none",overflow:"hidden"}}>
       {stars.map((s,i)=>(
-        <div key={i} style={{position:"absolute",left:`${s.x}%`,top:`${s.y}%`,width:s.s,height:s.s,background:"#fff",borderRadius:"50%",animation:`starTwinkle ${s.d}s ${Math.random()*3}s ease-in-out infinite`}}/>
+        <div key={i} style={{position:"absolute",left:`${s.x}%`,top:`${s.y}%`,width:s.s,height:s.s,background:"#fff",borderRadius:"50%",opacity:0.3,animation:`pulse ${s.d}s ${Math.random()*3}s ease-in-out infinite`}}/>
       ))}
     </div>
   );
@@ -395,7 +393,7 @@ const DashMockup = () => {
   useEffect(()=>{const t=setInterval(()=>setTick(x=>x+1),2000);return()=>clearInterval(t);},[]);
   const bars = [42,68,35,78,55,90,62,85,45,88,72,95];
   return (
-    <div style={{background:"#0D1117",borderRadius:20,border:`1px solid ${T.border2}`,overflow:"hidden",boxShadow:"0 0 0 1px rgba(124,58,237,0.2),0 40px 80px rgba(0,0,0,0.6)",fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{background:"#0D1117",borderRadius:20,border:`1px solid ${T.border2}`,overflow:"hidden",boxShadow:"0 0 0 1px rgba(124,58,237,0.2),0 40px 80px rgba(0,0,0,0.6)",fontFamily:"'Inter',sans-serif"}}>
       {/* Browser chrome */}
       <div style={{background:"#161B22",padding:"10px 16px",display:"flex",alignItems:"center",gap:8,borderBottom:`1px solid ${T.border}`}}>
         <div style={{display:"flex",gap:5}}>{["#FF5F57","#FEBC2E","#28C840"].map(c=><div key={c} style={{width:10,height:10,borderRadius:"50%",background:c}}/>)}</div>
@@ -408,7 +406,7 @@ const DashMockup = () => {
           {[["Active Cases","42",T.violet],["Resolved","128","#10B981"],["Pending","7",T.gold]].map(([l,v,c])=>(
             <div key={l} style={{background:"rgba(255,255,255,0.04)",borderRadius:12,padding:"12px 14px",border:`1px solid ${T.border}`}}>
               <div style={{fontSize:9,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>{l}</div>
-              <div style={{fontSize:26,fontWeight:800,color:c,fontFamily:"'Bricolage Grotesque',sans-serif"}}>{v}</div>
+              <div style={{fontSize:26,fontWeight:800,color:c,fontFamily:"'Instrument Serif',Georgia,serif"}}>{v}</div>
             </div>
           ))}
         </div>
@@ -449,7 +447,7 @@ const Modal = ({title,sub,onClose,children,wide}) => (
     <div style={{background:"#0D1117",border:`1px solid ${T.border2}`,borderRadius:24,padding:40,width:wide?720:560,maxWidth:"96vw",maxHeight:"92vh",overflowY:"auto",boxShadow:`0 0 0 1px rgba(124,58,237,0.2),0 32px 80px rgba(0,0,0,0.8)`}} onClick={e=>e.stopPropagation()}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:28}}>
         <div>
-          <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,color:T.text}}>{title}</div>
+          <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:22,fontWeight:700,color:T.text}}>{title}</div>
           {sub&&<div style={{fontSize:13,color:T.muted,marginTop:4}}>{sub}</div>}
         </div>
         <button onClick={onClose} style={{background:T.glass2,border:`1px solid ${T.border}`,borderRadius:8,width:34,height:34,cursor:"pointer",fontSize:16,color:T.muted2,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
@@ -475,7 +473,7 @@ function ContactForm({onDone}) {
   if(sent)return(
     <div style={{textAlign:"center",padding:"50px 20px"}}>
       <div style={{width:72,height:72,background:"rgba(124,58,237,0.15)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",border:`1px solid rgba(124,58,237,0.4)`,fontSize:30}}>✓</div>
-      <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,color:T.text,marginBottom:10}}>You're on the list!</div>
+      <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:22,fontWeight:700,color:T.text,marginBottom:10}}>You're on the list!</div>
       <p style={{color:T.muted,fontSize:14,lineHeight:1.7}}>Our team will reach out within 1 business day.<br/>In the meantime, email us at <a href="mailto:support@violationflow.com" style={{color:"#c4b5fd",textDecoration:"none"}}>support@violationflow.com</a></p>
     </div>
   );
@@ -487,7 +485,7 @@ function ContactForm({onDone}) {
         <Fld label="Company / Association"><DarkInp value={f.company} onChange={set("company")} placeholder="HOA or management company"/></Fld>
         <Fld label="Your Role"><DarkSel value={f.role} onChange={set("role")}><option value="">Select role...</option><option>Property Manager</option><option>HOA Board Member</option><option>Condo Association Manager</option><option>Community Manager</option><option>Other</option></DarkSel></Fld>
       </div>
-      <Fld label="Plan Interest"><DarkSel value={f.plan} onChange={set("plan")}><option>Starter — $49/mo</option><option>Professional — $99/mo</option><option>Full Service — $199/mo</option><option>Not sure yet</option></DarkSel></Fld>
+      <Fld label="Plan Interest"><DarkSel value={f.plan} onChange={set("plan")}><option>On Demand — $9.99/report</option><option>Starter — $59/mo</option><option>Professional — $149/mo</option><option>Enterprise — Custom</option><option>Not sure yet</option></DarkSel></Fld>
       <Fld label="Tell us about your community"><DarkTxt value={f.message} onChange={set("message")} placeholder="Number of units, current pain points, any questions..."/></Fld>
       <VBtn onClick={submit} disabled={saving||!f.name||!f.email} style={{width:"100%",justifyContent:"center",padding:"14px",fontSize:15}}>{saving?"Sending...":"Request a Free Demo"}</VBtn>
       <p style={{fontSize:11,color:T.muted,textAlign:"center",marginTop:10}}>By submitting, you agree to our Privacy Policy and Terms of Service. No spam, ever.</p>
@@ -516,31 +514,33 @@ ViolationFlow is a nationwide platform for HOAs and Condominium Associations tha
 
 PRICING PLANS — know these in detail:
 
-STARTER — $49/mo (annual: $39/mo)
-- Best for: Self-managed small HOAs or Condo associations, volunteer boards
-- Units: Up to 50 units
-- Features: Violation reporting portal, rule-based reporting, notice generator, hearing deadline tracking, compliance audit trail
-- Support: Email support
-- Who should choose this: A small community with a volunteer board that wants to stop managing violations in spreadsheets or paper
+ON DEMAND — $9.99 per violation report (no monthly fee)
+- Best for: Individual condo owners or homeowners whose HOA has NOT signed up for ViolationFlow
+- Features: Submit photo evidence instantly, photo evidence upload, official notice generation, case status tracking, legal-grade audit trail
+- No account required, secure payment, instant notice generation
 
-PROFESSIONAL — $99/mo (annual: $79/mo)
-- Best for: Property management companies, large HOAs, condo buildings with 50+ units
-- Units: Unlimited units
-- Features: Everything in Starter PLUS unlimited units, multi-association management (manage many communities from one account), powerful analytics dashboard, priority email support, API access
-- Support: Priority email support
-- Who should choose this: A property manager who oversees multiple communities or a large association that needs analytics and reporting
+STARTER — $59/month
+- Best for: Self-managed HOAs or Condo associations, volunteer boards
+- Units: Up to 150 units
+- Features: Violation portal for residents, rule database upload, notice generator, hearing deadline tracking, compliance history, email support
+- Who should choose this: A small community with a volunteer board
 
-FULL SERVICE — $199/mo (annual: $159/mo)
-- Best for: Boards or managers who want us to handle everything
-- Units: Unlimited units
-- Features: Everything in Professional PLUS our team reviews all cases, notices drafted and sent by our staff, hearing coordination handled by us, dedicated account manager, white-glove onboarding
-- Support: Dedicated account manager
-- Who should choose this: Boards that have no time to manage the enforcement process themselves and want a fully managed compliance service
+PROFESSIONAL — $149/month
+- Best for: Property management companies managing multiple communities
+- Units: Up to 300 units (600 units with add-on)
+- Features: Unlimited associations, portfolio dashboard, compliance analytics, API integrations, priority support
+- Who should choose this: A property manager who oversees multiple communities
+
+ENTERPRISE — Custom pricing
+- Best for: Large management firms with 600+ units
+- Features: Unlimited units, white label option, dedicated onboarding, custom integrations, SLA guarantee, account manager
 
 KEY DIFFERENCE BETWEEN PLANS:
-- Starter = self-service software tool, you do the work
-- Professional = powerful software with analytics for multi-community management
-- Full Service = we do it all for you, fully managed service
+- On Demand = individual owners pay $9.99 per report, no subscription needed
+- Starter = self-service for small self-managed communities up to 150 units
+- Professional = multi-association dashboard for property managers, up to 300 units
+- Enterprise = unlimited units, white label, fully custom for large firms
+- Owner Plan = same as On Demand
 
 WHAT ASSOCIATIONS MUST PROVIDE WHEN ONBOARDING:
 1. Property Information: Full legal property name, address, city, state, zip code
@@ -599,10 +599,10 @@ Never give legal advice. Recommend consulting an attorney for legal questions.`;
       {!open&&<div style={{position:"absolute",top:-2,right:-2,width:16,height:16,background:T.gold,borderRadius:"50%",border:"2px solid #06080F",fontSize:9,color:"#000",fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>1</div>}
     </button>
     {open&&(
-      <div style={{position:"fixed",bottom:104,right:28,width:380,maxHeight:540,background:"#0D1117",borderRadius:20,boxShadow:`0 0 0 1px rgba(124,58,237,0.3),0 32px 80px rgba(0,0,0,0.8)`,zIndex:800,display:"flex",flexDirection:"column",overflow:"hidden",fontFamily:"'DM Sans',sans-serif"}}>
+      <div style={{position:"fixed",bottom:104,right:28,width:380,maxHeight:540,background:"#0D1117",borderRadius:20,boxShadow:`0 0 0 1px rgba(124,58,237,0.3),0 32px 80px rgba(0,0,0,0.8)`,zIndex:800,display:"flex",flexDirection:"column",overflow:"hidden",fontFamily:"'Inter',sans-serif"}}>
         <div style={{background:`linear-gradient(135deg,rgba(124,58,237,0.2),rgba(79,70,229,0.2))`,padding:"16px 18px",display:"flex",alignItems:"center",gap:12,borderBottom:`1px solid ${T.border}`}}>
           <div style={{width:40,height:40,background:`linear-gradient(135deg,${T.violet},${T.indigo})`,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center"}}><ScaleLogo size={22}/></div>
-          <div><div style={{color:T.text,fontWeight:600,fontSize:14,fontFamily:"'Bricolage Grotesque',sans-serif"}}>ViolationFlow AI</div><div style={{color:"#a78bfa",fontSize:11}}>● Online — HOA & Condo Expert</div></div>
+          <div><div style={{color:T.text,fontWeight:600,fontSize:14,fontFamily:"'Instrument Serif',Georgia,serif"}}>ViolationFlow AI</div><div style={{color:"#a78bfa",fontSize:11}}>● Online — HOA & Condo Expert</div></div>
         </div>
         <div style={{flex:1,overflowY:"auto",padding:"14px 14px 8px"}}>
           {msgs.map((m,i)=>(
@@ -646,10 +646,10 @@ function ResidentForm({onBack}) {
   const grouped=rules.reduce((a,r)=>{(a[r.category]=a[r.category]||[]).push(r);return a;},{});
   const set=k=>e=>setForm(f=>({...f,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value}));
   return(
-    <div style={{minHeight:"100vh",background:T.bg,fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',sans-serif"}}>
       <style>{STYLES}</style>
       <nav style={{background:"rgba(6,8,15,0.95)",backdropFilter:"blur(20px)",borderBottom:`1px solid ${T.border}`,padding:"14px 32px",display:"flex",alignItems:"center",gap:16,position:"sticky",top:0,zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={onBack}><ScaleLogo size={26}/><span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:700,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></span></div>
+        <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={onBack}><ScaleLogo size={26}/><span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:18,fontWeight:700,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></span></div>
         <div style={{flex:1}}/>
         <Pill>HOA & Condo Violation Portal</Pill>
       </nav>
@@ -657,7 +657,7 @@ function ResidentForm({onBack}) {
         {step===1&&(
           <div className="hero-fade">
             <div style={{textAlign:"center",marginBottom:36}}>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:32,fontWeight:800,color:T.text,marginBottom:8}}>Find Your Community</div>
+              <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:32,fontWeight:800,color:T.text,marginBottom:8}}>Find Your Community</div>
               <p style={{color:T.muted,fontSize:15}}>Search for your HOA or Condominium Association to begin your violation report.</p>
             </div>
             <GlassCard style={{padding:36}}>
@@ -676,7 +676,7 @@ function ResidentForm({onBack}) {
               <button onClick={()=>setStep(1)} style={{background:"none",border:"none",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>Change ↗</button>
             </div>
             <GlassCard style={{padding:36}} hover={false}>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,color:T.text,marginBottom:4}}>Violation Report</div>
+              <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:22,fontWeight:700,color:T.text,marginBottom:4}}>Violation Report</div>
               <p style={{color:T.muted,fontSize:13,marginBottom:28}}>All fields marked * are required. Reports must reference a specific rule and identify the reporter. Anonymous submissions are not accepted.</p>
               <div style={{background:"rgba(255,255,255,0.03)",borderRadius:12,padding:"18px 20px",marginBottom:20,border:`1px solid ${T.border}`}}>
                 <div style={{fontSize:10,fontWeight:700,color:T.muted,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:16}}>A — Reporter Information</div>
@@ -706,7 +706,7 @@ function ResidentForm({onBack}) {
         {step===3&&(
           <GlassCard style={{padding:64,textAlign:"center"}} hover={false}>
             <div style={{width:80,height:80,background:"rgba(124,58,237,0.15)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",border:`1px solid rgba(124,58,237,0.4)`,fontSize:36}}>✓</div>
-            <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Report Submitted</div>
+            <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Report Submitted</div>
             <p style={{color:T.muted,lineHeight:1.8,marginBottom:32,maxWidth:400,margin:"0 auto 32px"}}>Your violation report has been received and will be reviewed by your property manager.</p>
             <VBtn onClick={()=>{setStep(1);setSearch("");setAssoc(null);setForm({reporter_name:"",reporter_unit:"",reporter_email:"",reporter_phone:"",violator_unit:"",rule_id:"",description:"",incident_date:"",incident_time:"",location:"",previously_reported:"no",requested_action:"Warning",signature:"",cert1:false,cert2:false,cert3:false});setErrs({});}}>Submit Another Report</VBtn>
             <div style={{marginTop:16}}><button onClick={onBack} style={{background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",textDecoration:"underline",fontFamily:"inherit"}}>Back to home</button></div>
@@ -722,7 +722,7 @@ function ResidentForm({onBack}) {
 ───────────────────────────────────────────────────────────────────────────── */
 const ST={NEW_REPORT:{label:"New Report",c:"#F59E0B",bg:"rgba(245,158,11,0.12)"},UNDER_REVIEW:{label:"Under Review",c:"#60A5FA",bg:"rgba(96,165,250,0.12)"},NOTICE_SENT:{label:"Notice Sent",c:"#a78bfa",bg:"rgba(167,139,250,0.12)"},HEARING_REQUESTED:{label:"Hearing Req.",c:"#f472b6",bg:"rgba(244,114,182,0.12)"},FINAL_VIOLATION:{label:"Final Violation",c:"#f87171",bg:"rgba(248,113,113,0.12)"},CLOSED:{label:"Closed",c:"#34d399",bg:"rgba(52,211,153,0.1)"}};
 const Bdg=({status})=>{const s=ST[status]||ST.NEW_REPORT;return<span style={{background:s.bg,color:s.c,padding:"3px 10px",borderRadius:20,fontSize:11,fontWeight:700,letterSpacing:"0.04em",whiteSpace:"nowrap",border:`1px solid ${s.c}22`}}>{s.label}</span>;};
-const NDoc=({d})=><div style={{background:"#0D1117",borderRadius:16,padding:32,border:`1px solid ${T.border2}`}}><div style={{textAlign:"center",borderBottom:`1px solid ${T.border}`,paddingBottom:18,marginBottom:20}}><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,letterSpacing:"0.05em"}}>VIOLATION NOTICE</div><div style={{fontSize:13,color:T.muted,marginTop:4}}>{d.assocName}</div><div style={{fontSize:12,color:T.muted,marginTop:2}}>Notice Date: {d.noticeDate}</div></div>{[["Unit in Violation",`Unit ${d.violatorUnit}`],["Rule Violated",d.ruleTitle],["Rule Section",`§${d.ruleSection}`],["Description",d.description]].map(([k,v])=><div key={k} style={{marginBottom:12,fontSize:14,color:T.muted2}}><span style={{color:T.text,fontWeight:600}}>{k}:</span> {v}</div>)}<div style={{marginBottom:20,fontSize:14}}><span style={{color:T.text,fontWeight:600}}>Fine Amount:</span> <span style={{color:T.gold,fontWeight:700}}>${d.fineAmount}</span></div><div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:10,padding:14,marginBottom:16}}><div style={{fontWeight:700,marginBottom:6,color:"#fbbf24",fontSize:13}}>⚖ Your Hearing Rights</div><div style={{fontSize:13,lineHeight:1.7,color:T.muted2}}>You have the right to contest this violation by requesting a formal hearing within <strong style={{color:T.text}}>{d.hearingDays} days</strong> (by <strong style={{color:T.text}}>{d.deadline}</strong>). Failure to request a hearing will result in this violation becoming final and a fine of <strong style={{color:T.gold}}>${d.fineAmount}</strong> applied to your account.</div></div><div style={{fontSize:11,color:T.muted,borderTop:`1px solid ${T.border}`,paddingTop:12}}>Issued pursuant to applicable state condominium and HOA statutes and the association's governing documents. For questions contact: support@violationflow.com</div></div>;
+const NDoc=({d})=><div style={{background:"#0D1117",borderRadius:16,padding:32,border:`1px solid ${T.border2}`}}><div style={{textAlign:"center",borderBottom:`1px solid ${T.border}`,paddingBottom:18,marginBottom:20}}><div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,letterSpacing:"0.05em"}}>VIOLATION NOTICE</div><div style={{fontSize:13,color:T.muted,marginTop:4}}>{d.assocName}</div><div style={{fontSize:12,color:T.muted,marginTop:2}}>Notice Date: {d.noticeDate}</div></div>{[["Unit in Violation",`Unit ${d.violatorUnit}`],["Rule Violated",d.ruleTitle],["Rule Section",`§${d.ruleSection}`],["Description",d.description]].map(([k,v])=><div key={k} style={{marginBottom:12,fontSize:14,color:T.muted2}}><span style={{color:T.text,fontWeight:600}}>{k}:</span> {v}</div>)}<div style={{marginBottom:20,fontSize:14}}><span style={{color:T.text,fontWeight:600}}>Fine Amount:</span> <span style={{color:T.gold,fontWeight:700}}>${d.fineAmount}</span></div><div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:10,padding:14,marginBottom:16}}><div style={{fontWeight:700,marginBottom:6,color:"#fbbf24",fontSize:13}}>⚖ Your Hearing Rights</div><div style={{fontSize:13,lineHeight:1.7,color:T.muted2}}>You have the right to contest this violation by requesting a formal hearing within <strong style={{color:T.text}}>{d.hearingDays} days</strong> (by <strong style={{color:T.text}}>{d.deadline}</strong>). Failure to request a hearing will result in this violation becoming final and a fine of <strong style={{color:T.gold}}>${d.fineAmount}</strong> applied to your account.</div></div><div style={{fontSize:11,color:T.muted,borderTop:`1px solid ${T.border}`,paddingTop:12}}>Issued pursuant to applicable state condominium and HOA statutes and the association's governing documents. For questions contact: support@violationflow.com</div></div>;
 const TL=({events})=><div style={{paddingLeft:22,position:"relative"}}><div style={{position:"absolute",left:7,top:8,bottom:8,width:2,background:T.border}}/>{events.map((e,i)=><div key={e.id} style={{position:"relative",marginBottom:16}}><div style={{position:"absolute",left:-22,top:5,width:11,height:11,borderRadius:"50%",background:i===0?T.violet:T.border2,border:"2px solid #06080F",outline:`2px solid ${i===0?T.violet:T.border}`}}/><div style={{fontSize:11,color:T.muted,marginBottom:2}}>{new Date(e.created_at).toLocaleString()}</div><div style={{fontSize:13,fontWeight:600,color:T.muted2}}>{e.event_type.replace(/_/g," ")}</div>{e.description&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>{e.description}</div>}</div>)}</div>;
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -751,7 +751,7 @@ function AssociationsTab({assocs,companyId,onSave}) {
   return(
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-        <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Associations</h2>
+        <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text}}>Associations</h2>
         <VBtn onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Association</VBtn>
       </div>
       {!assocs.length&&<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>🏢</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No associations yet</div><div style={{fontSize:13,color:T.muted,marginTop:6}}>Add your first HOA or Condo association to get started.</div></GlassCard>}
@@ -760,7 +760,7 @@ function AssociationsTab({assocs,companyId,onSave}) {
           <GlassCard key={a.id} style={{padding:22}} hover={false}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
               <div>
-                <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text}}>{a.name}</div>
+                <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:15,fontWeight:700,color:T.text}}>{a.name}</div>
                 <div style={{fontSize:12,color:T.muted,marginTop:2}}>{[a.address,a.city,a.state,a.zip].filter(Boolean).join(", ")}</div>
               </div>
               <div style={{display:"flex",gap:6}}>
@@ -873,7 +873,7 @@ function OwnersTab({assocs,companyId,onSave}) {
   return(
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-        <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Unit Owners</h2>
+        <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text}}>Unit Owners</h2>
         <div style={{display:"flex",gap:8}}>
           <VBtn variant="ghost" onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Owner</VBtn>
         </div>
@@ -884,7 +884,7 @@ function OwnersTab({assocs,companyId,onSave}) {
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
           <div style={{width:38,height:38,background:"rgba(245,158,11,0.12)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>📊</div>
           <div>
-            <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:14,fontWeight:700,color:T.text}}>Bulk Import via CSV</div>
+            <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:14,fontWeight:700,color:T.text}}>Bulk Import via CSV</div>
             <div style={{fontSize:12,color:T.muted}}>Upload a spreadsheet to add all owners at once</div>
           </div>
           <button onClick={downloadTemplate} style={{marginLeft:"auto",background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:8,padding:"7px 14px",color:"#fbbf24",fontSize:12,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Download Template</button>
@@ -1048,7 +1048,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
   return(
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-        <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text}}>Rules Library</h2>
+        <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text}}>Rules Library</h2>
         <VBtn onClick={()=>open()} style={{fontSize:13,padding:"9px 18px"}}>+ Add Rule</VBtn>
       </div>
 
@@ -1057,7 +1057,7 @@ function RulesTab({assocs,rules,companyId,onSave}) {
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
           <div style={{width:40,height:40,background:"rgba(124,58,237,0.15)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🤖</div>
           <div>
-            <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text}}>AI Rules Extractor</div>
+            <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:15,fontWeight:700,color:T.text}}>AI Rules Extractor</div>
             <div style={{fontSize:12,color:T.muted}}>Upload your HOA/Condo rulebook PDF and AI will automatically extract all rules and fees</div>
           </div>
         </div>
@@ -1165,14 +1165,14 @@ function Dashboard({onBack,session,onSignOut}) {
   const TABS=[{id:"reports",icon:"📋",label:"New Reports",count:stats.p},{id:"cases",icon:"⚖️",label:"Cases",count:stats.a},{id:"associations",icon:"🏢",label:"Associations"},{id:"owners",icon:"👤",label:"Owners"},{id:"rules",icon:"📖",label:"Rules"},{id:"leads",icon:"✉️",label:"Leads",count:leads.length},{id:"analytics",icon:"📊",label:"Analytics"}];
   const bars=[42,68,35,78,55,90,62,85,45,88,72,95];
   return(
-    <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text}}>
+    <div style={{fontFamily:"'Inter',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text}}>
       <style>{STYLES}</style>
       <div style={{display:"flex",minHeight:"100vh"}}>
         <aside style={{width:240,background:T.bg2,display:"flex",flexDirection:"column",padding:"24px 0",flexShrink:0,borderRight:`1px solid ${T.border}`}}>
           <div style={{padding:"0 20px 24px",borderBottom:`1px solid ${T.border}`,cursor:"pointer",transition:"opacity 0.2s"}} onClick={onBack}
             onMouseEnter={e=>e.currentTarget.style.opacity="0.7"}
             onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-            <div style={{display:"flex",alignItems:"center",gap:10}}><ScaleLogo size={28} gold/><div><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></div><div style={{fontSize:10,color:T.muted,marginTop:1}}>Manager Portal</div></div></div>
+            <div style={{display:"flex",alignItems:"center",gap:10}}><ScaleLogo size={28} gold/><div><div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:18,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></div><div style={{fontSize:10,color:T.muted,marginTop:1}}>Manager Portal</div></div></div>
           </div>
           {TABS.map(t=>(
             <button key={t.id} onClick={()=>setTab(t.id)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"11px 20px",background:tab===t.id?"rgba(124,58,237,0.12)":"none",border:"none",borderLeft:`3px solid ${tab===t.id?T.violet:"transparent"}`,color:tab===t.id?T.text:T.muted,fontSize:13,fontWeight:tab===t.id?600:400,cursor:"pointer",fontFamily:"inherit",textAlign:"left",transition:"all 0.15s"}}>
@@ -1197,18 +1197,18 @@ function Dashboard({onBack,session,onSignOut}) {
           <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:28}}>
             {[["Pending",stats.p,T.gold],["Active",stats.a,T.violet],["Final",stats.f,"#f87171"],["Closed",stats.cl,"#34d399"]].map(([l,v,c])=>(
               <GlassCard key={l} style={{padding:"20px 22px",borderLeft:`3px solid ${c}`}} hover={false}>
-                <div style={{fontSize:32,fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,color:c}}>{v}</div>
+                <div style={{fontSize:32,fontFamily:"'Instrument Serif',Georgia,serif",fontWeight:800,color:c}}>{v}</div>
                 <div style={{fontSize:11,color:T.muted,marginTop:4,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>{l}</div>
               </GlassCard>
             ))}
           </div>
 
           {tab==="reports"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>New Reports — Awaiting Review</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>New Reports — Awaiting Review</h2>
             {!pending.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:40}}>✅</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>All caught up</div></GlassCard>
             :pending.map(r=>{const a=assocs.find(x=>x.id===r.association_id);const ru=rules.find(x=>x.id===r.rule_id);return(
               <GlassCard key={r.id} style={{padding:24,marginBottom:14,borderLeft:`3px solid ${T.gold}`}} hover={false}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}><div><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:16,fontWeight:700,color:T.text}}>Unit {r.reporter_unit} → Unit {r.violator_unit}</div><div style={{fontSize:12,color:T.muted,marginTop:2}}>{a?.name} · {new Date(r.created_at).toLocaleString()}</div></div><Bdg status="NEW_REPORT"/></div>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}><div><div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:16,fontWeight:700,color:T.text}}>Unit {r.reporter_unit} → Unit {r.violator_unit}</div><div style={{fontSize:12,color:T.muted,marginTop:2}}>{a?.name} · {new Date(r.created_at).toLocaleString()}</div></div><Bdg status="NEW_REPORT"/></div>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:14}}>{[["Rule",ru?.rule_title||"—"],["Section",`§${ru?.rule_section||"—"}`],["Fine",`$${ru?.fine_amount||0}`],["Reporter",r.reporter_name],["Email",r.reporter_email],["Date",r.incident_date?new Date(r.incident_date).toLocaleDateString():"—"]].map(([l,v])=><div key={l} style={{background:"rgba(255,255,255,0.03)",borderRadius:8,padding:"8px 10px",border:`1px solid ${T.border}`}}><div style={{fontSize:9,color:T.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:2}}>{l}</div><div style={{fontSize:12,color:T.muted2,fontWeight:500}}>{v}</div></div>)}</div>
                 {r.description&&<div style={{background:"rgba(255,255,255,0.03)",borderRadius:8,padding:"10px 12px",marginBottom:12,fontSize:13,color:T.muted2,lineHeight:1.6,border:`1px solid ${T.border}`}}><b style={{color:T.text}}>Description:</b> {r.description}</div>}
                 <div style={{display:"flex",gap:8}}><VBtn onClick={()=>approve(r)} disabled={saving} style={{fontSize:13,padding:"9px 18px"}}>✓ Approve & Send Notice</VBtn><VBtn variant="danger" onClick={()=>reject(r.id)} disabled={saving} style={{fontSize:13,padding:"9px 18px"}}>✕ Reject</VBtn></div>
@@ -1217,7 +1217,7 @@ function Dashboard({onBack,session,onSignOut}) {
           </div>}
 
           {tab==="cases"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>All Cases</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>All Cases</h2>
             <GlassCard hover={false} style={{overflow:"hidden"}}>
               <div style={{display:"grid",gridTemplateColumns:"70px 1.5fr 70px 1.5fr 70px 150px 80px 70px",padding:"11px 18px",background:"rgba(255,255,255,0.03)",borderBottom:`1px solid ${T.border}`,fontSize:10,fontWeight:700,color:T.muted,letterSpacing:"0.1em",textTransform:"uppercase"}}>
                 <span>ID</span><span>Association</span><span>Unit</span><span>Rule</span><span>Fine</span><span>Status</span><span>Deadline</span><span>Date</span>
@@ -1241,16 +1241,16 @@ function Dashboard({onBack,session,onSignOut}) {
           </div>}
 
           {tab==="associations"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Associations</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Associations</h2>
             <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
               {assocs.map(a=>{const ac=cases.filter(c=>c.association_id===a.id).length;const ar=rules.filter(r=>r.association_id===a.id).length;return(
                 <GlassCard key={a.id} style={{padding:22}}>
-                  <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text,marginBottom:3}}>{a.name}</div>
+                  <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:15,fontWeight:700,color:T.text,marginBottom:3}}>{a.name}</div>
                   <div style={{fontSize:12,color:T.muted,marginBottom:14}}>{a.city&&a.state?`${a.city}, ${a.state}`:"Community"} · {a.hearing_days}-day hearing window</div>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
                     {[["Cases",ac,T.violet],["Rules",ar,"#a78bfa"]].map(([l,v,c])=>(
                       <div key={l} style={{background:"rgba(255,255,255,0.03)",borderRadius:8,padding:"10px",textAlign:"center",border:`1px solid ${T.border}`}}>
-                        <div style={{fontSize:22,fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,color:c}}>{v}</div>
+                        <div style={{fontSize:22,fontFamily:"'Instrument Serif',Georgia,serif",fontWeight:800,color:c}}>{v}</div>
                         <div style={{fontSize:10,color:T.muted,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>{l}</div>
                       </div>
                     ))}
@@ -1265,7 +1265,7 @@ function Dashboard({onBack,session,onSignOut}) {
           {tab==="rules"&&<RulesTab assocs={assocs} rules={rules} companyId={cid} onSave={load}/>}
 
           {tab==="leads"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Captured Leads</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Captured Leads</h2>
             <GlassCard hover={false} style={{overflow:"hidden"}}>
               <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr 2fr",padding:"11px 18px",background:"rgba(255,255,255,0.03)",borderBottom:`1px solid ${T.border}`,fontSize:10,fontWeight:700,color:T.muted,letterSpacing:"0.1em",textTransform:"uppercase"}}>
                 <span>Email</span><span>Name</span><span>Company</span><span>Plan</span><span>Source</span><span>Date</span>
@@ -1285,7 +1285,7 @@ function Dashboard({onBack,session,onSignOut}) {
           </div>}
 
           {tab==="analytics"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Analytics</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:18}}>Analytics</h2>
             <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:16}}>
               <GlassCard style={{padding:24}} hover={false}>
                 <div style={{fontSize:12,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Monthly Violation Volume</div>
@@ -1298,7 +1298,7 @@ function Dashboard({onBack,session,onSignOut}) {
                 {[["Resolution Rate","94%","#34d399"],["Avg. Case Duration","8.2 days","#60A5FA"],["Hearing Requests","12%","#f472b6"],["Fine Collection","89%",T.gold]].map(([l,v,c])=>(
                   <GlassCard key={l} style={{padding:"14px 18px"}} hover={false}>
                     <div style={{fontSize:11,color:T.muted,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>{l}</div>
-                    <div style={{fontSize:24,fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,color:c}}>{v}</div>
+                    <div style={{fontSize:24,fontFamily:"'Instrument Serif',Georgia,serif",fontWeight:800,color:c}}>{v}</div>
                   </GlassCard>
                 ))}
               </div>
@@ -1406,9 +1406,9 @@ const FAQS = [
   {q:"Can residents submit anonymous violation reports?",a:"No. ViolationFlow requires all reporters to provide their full name, unit number, and contact information. This prevents frivolous or harassing reports and ensures accountability. Anonymous submissions are blocked by design."},
   {q:"What happens if a hearing is not requested?",a:"If the unit owner does not request a hearing within the configured window (10–14 days), the violation is automatically finalized. Both the manager and owner are notified and the fine is ready to apply to the account ledger."},
   {q:"Does ViolationFlow work in all US states?",a:"Yes — all 50 states. Hearing windows are fully configurable (10–14 days) to match your specific state's governing document requirements and applicable HOA or Condominium statutes."},
-  {q:"What's the difference between Starter and Professional?",a:"Starter supports up to 50 units and is designed for self-managed communities. Professional adds unlimited units, multi-association management from a single account, a powerful analytics dashboard, and priority support — ideal for property managers overseeing multiple communities."},
-  {q:"What does Full Service include that Professional doesn't?",a:"With Full Service, our team does the work for you: reviewing all cases, drafting and sending notices, coordinating hearings, and providing a dedicated account manager. It's a fully managed compliance service — you don't lift a finger."},
-  {q:"Can I manage multiple HOAs or Condo associations?",a:"Yes, with the Professional and Full Service plans. You can manage unlimited associations from a single dashboard — perfect for property management companies."},
+  {q:"What's the difference between Starter and Professional?",a:"Starter is $59/month for self-managed communities up to 150 units. Professional is $149/month for property managers who need a multi-association dashboard, compliance analytics, API integrations, and up to 300 units. For 600+ units, we offer an Enterprise plan with custom pricing."},
+  {q:"What is the On Demand plan?",a:"On Demand is $9.99 per violation report — no subscription required. It's designed for individual condo owners or homeowners whose HOA hasn't signed up for ViolationFlow. You can submit photo evidence of a rule violation, and have it delivered to the board or manager who files the official notice — no account needed."},
+  {q:"Can I manage multiple HOAs or Condo associations?",a:"Yes, with the Professional and Enterprise plans. You can manage unlimited associations from a single dashboard — perfect for property management companies."},
   {q:"Is my community's data secure?",a:"Yes. ViolationFlow is SOC 2 Type II compliant with encrypted data storage and secure access controls. Your community's data is never sold or shared with third parties."},
   {q:"Do you offer a free trial?",a:"Yes. The Professional plan includes a free trial. Contact us at support@violationflow.com or request a demo and our team will set you up within 1 business day."},
   {q:"What information does my association need to provide?",a:"To onboard, associations must provide: property name and full address, owner name and mailing address per unit (for official notice delivery), unit numbers, phone numbers per owner, and uploaded governing documents (bylaws, CC&Rs, rules). This information is required for legally defensible enforcement."},
@@ -1444,13 +1444,56 @@ function FAQAccordion() {
 /* ─────────────────────────────────────────────────────────────────────────────
    PENDING / REJECTED SCREENS
 ───────────────────────────────────────────────────────────────────────────── */
+/* ─── NAV SIGN-IN DROPDOWN ─────────────────────────────────────────────── */
+function NavSignIn({goToLogin}) {
+  const [open,setOpen]=useState(false);
+  const ref=React.useRef();
+  useEffect(()=>{
+    const h=(e)=>{ if(ref.current&&!ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown",h);
+    return()=>document.removeEventListener("mousedown",h);
+  },[]);
+  const items=[
+    {icon:"🏠",label:"Self-Managed HOA Login",sub:"Board members & volunteers",action:goToLogin},
+    {icon:"🏢",label:"Property Manager Login",sub:"Multi-association managers",action:goToLogin},
+    {icon:"🔒",label:"Admin Login",sub:"ViolationFlow staff only",action:goToLogin},
+  ];
+  return(
+    <div ref={ref} style={{position:"relative"}}>
+      <button onClick={()=>setOpen(o=>!o)}
+        style={{display:"flex",alignItems:"center",gap:6,background:open?"rgba(255,255,255,0.06)":"none",border:`1px solid ${open?"rgba(255,255,255,0.15)":T.border}`,borderRadius:9,padding:"8px 14px",fontSize:13,fontWeight:500,color:T.muted2,cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s"}}
+        onMouseEnter={e=>{e.currentTarget.style.color=T.text;e.currentTarget.style.borderColor="rgba(255,255,255,0.2)";}}
+        onMouseLeave={e=>{if(!open){e.currentTarget.style.color=T.muted2;e.currentTarget.style.borderColor=T.border;}}}>
+        Sign In <span style={{fontSize:10,marginLeft:2,opacity:0.7,transform:open?"rotate(180deg)":"rotate(0)",display:"inline-block",transition:"transform 0.2s"}}>▼</span>
+      </button>
+      {open&&(
+        <div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"#0D1117",border:`1px solid rgba(255,255,255,0.1)`,borderRadius:14,padding:8,minWidth:260,boxShadow:"0 20px 60px rgba(0,0,0,0.6)",zIndex:999}}>
+          <div style={{fontSize:10,fontWeight:700,color:T.muted,textTransform:"uppercase",letterSpacing:"0.1em",padding:"6px 12px 4px"}}>Sign in as</div>
+          {items.map(item=>(
+            <button key={item.label} onClick={()=>{setOpen(false);item.action();}}
+              style={{display:"flex",alignItems:"center",gap:12,width:"100%",padding:"10px 12px",background:"none",border:"none",borderRadius:10,cursor:"pointer",fontFamily:"inherit",textAlign:"left",transition:"background 0.15s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.06)"}
+              onMouseLeave={e=>e.currentTarget.style.background="none"}>
+              <span style={{fontSize:18,width:28,textAlign:"center"}}>{item.icon}</span>
+              <div>
+                <div style={{fontSize:13,fontWeight:600,color:T.text}}>{item.label}</div>
+                <div style={{fontSize:11,color:T.muted,marginTop:1}}>{item.sub}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PendingScreen({session,onSignOut}) {
   return(
-    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Inter',sans-serif"}}>
       <style>{STYLES}</style>
       <div style={{textAlign:"center",maxWidth:480,padding:40}}>
         <div style={{width:80,height:80,borderRadius:"50%",background:"rgba(245,158,11,0.12)",border:"2px solid rgba(245,158,11,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,margin:"0 auto 24px"}}>⏳</div>
-        <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Application Under Review</div>
+        <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Application Under Review</div>
         <div style={{color:T.muted,fontSize:15,lineHeight:1.7,marginBottom:8}}>Thank you for signing up for ViolationFlow. Your application is being reviewed by our team.</div>
         <div style={{color:T.muted,fontSize:14,marginBottom:32}}>You'll receive an email at <span style={{color:"#a78bfa"}}>{session?.user?.email}</span> once your account is approved — usually within 24 hours.</div>
         <GlassCard style={{padding:"14px 20px",marginBottom:20,textAlign:"left"}} hover={false}>
@@ -1471,11 +1514,11 @@ function PendingScreen({session,onSignOut}) {
 
 function RejectedScreen({reason,onSignOut}) {
   return(
-    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Inter',sans-serif"}}>
       <style>{STYLES}</style>
       <div style={{textAlign:"center",maxWidth:480,padding:40}}>
         <div style={{width:80,height:80,borderRadius:"50%",background:"rgba(239,68,68,0.1)",border:"2px solid rgba(239,68,68,0.25)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,margin:"0 auto 24px"}}>✕</div>
-        <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Application Not Approved</div>
+        <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:28,fontWeight:800,color:T.text,marginBottom:12}}>Application Not Approved</div>
         <div style={{color:T.muted,fontSize:15,lineHeight:1.7,marginBottom:20}}>Unfortunately your application was not approved at this time.</div>
         {reason&&<GlassCard style={{padding:"14px 20px",marginBottom:20,textAlign:"left",border:"1px solid rgba(239,68,68,0.2)"}} hover={false}>
           <div style={{fontSize:11,color:"#f87171",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:6}}>Reason</div>
@@ -1530,7 +1573,7 @@ function AdminDashboard({session,onSignOut,onBack}) {
     <div style={{background:T.glass,border:`1px solid ${T.border}`,borderRadius:14,padding:18,marginBottom:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div style={{flex:1}}>
-          <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:15,fontWeight:700,color:T.text,marginBottom:4}}>{c.name}</div>
+          <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:15,fontWeight:700,color:T.text,marginBottom:4}}>{c.name}</div>
           <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
             {[["Contact",c.contact_name],["Email",c.owner_email],["Phone",c.phone],["Signed up",new Date(c.created_at).toLocaleDateString()]].map(([l,v])=>v?(
               <div key={l} style={{fontSize:12,color:T.muted}}><span style={{color:T.muted,fontWeight:600}}>{l}:</span> <span style={{color:T.muted2}}>{v}</span></div>
@@ -1552,13 +1595,13 @@ function AdminDashboard({session,onSignOut,onBack}) {
   );
 
   return(
-    <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text,display:"flex"}}>
+    <div style={{fontFamily:"'Inter',system-ui,sans-serif",background:T.bg,minHeight:"100vh",color:T.text,display:"flex"}}>
       <style>{STYLES}</style>
       {/* Sidebar */}
       <aside style={{width:240,background:T.bg2,display:"flex",flexDirection:"column",padding:"24px 0",flexShrink:0,borderRight:`1px solid ${T.border}`}}>
         <div style={{padding:"0 20px 24px",borderBottom:`1px solid ${T.border}`,cursor:"pointer"}} onClick={onBack}
           onMouseEnter={e=>e.currentTarget.style.opacity="0.7"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}><ScaleLogo size={28} gold/><div><div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></div><div style={{fontSize:10,color:"#f59e0b",marginTop:1,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>Admin Panel</div></div></div>
+          <div style={{display:"flex",alignItems:"center",gap:10}}><ScaleLogo size={28} gold/><div><div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:18,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></div><div style={{fontSize:10,color:"#f59e0b",marginTop:1,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>Admin Panel</div></div></div>
         </div>
         {TABS.map(t=>(
           <button key={t.id} onClick={()=>setTab(t.id)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"11px 20px",background:tab===t.id?"rgba(124,58,237,0.12)":"none",border:"none",borderLeft:`3px solid ${tab===t.id?T.violet:"transparent"}`,color:tab===t.id?T.text:T.muted,fontSize:13,fontWeight:tab===t.id?600:400,cursor:"pointer",fontFamily:"inherit",textAlign:"left",transition:"all 0.15s"}}>
@@ -1583,7 +1626,7 @@ function AdminDashboard({session,onSignOut,onBack}) {
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:28}}>
           {[["Pending",pending.length,"#f59e0b"],["Active Managers",approved.length,"#34d399"],["Rejected",rejected.length,"#f87171"]].map(([l,v,c])=>(
             <GlassCard key={l} style={{padding:"20px 24px"}} hover={false}>
-              <div style={{fontSize:32,fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,color:c,marginBottom:4}}>{v}</div>
+              <div style={{fontSize:32,fontFamily:"'Instrument Serif',Georgia,serif",fontWeight:800,color:c,marginBottom:4}}>{v}</div>
               <div style={{fontSize:11,color:T.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em"}}>{l}</div>
             </GlassCard>
           ))}
@@ -1591,19 +1634,19 @@ function AdminDashboard({session,onSignOut,onBack}) {
 
         {loading?<div style={{textAlign:"center",padding:60,color:T.muted}}>Loading...</div>:<>
           {tab==="approvals"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,marginBottom:16}}>Pending Approvals</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,marginBottom:16}}>Pending Approvals</h2>
             {!pending.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>✅</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No pending applications</div></GlassCard>:
             pending.map(c=><CoCard key={c.id} c={c} showActions/>)}
           </div>}
 
           {tab==="managers"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,marginBottom:16}}>Active Managers</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,marginBottom:16}}>Active Managers</h2>
             {!approved.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>👤</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No approved managers yet</div></GlassCard>:
             approved.map(c=><CoCard key={c.id} c={c} showActions={false}/>)}
           </div>}
 
           {tab==="rejected"&&<div>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,marginBottom:16}}>Rejected Applications</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,marginBottom:16}}>Rejected Applications</h2>
             {!rejected.length?<GlassCard style={{padding:60,textAlign:"center"}} hover={false}><div style={{fontSize:32}}>📋</div><div style={{fontWeight:600,color:T.muted2,marginTop:12}}>No rejected applications</div></GlassCard>:
             rejected.map(c=><CoCard key={c.id} c={c} showActions={false}/>)}
           </div>}
@@ -1683,261 +1726,430 @@ export default function App() {
   ];
 
   return(
-    <div style={{background:T.bg,color:T.text,fontFamily:"'DM Sans',system-ui,sans-serif",overflowX:"hidden"}}>
+    <div style={{background:T.bg,color:T.text,fontFamily:"'Inter',system-ui,sans-serif",overflowX:"hidden"}}>
       <style>{STYLES}</style>
 
-      {/* ── STICKY NAV ── */}
-      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:300,background:"rgba(6,8,15,0.85)",backdropFilter:"blur(24px)",borderBottom:`1px solid ${T.border}`,padding:"0 48px",height:64,display:"flex",alignItems:"center"}}>
-        <div style={{maxWidth:1280,margin:"0 auto",width:"100%",display:"flex",alignItems:"center",gap:8}}>
+      {/* ── UTILITY BAR ── */}
+      <div style={{position:"fixed",top:0,left:0,right:0,zIndex:301,background:"rgba(5,5,8,0.95)",borderBottom:"1px solid rgba(245,158,11,0.12)",height:36,display:"flex",alignItems:"center",justifyContent:"center",gap:12,backdropFilter:"blur(12px)"}}>
+        <span style={{width:5,height:5,borderRadius:"50%",background:"#F59E0B",display:"inline-block",flexShrink:0,boxShadow:"0 0 6px #F59E0B"}}/>
+        <span style={{fontSize:12,color:"#8B93A8",fontWeight:400,letterSpacing:"0.01em"}}>Is your HOA not on ViolationFlow?</span>
+        <button onClick={()=>setView("resident")}
+          style={{background:"transparent",border:"none",fontSize:12,fontWeight:600,color:"#fbbf24",cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.01em",textDecoration:"underline",textDecorationColor:"rgba(245,158,11,0.35)",textUnderlineOffset:2}}
+          onMouseEnter={e=>{e.currentTarget.style.color="#F59E0B";}}
+          onMouseLeave={e=>{e.currentTarget.style.color="#fbbf24";}}>
+          Submit Evidence — $9.99 →
+        </button>
+      </div>
+
+      {/* ── MAIN NAV ── */}
+      <nav style={{position:"fixed",top:36,left:0,right:0,zIndex:300,background:"rgba(5,5,8,0.92)",backdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.055)",height:60}}>
+        <div style={{maxWidth:1360,margin:"0 auto",height:"100%",display:"flex",alignItems:"center",padding:"0 40px",gap:8}}>
+
           {/* Logo */}
-          <div style={{display:"flex",alignItems:"center",gap:10,marginRight:40,cursor:"pointer"}} onClick={()=>setView("home")}>
-            <ScaleLogo size={30} gold/>
-            <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:800,color:T.text}}>Violation<span style={{background:`linear-gradient(90deg,#a78bfa,#818cf8)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Flow</span></span>
+          <div style={{display:"flex",alignItems:"center",gap:9,marginRight:36,cursor:"pointer",flexShrink:0}} onClick={()=>setView("home")}>
+            <ScaleLogo size={26} gold/>
+            <span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:18,fontWeight:400,color:"#FAFAFA",letterSpacing:"-0.01em",fontStyle:"italic"}}>ViolationFlow</span>
           </div>
-          {/* Links */}
-          <div style={{display:"flex",gap:2,flex:1}}>
-            {[{l:"Solutions",h:"#solutions"},{l:"Features",h:"#features"},{l:"How It Works",h:"#how-it-works"},{l:"Pricing",h:"#pricing"},{l:"FAQ",h:"#faq"},{l:"Contact",h:"#contact"}].map(({l,h})=>(
-              <a key={l} href={h} style={{padding:"8px 14px",borderRadius:8,fontSize:13,fontWeight:500,color:T.muted,textDecoration:"none",transition:"all 0.15s",display:"block"}}
-                onMouseEnter={e=>{e.target.style.color=T.text;e.target.style.background=T.glass;}}
-                onMouseLeave={e=>{e.target.style.color=T.muted;e.target.style.background="transparent";}}>{l}</a>
+
+          {/* Nav links */}
+          <div style={{display:"flex",gap:0,flex:1}}>
+            {[{l:"Features",h:"#features"},{l:"How It Works",h:"#how-it-works"},{l:"Pricing",h:"#pricing"},{l:"FAQ",h:"#faq"}].map(({l,h})=>(
+              <a key={l} href={h} style={{padding:"7px 14px",fontSize:13,fontWeight:400,color:"#5A6478",textDecoration:"none",transition:"color 0.15s",letterSpacing:"0.01em"}}
+                onMouseEnter={e=>e.target.style.color="#FAFAFA"}
+                onMouseLeave={e=>e.target.style.color="#5A6478"}>{l}</a>
             ))}
           </div>
-          <div style={{display:"flex",gap:10,alignItems:"center"}}>
-            <button onClick={goToLogin} style={{background:"none",border:`1px solid ${T.border2}`,color:T.muted2,padding:"8px 18px",borderRadius:9,fontFamily:"inherit",fontSize:13,fontWeight:500,cursor:"pointer",transition:"all 0.15s"}}
-              onMouseEnter={e=>{e.currentTarget.style.color=T.text;e.currentTarget.style.borderColor=T.violet;}}
-              onMouseLeave={e=>{e.currentTarget.style.color=T.muted2;e.currentTarget.style.borderColor=T.border2;}}>Sign In</button>
-            <VBtn onClick={()=>setModal("contact")} style={{padding:"9px 20px",fontSize:13}}>Get Started</VBtn>
-          </div>
+
+          {/* Owner Report */}
+          <button onClick={()=>setView("resident")}
+            style={{display:"flex",alignItems:"center",gap:6,background:"rgba(245,158,11,0.07)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:8,padding:"7px 14px",fontSize:12,fontWeight:600,color:"#fbbf24",cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s",flexShrink:0,marginRight:6,letterSpacing:"0.01em"}}
+            onMouseEnter={e=>{e.currentTarget.style.background="rgba(245,158,11,0.14)";e.currentTarget.style.borderColor="rgba(245,158,11,0.4)";}}
+            onMouseLeave={e=>{e.currentTarget.style.background="rgba(245,158,11,0.07)";e.currentTarget.style.borderColor="rgba(245,158,11,0.2)";}}>
+            📸 Submit Evidence
+          </button>
+
+          <NavSignIn goToLogin={goToLogin}/>
+
+          <button onClick={()=>setModal("contact")}
+            style={{background:"linear-gradient(135deg,#6D28D9,#4338CA)",color:"#fff",border:"none",borderRadius:8,padding:"8px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",flexShrink:0,marginLeft:4,boxShadow:"0 2px 12px rgba(109,40,217,0.4)",transition:"all 0.2s",letterSpacing:"0.01em"}}
+            onMouseEnter={e=>{e.currentTarget.style.boxShadow="0 4px 24px rgba(109,40,217,0.55)";e.currentTarget.style.transform="translateY(-1px)";}}
+            onMouseLeave={e=>{e.currentTarget.style.boxShadow="0 2px 12px rgba(109,40,217,0.4)";e.currentTarget.style.transform="translateY(0)";}}>
+            Get Started Free
+          </button>
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"120px 24px 80px",position:"relative",overflow:"hidden",textAlign:"center"}}>
+      {/* ══════════════════════════════════════════════════════
+          HERO — SUBMIT VIOLATION IMMEDIATELY
+      ══════════════════════════════════════════════════════ */}
+      <section style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"160px 24px 80px",position:"relative",overflow:"hidden",textAlign:"center"}}>
         <MeshBG/>
         <Stars/>
-        {/* Glow halo */}
-        <div style={{position:"absolute",width:600,height:300,background:`radial-gradient(ellipse,rgba(124,58,237,0.25) 0%,transparent 70%)`,top:"20%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",width:900,height:600,background:"radial-gradient(ellipse,rgba(109,40,217,0.15) 0%,transparent 65%)",top:"-10%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none"}}/>
 
-        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:900,margin:"0 auto",width:"100%"}}>
           <div className="hero-fade" style={{marginBottom:24}}>
-            <Pill style={{fontSize:12}}>
-              <span style={{width:6,height:6,background:"#4ade80",borderRadius:"50%",display:"inline-block"}}/>
-              ✦ Now serving HOA & Condo Communities Nationwide
-            </Pill>
+            <div style={{display:"inline-flex",alignItems:"center",gap:8,border:"1px solid rgba(255,255,255,0.1)",borderRadius:99,padding:"6px 16px",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(8px)"}}>
+              <span style={{width:5,height:5,background:"#4ade80",borderRadius:"50%",display:"inline-block",flexShrink:0,animation:"pulse 2s infinite"}}/>
+              <span style={{fontSize:12,color:T.muted2,fontWeight:500,letterSpacing:"0.02em"}}>Trusted by HOA & Condo Communities Nationwide</span>
+            </div>
           </div>
 
-          <h1 className="hero-fade-2" style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(46px,7vw,86px)",fontWeight:800,lineHeight:1.05,marginBottom:24,letterSpacing:"-0.02em"}}>
-            Violation management<br/>
-            <span className="shimmer-text">without the friction.</span>
+          <h1 className="hero-fade-2" style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(48px,7vw,90px)",fontWeight:400,lineHeight:1.0,marginBottom:24,letterSpacing:"-0.02em",fontStyle:"normal"}}>
+            Submit Evidence of a Condo<br/>
+            Rule Violation <span style={{fontStyle:"italic",background:"linear-gradient(135deg,#c4b5fd,#8B5CF6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>in Seconds.</span>
           </h1>
 
-          <p className="hero-fade-3" style={{fontSize:"clamp(16px,2vw,20px)",color:T.muted,maxWidth:620,margin:"0 auto 44px",lineHeight:1.75}}>
-            The modern compliance platform for HOAs and Condominium Associations. Report, track, enforce — all automated, all documented, fully defensible.
+          <p className="hero-fade-3" style={{fontSize:"clamp(15px,1.6vw,18px)",color:T.muted2,maxWidth:520,margin:"0 auto 40px",lineHeight:1.85,fontWeight:400}}>
+            Document rule violations with timestamped photo evidence. Your submission is delivered to the board or property manager — who then files the official violation notice.
           </p>
 
-          <div className="hero-fade-4" style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap",marginBottom:64}}>
-            <VBtn onClick={()=>setView("resident")} style={{fontSize:15,padding:"15px 32px"}}>
-              📋 Submit a Report
-            </VBtn>
-            <VBtn variant="ghost" onClick={()=>setModal("contact")} style={{fontSize:15,padding:"15px 32px"}}>
-              Schedule a Demo
-            </VBtn>
+          {/* PRIMARY CTAs */}
+          <div className="hero-fade-4" style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",marginBottom:14}}>
+            <button onClick={()=>setView("resident")}
+              style={{display:"inline-flex",alignItems:"center",gap:9,background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",border:"none",borderRadius:12,padding:"15px 28px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 28px rgba(245,158,11,0.45),0 1px 0 rgba(255,255,255,0.12) inset",transition:"all 0.2s",letterSpacing:"0.01em"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 8px 40px rgba(245,158,11,0.6),0 1px 0 rgba(255,255,255,0.12) inset";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 28px rgba(245,158,11,0.45),0 1px 0 rgba(255,255,255,0.12) inset";}}>
+              📸 Submit Evidence — $9.99
+            </button>
+            <button onClick={()=>{const el=document.getElementById("for-associations");el&&el.scrollIntoView({behavior:"smooth"});}}
+              style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(255,255,255,0.04)",color:T.muted2,border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"15px 24px",fontSize:15,fontWeight:500,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.color=T.text;e.currentTarget.style.borderColor="rgba(255,255,255,0.2)";e.currentTarget.style.background="rgba(255,255,255,0.07)";}}
+              onMouseLeave={e=>{e.currentTarget.style.color=T.muted2;e.currentTarget.style.borderColor="rgba(255,255,255,0.1)";e.currentTarget.style.background="rgba(255,255,255,0.04)";}}>
+              🏢 For Associations & Property Managers
+            </button>
           </div>
 
-          {/* Stats */}
-          <div className="hero-fade-4" style={{display:"flex",gap:48,justifyContent:"center",marginBottom:72}}>
-            {[["1,572+","Communities Served"],["100%","Resolution Rate"],["90%","Faster Enforcement"],["24/7","AI Support"]].map(([v,l])=>(
-              <div key={l} style={{textAlign:"center"}}>
-                <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:28,fontWeight:800,background:`linear-gradient(135deg,${T.text},#c4b5fd)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{v}</div>
-                <div style={{fontSize:12,color:T.muted,marginTop:2}}>{l}</div>
+          {/* Trust line */}
+          <div className="hero-fade-4" style={{fontSize:12,color:T.muted,marginBottom:72,display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
+            {["No account required","Secure payment","Instant notice generation"].map((t,i)=>(
+              <span key={t} style={{display:"flex",alignItems:"center",gap:5}}>
+                {i>0&&<span style={{opacity:0.2,marginRight:-8}}>·</span>}
+                <span style={{color:"#34d399",fontSize:11,marginRight:2}}>✓</span>
+                <span style={{color:T.muted,fontSize:12}}>{t}</span>
+              </span>
+            ))}
+          </div>
+
+          {/* Stats row */}
+          <div className="hero-fade-4" style={{display:"flex",gap:0,justifyContent:"center",marginBottom:72,flexWrap:"wrap",borderTop:"1px solid rgba(255,255,255,0.05)",borderBottom:"1px solid rgba(255,255,255,0.05)",padding:"28px 0"}}>
+            {[["1,572+","Communities Served"],["98%","Satisfaction Rate"],["90%","Faster Enforcement"],["24/7","AI Support"]].map(([v,l],i)=>(
+              <div key={l} style={{textAlign:"center",flex:"0 0 auto",padding:"0 36px",borderRight:i<3?"1px solid rgba(255,255,255,0.06)":"none"}}>
+                <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:34,fontWeight:400,color:T.text,lineHeight:1,marginBottom:4,fontStyle:"italic"}}>{v}</div>
+                <div style={{fontSize:11,color:T.muted,letterSpacing:"0.04em",textTransform:"uppercase"}}>{l}</div>
               </div>
             ))}
           </div>
 
-          {/* Floating dashboard */}
           <div className="float" style={{position:"relative",zIndex:2}}>
-            <div style={{position:"absolute",inset:-60,background:`radial-gradient(ellipse,rgba(124,58,237,0.2) 0%,transparent 70%)`,pointerEvents:"none",borderRadius:"50%"}}/>
+            <div style={{position:"absolute",inset:-80,background:"radial-gradient(ellipse,rgba(109,40,217,0.12) 0%,transparent 65%)",pointerEvents:"none",borderRadius:"50%"}}/>
             <DashMockup/>
           </div>
         </div>
       </section>
 
-      {/* ── MARQUEE TRUST BAR ── */}
-      <div style={{borderTop:`1px solid ${T.border}`,borderBottom:`1px solid ${T.border}`,padding:"18px 0",overflow:"hidden",background:T.bg2}}>
-        <div style={{display:"flex",gap:64,animation:"marquee 20s linear infinite",whiteSpace:"nowrap"}}>
-          {[...Array(2)].map((_,ri)=>(
-            ["🏘 HOA Boards","🏢 Condo Associations","🔑 Property Managers","📋 Community Managers","🌐 Self-Managed Communities","⚖️ Board of Directors","🏗 Real Estate Developers","🏠 Single-Family HOAs"].map(t=>(
-              <span key={`${ri}-${t}`} style={{fontSize:13,fontWeight:500,color:T.muted,display:"inline-flex",alignItems:"center",gap:8,flexShrink:0}}>{t}</span>
-            ))
-          ))}
-        </div>
-      </div>
 
-      {/* ── SOLUTIONS / BENTO ── */}
-      <section id="solutions" style={{padding:"112px 48px",position:"relative"}}>
-        <div style={{maxWidth:1280,margin:"0 auto"}}>
-          <div style={{textAlign:"center",marginBottom:72}}>
-            <Pill style={{marginBottom:18}}>Platform Solutions</Pill>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,lineHeight:1.1,marginBottom:18}}>
-              Everything managed,<br/><span className="shimmer-text">end-to-end.</span>
+      {/* ══════════════════════════════════════════════════════
+          HOW IT WORKS
+      ══════════════════════════════════════════════════════ */}
+      <section id="how-it-works" style={{padding:"100px 48px",position:"relative",overflow:"hidden",borderTop:"1px solid rgba(255,255,255,0.05)"}}>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 80% 50% at 50% 0%,rgba(109,40,217,0.07),transparent)",pointerEvents:"none"}}/>
+        <div style={{maxWidth:1100,margin:"0 auto",position:"relative"}}>
+
+          {/* Section label */}
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:56}}>
+            <div style={{width:40,height:1,background:"rgba(139,92,246,0.4)"}}/>
+            <span style={{fontSize:11,fontWeight:700,color:"#8B5CF6",letterSpacing:"0.12em",textTransform:"uppercase"}}>How It Works</span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:80,alignItems:"center"}}>
+            {/* Left — headline */}
+            <div>
+              <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(36px,4.5vw,62px)",fontWeight:400,lineHeight:1.05,marginBottom:24,letterSpacing:"-0.02em"}}>
+                From photo to<br/><span style={{fontStyle:"italic",color:"#a78bfa"}}>official notice</span><br/>in 90 seconds.
+              </h2>
+              <p style={{color:"#5A6478",fontSize:15,lineHeight:1.85,marginBottom:36,maxWidth:420}}>No legal jargon. No manual forms. Upload evidence, select the rule, and ViolationFlow handles everything else.</p>
+              <button onClick={()=>setView("resident")}
+                style={{display:"inline-flex",alignItems:"center",gap:9,background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",border:"none",borderRadius:10,padding:"13px 24px",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 24px rgba(245,158,11,0.4)",transition:"all 0.2s",letterSpacing:"0.01em"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 8px 36px rgba(245,158,11,0.55)";}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(245,158,11,0.4)";}}>
+                Submit Evidence — $9.99
+              </button>
+            </div>
+
+            {/* Right — numbered steps */}
+            <div style={{display:"flex",flexDirection:"column",gap:0}}>
+              {[
+                {n:"01",title:"Upload Photo Evidence",desc:"Take a photo of the violation on-site. Timestamped and geo-tagged automatically.",color:"#8B5CF6"},
+                {n:"02",title:"Select the Exact Rule",desc:"Pick from your building's actual bylaws — specific section, fine amount included.",color:"#6D28D9"},
+                {n:"03",title:"Notice Generated Instantly",desc:"A compliant violation notice is prepared with rule reference, deadline, and evidence.",color:"#a78bfa"},
+              ].map((s,i)=>(
+                <div key={s.n} style={{display:"flex",gap:20,padding:"28px 0",borderBottom:i<2?"1px solid rgba(255,255,255,0.05)":"none",alignItems:"flex-start"}}>
+                  <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:13,fontWeight:400,color:"rgba(139,92,246,0.5)",letterSpacing:"0.04em",flexShrink:0,width:28,paddingTop:3,fontStyle:"italic"}}>{s.n}</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:16,fontWeight:600,color:"#FAFAFA",marginBottom:6,letterSpacing:"-0.01em"}}>{s.title}</div>
+                    <div style={{fontSize:14,color:"#5A6478",lineHeight:1.7}}>{s.desc}</div>
+                  </div>
+                  <div style={{width:6,height:6,borderRadius:"50%",background:s.color,flexShrink:0,marginTop:8,boxShadow:`0 0 10px ${s.color}`}}/>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          FOR CONDO OWNERS
+      ══════════════════════════════════════════════════════ */}
+      <section style={{padding:"100px 48px",position:"relative",overflow:"hidden",background:"linear-gradient(180deg,#050508 0%,#07060C 100%)"}}>
+        <div style={{position:"absolute",top:"-20%",right:"-5%",width:600,height:600,background:"radial-gradient(circle,rgba(245,158,11,0.06),transparent 65%)",pointerEvents:"none"}}/>
+        <div style={{maxWidth:1100,margin:"0 auto",position:"relative"}}>
+
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:56}}>
+            <div style={{width:40,height:1,background:"rgba(245,158,11,0.4)"}}/>
+            <span style={{fontSize:11,fontWeight:700,color:"#F59E0B",letterSpacing:"0.12em",textTransform:"uppercase"}}>For Condo Owners</span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:80,alignItems:"start"}}>
+            <div>
+              <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(34px,4.2vw,58px)",fontWeight:400,lineHeight:1.05,marginBottom:20,letterSpacing:"-0.02em"}}>
+                Your management<br/>ignores violations.<br/><span style={{fontStyle:"italic",color:"#fbbf24"}}>Document them.</span>
+              </h2>
+              <p style={{color:"#5A6478",fontSize:15,lineHeight:1.85,marginBottom:32,maxWidth:440}}>Submit timestamped photo evidence directly to your board or property manager — who then files the official violation notice. You document it, they enforce it. No subscription needed.</p>
+
+              {/* Violation types — inline chips */}
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:36}}>
+                {["Noise","Smoking","Pets","Parking","Garbage","Short-term rentals","Common areas","Structural"].map(v=>(
+                  <span key={v} style={{fontSize:12,color:"#8B93A8",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:99,padding:"5px 13px",fontWeight:500}}>{v}</span>
+                ))}
+              </div>
+
+              <button onClick={()=>setView("resident")}
+                style={{display:"inline-flex",alignItems:"center",gap:9,background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",border:"none",borderRadius:10,padding:"14px 26px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 24px rgba(245,158,11,0.4)",transition:"all 0.2s",letterSpacing:"0.01em"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 8px 36px rgba(245,158,11,0.55)";}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(245,158,11,0.4)";}}>
+                📸 Submit Evidence — $9.99
+              </button>
+              <div style={{fontSize:12,color:"#5A6478",marginTop:10}}>No account · Secure payment · Instant notice</div>
+            </div>
+
+            {/* Right — process cards */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              {[
+                {n:"01",title:"Upload Photo",desc:"Take and upload evidence instantly from your phone.",icon:"📸",accent:"rgba(245,158,11,0.12)",accentBorder:"rgba(245,158,11,0.18)"},
+                {n:"02",title:"Select Rule",desc:"Choose the exact bylaw violated from your building's rules.",icon:"📋",accent:"rgba(245,158,11,0.08)",accentBorder:"rgba(245,158,11,0.14)"},
+                {n:"03",title:"Notice Sent",desc:"Board or manager gets the official notice automatically.",icon:"📬",accent:"rgba(245,158,11,0.08)",accentBorder:"rgba(245,158,11,0.14)"},
+                {n:"04",title:"Track Case",desc:"Follow your report through every stage to resolution.",icon:"🔍",accent:"rgba(245,158,11,0.05)",accentBorder:"rgba(245,158,11,0.1)"},
+              ].map(f=>(
+                <div key={f.n} style={{background:f.accent,border:`1px solid ${f.accentBorder}`,borderRadius:16,padding:"20px 18px",transition:"all 0.25s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.borderColor="rgba(245,158,11,0.32)";}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=f.accentBorder;}}>
+                  <div style={{fontSize:22,marginBottom:12}}>{f.icon}</div>
+                  <div style={{fontSize:10,fontWeight:700,color:"rgba(245,158,11,0.6)",letterSpacing:"0.1em",marginBottom:6}}>{f.n}</div>
+                  <div style={{fontSize:14,fontWeight:600,color:"#FAFAFA",marginBottom:6,letterSpacing:"-0.01em"}}>{f.title}</div>
+                  <div style={{fontSize:12,color:"#5A6478",lineHeight:1.6}}>{f.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          FOR ASSOCIATIONS & PROPERTY MANAGERS
+      ══════════════════════════════════════════════════════ */}
+      <section id="for-associations" style={{padding:"100px 48px",position:"relative",overflow:"hidden",background:"#08090E",borderTop:"1px solid rgba(255,255,255,0.05)",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 60% 50% at 50% 100%,rgba(109,40,217,0.08),transparent)",pointerEvents:"none"}}/>
+        <div style={{maxWidth:1100,margin:"0 auto",position:"relative"}}>
+
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:20}}>
+            <div style={{width:40,height:1,background:"rgba(139,92,246,0.4)"}}/>
+            <span style={{fontSize:11,fontWeight:700,color:"#8B5CF6",letterSpacing:"0.12em",textTransform:"uppercase"}}>For Associations & Managers</span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:32,alignItems:"end",marginBottom:52}}>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(34px,4.2vw,58px)",fontWeight:400,lineHeight:1.05,letterSpacing:"-0.02em"}}>
+              Built for the people<br/>who <span style={{fontStyle:"italic",color:"#a78bfa"}}>enforce the rules.</span>
             </h2>
-            <p style={{color:T.muted,fontSize:17,maxWidth:540,margin:"0 auto",lineHeight:1.75}}>Compliance shouldn't be a full-time job. ViolationFlow handles the heavy lifting so your team can focus on community.</p>
+            <p style={{color:"#5A6478",fontSize:15,lineHeight:1.85,maxWidth:400,paddingBottom:4}}>Whether you're a volunteer board or a professional property manager — ViolationFlow eliminates the compliance workload.</p>
           </div>
 
-          {/* Bento Grid */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gridTemplateRows:"auto auto",gap:16}}>
-            {/* Card 1 — large */}
-            <GlassCard style={{gridColumn:"1/2",gridRow:"1/2",padding:36}}>
-              <div style={{width:48,height:48,background:"rgba(124,58,237,0.15)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:20,border:`1px solid rgba(124,58,237,0.2)`}}>⚡</div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,marginBottom:10}}>One-Click Enforcement</div>
-              <p style={{color:T.muted,fontSize:14,lineHeight:1.7,marginBottom:20}}>Automatically generate legal notices and cure-period timelines based on your specific bylaws and governing documents.</p>
-              <a href="#how-it-works" style={{color:"#c4b5fd",fontSize:13,fontWeight:600,textDecoration:"none",display:"flex",alignItems:"center",gap:4}}>See how it works</a>
-            </GlassCard>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
 
-            {/* Card 2 — dark */}
-            <div style={{gridColumn:"2/3",gridRow:"1/2",background:"linear-gradient(135deg,#1a1040,#0f0a24)",borderRadius:20,padding:36,border:`1px solid rgba(124,58,237,0.2)`,position:"relative",overflow:"hidden",transition:"all 0.3s"}}
-              onMouseEnter={e=>{e.currentTarget.style.border=`1px solid rgba(124,58,237,0.4)`;e.currentTarget.style.transform="translateY(-2px)";}}
-              onMouseLeave={e=>{e.currentTarget.style.border=`1px solid rgba(124,58,237,0.2)`;e.currentTarget.style.transform="translateY(0)";}}>
-              <div style={{position:"absolute",top:-40,right:-40,width:160,height:160,borderRadius:"50%",background:"radial-gradient(circle,rgba(124,58,237,0.2),transparent 70%)"}}/>
-              <div style={{width:48,height:48,background:"rgba(124,58,237,0.2)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:20}}>📱</div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,marginBottom:10}}>Mobile First</div>
-              <p style={{color:"#94A3B8",fontSize:14,lineHeight:1.7}}>Take photos on-site, upload evidence immediately, and timestamp every report for legal accuracy. Works on any device.</p>
-            </div>
-
-            {/* Card 3 — analytics */}
-            <div style={{gridColumn:"3/4",gridRow:"1/3",background:"linear-gradient(135deg,#1E3A8A,#1e40af,#1d4ed8)",borderRadius:20,padding:36,border:"1px solid rgba(59,130,246,0.3)",transition:"all 0.3s",position:"relative",overflow:"hidden"}}
-              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 20px 60px rgba(30,64,175,0.3)";}}
-              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none";}}>
-              <div style={{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"radial-gradient(circle,rgba(255,255,255,0.08),transparent 70%)"}}/>
-              <div style={{width:48,height:48,background:"rgba(255,255,255,0.15)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:20}}>📊</div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,marginBottom:8}}>Powerful Analytics</div>
-              <p style={{color:"#BFDBFE",fontSize:14,lineHeight:1.7,marginBottom:24}}>Identify recurring issues and resolution bottlenecks. Spot patterns before they become problems.</p>
-              {/* Live bars */}
-              <div style={{background:"rgba(0,0,0,0.25)",borderRadius:12,padding:"16px 14px"}}>
-                <div style={{fontSize:10,fontWeight:700,color:"#93C5FD",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Violations by Category</div>
-                <div style={{display:"flex",alignItems:"flex-end",gap:4,height:60}}>
-                  {[60,75,45,90,55,80,70,95,65,85,50,88].map((h,i)=>(
-                    <div key={i} style={{flex:1,background:i===7?"#F59E0B":"rgba(147,197,253,0.5)",borderRadius:"3px 3px 0 0",height:`${h}%`,transition:"all 0.5s"}}/>
-                  ))}
-                </div>
-                <div style={{display:"flex",gap:16,marginTop:12}}>
-                  {[["Parking","38%"],["Noise","24%"],["Structure","18%"]].map(([l,v])=>(
-                    <div key={l}><div style={{fontSize:14,fontWeight:800,color:"#fff",fontFamily:"'Bricolage Grotesque',sans-serif"}}>{v}</div><div style={{fontSize:10,color:"#93C5FD"}}>{l}</div></div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <GlassCard style={{gridColumn:"1/2",gridRow:"2/3",padding:36}}>
-              <div style={{width:48,height:48,background:"rgba(245,158,11,0.1)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:20,border:"1px solid rgba(245,158,11,0.2)"}}>⏱</div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,marginBottom:10}}>Automatic Reminders</div>
-              <p style={{color:T.muted,fontSize:14,lineHeight:1.7}}>Never miss a hearing deadline. Automated timeline tracking ensures proper notice periods are always observed.</p>
-            </GlassCard>
-
-            {/* Card 5 */}
-            <GlassCard style={{gridColumn:"2/3",gridRow:"2/3",padding:36}}>
-              <div style={{width:48,height:48,background:"rgba(16,185,129,0.1)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:20,border:"1px solid rgba(16,185,129,0.2)"}}>🛡</div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:22,fontWeight:700,marginBottom:10}}>Due Process Shield</div>
-              <p style={{color:T.muted,fontSize:14,lineHeight:1.7}}>Complete audit trail on every case. Timestamped, immutable documentation ready for any legal challenge.</p>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURES DEEP DIVE ── */}
-      <section id="features" style={{padding:"112px 48px",background:T.bg2,borderTop:`1px solid ${T.border}`,borderBottom:`1px solid ${T.border}`}}>
-        <div style={{maxWidth:1280,margin:"0 auto"}}>
-          <div style={{textAlign:"center",marginBottom:72}}>
-            <Pill style={{marginBottom:18}}>Features</Pill>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,lineHeight:1.1,marginBottom:18}}>Built for communities<br/>that demand compliance.</h2>
-            <p style={{color:T.muted,fontSize:17,maxWidth:500,margin:"0 auto"}}>Every feature purpose-built for HOAs and Condominium Associations — not bolted onto generic software.</p>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
-            {features.map((f,i)=>(
-              <GlassCard key={f.title} style={{padding:28,cursor:"default",borderColor:activeFeature===i?`rgba(124,58,237,0.4)`:T.border}}
-                hover={false}
-                onMouseEnter={()=>setActiveFeature(i)}
-                onMouseLeave={()=>setActiveFeature(0)}>
-                <div style={{width:48,height:48,background:activeFeature===i?"rgba(124,58,237,0.2)":"rgba(124,58,237,0.1)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:18,border:`1px solid rgba(124,58,237,0.2)`,transition:"all 0.2s",boxShadow:activeFeature===i?"0 0 20px rgba(124,58,237,0.2)":"none"}}>{f.icon}</div>
-                <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:700,color:T.text,marginBottom:8}}>{f.title}</div>
-                <div style={{fontSize:14,color:T.muted,lineHeight:1.7}}>{f.desc}</div>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" style={{padding:"112px 48px"}}>
-        <div style={{maxWidth:900,margin:"0 auto"}}>
-          <div style={{textAlign:"center",marginBottom:72}}>
-            <Pill style={{marginBottom:18}}>How It Works</Pill>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,lineHeight:1.1,marginBottom:18}}>From report to resolution<br/>in 5 steps.</h2>
-          </div>
-          <div style={{position:"relative"}}>
-            <div style={{position:"absolute",left:27,top:28,bottom:28,width:2,background:`linear-gradient(to bottom,${T.violet},rgba(124,58,237,0.1))`}}/>
-            {[
-              {n:"01",title:"Resident Submits Report",desc:"Owner searches for their HOA or Condo association, selects the exact rule violated from uploaded bylaws, and completes a structured form with identity, description, and evidence. Anonymous submissions are blocked.",color:T.violet},
-              {n:"02",title:"Manager Reviews",desc:"Property manager receives an instant notification, reviews evidence, and approves or rejects. Approved reports automatically create a tracked violation case in the dashboard.",color:"#818cf8"},
-              {n:"03",title:"Violation Notice Generated",desc:"System auto-generates a professional violation notice with the exact rule reference, section, fine amount, and configurable hearing deadline. One click to send.",color:"#a78bfa"},
-              {n:"04",title:"Hearing Window Tracked",desc:"A 10–14 day configurable hearing window tracks the owner's right to contest. The system enforces due process — no steps can be skipped.",color:"#c4b5fd"},
-              {n:"05",title:"Auto-Finalization",desc:"If no hearing is requested, the violation is automatically finalized. Both manager and owner are notified. Fine is ready to apply to account ledger.",color:T.gold},
-            ].map((s,i)=>(
-              <div key={s.n} style={{display:"flex",gap:28,marginBottom:40,alignItems:"flex-start",position:"relative"}}>
-                <div style={{width:56,height:56,background:`linear-gradient(135deg,${s.color}22,${s.color}44)`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:14,fontWeight:800,color:s.color,flexShrink:0,zIndex:1,border:`2px solid ${s.color}`,boxShadow:`0 0 0 6px ${T.bg}`}}>{s.n}</div>
-                <GlassCard style={{flex:1,padding:"22px 26px"}} hover={false}>
-                  <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:700,color:T.text,marginBottom:8}}>{s.title}</div>
-                  <div style={{fontSize:14,color:T.muted,lineHeight:1.75}}>{s.desc}</div>
-                </GlassCard>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PRICING ── */}
-      <section id="pricing" style={{padding:"112px 48px",background:T.bg2,borderTop:`1px solid ${T.border}`,borderBottom:`1px solid ${T.border}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{textAlign:"center",marginBottom:56}}>
-            <Pill style={{marginBottom:18}}>Pricing</Pill>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,lineHeight:1.1,marginBottom:18}}>Simple, honest pricing.</h2>
-            <p style={{color:T.muted,fontSize:16,marginBottom:28}}>Per association, per month. No setup fees. Cancel anytime.</p>
-            {/* Toggle */}
-            <div style={{display:"inline-flex",alignItems:"center",gap:12,background:T.glass,border:`1px solid ${T.border}`,borderRadius:99,padding:"6px 6px 6px 16px"}}>
-              <span style={{fontSize:13,color:annual?T.muted:T.text,fontWeight:annual?400:600}}>Monthly</span>
-              <div onClick={()=>setAnnual(a=>!a)} style={{width:44,height:24,background:annual?T.violet:"rgba(255,255,255,0.1)",borderRadius:99,position:"relative",cursor:"pointer",transition:"background 0.3s"}}>
-                <div style={{position:"absolute",top:3,left:annual?20:3,width:18,height:18,background:"#fff",borderRadius:"50%",transition:"left 0.3s"}}/>
-              </div>
-              <span style={{fontSize:13,color:annual?T.text:T.muted,fontWeight:annual?600:400}}>Annual</span>
-              {annual&&<span style={{background:"rgba(16,185,129,0.15)",color:"#34d399",fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,border:"1px solid rgba(16,185,129,0.3)"}}>Save 20%</span>}
-            </div>
-          </div>
-
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>
-            {[
-              {name:"Starter",price:annual?39:49,desc:"Perfect for self-managed small communities.",features:["Violation reporting portal","Rule-based reporting","Notice generator","Hearing deadline tracking","Compliance audit trail","Up to 50 units"],cta:"Get Started Free"},
-              {name:"Professional",price:annual?79:99,desc:"Built for property management companies.",features:["Everything in Starter","Unlimited units","Multi-association management","Powerful analytics","Priority email support","API access"],cta:"Start Free Trial",highlight:true},
-              {name:"Full Service",price:annual?159:199,desc:"We manage the entire enforcement process.",features:["Everything in Professional","Our team reviews all cases","Notices drafted & sent","Hearing coordination","Dedicated account manager","White-glove onboarding"],cta:"Contact Sales"},
-            ].map(p=>(
-              <div key={p.name} style={{borderRadius:24,padding:36,position:"relative",transition:"all 0.3s",...(p.highlight?{background:"linear-gradient(135deg,rgba(124,58,237,0.12),rgba(79,70,229,0.08))",border:`1px solid rgba(124,58,237,0.4)`,boxShadow:`0 0 60px rgba(124,58,237,0.15),0 20px 60px rgba(0,0,0,0.4)`,animation:"glowPulse 4s ease-in-out infinite"}:{background:T.glass,border:`1px solid ${T.border}`})}}
-                onMouseEnter={e=>{if(!p.highlight){e.currentTarget.style.border=`1px solid ${T.border2}`;e.currentTarget.style.transform="translateY(-4px)";}}}
-                onMouseLeave={e=>{if(!p.highlight){e.currentTarget.style.border=`1px solid ${T.border}`;e.currentTarget.style.transform="translateY(0)";}}}
-              >
-                {p.highlight&&<div style={{position:"absolute",top:-13,left:"50%",transform:"translateX(-50%)",background:`linear-gradient(135deg,${T.violet},${T.indigo})`,color:"#fff",padding:"5px 20px",borderRadius:99,fontSize:11,fontWeight:700,letterSpacing:"0.08em",whiteSpace:"nowrap",boxShadow:"0 4px 20px rgba(124,58,237,0.4)"}}>MOST POPULAR</div>}
-                <div style={{fontSize:13,fontWeight:600,color:T.muted,marginBottom:8}}>{p.name}</div>
-                <div style={{display:"flex",alignItems:"baseline",gap:4,marginBottom:6}}>
-                  <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:46,fontWeight:800,color:p.highlight?"#c4b5fd":T.text}}>${p.price}</span>
-                  <span style={{fontSize:13,color:T.muted}}>/mo</span>
-                </div>
-                <div style={{fontSize:12,color:T.muted,marginBottom:8}}>per association</div>
-                <div style={{fontSize:13,color:T.muted,marginBottom:28,lineHeight:1.6}}>{p.desc}</div>
-                {p.features.map(f=>(
-                  <div key={f} style={{display:"flex",gap:10,marginBottom:10,fontSize:13,color:T.muted2}}>
-                    <span style={{color:p.highlight?"#a78bfa":"#34d399",fontWeight:700,flexShrink:0}}>✓</span>{f}
+            {/* HOA Boards */}
+            <div style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:20,padding:"40px",transition:"all 0.3s"}}
+              onMouseEnter={e=>{e.currentTarget.style.border="1px solid rgba(52,211,153,0.25)";e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.background="rgba(52,211,153,0.03)";}}
+              onMouseLeave={e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.07)";e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background="rgba(255,255,255,0.02)";}}>
+              <div style={{display:"inline-flex",alignItems:"center",gap:7,border:"1px solid rgba(52,211,153,0.25)",borderRadius:6,padding:"3px 10px",fontSize:10,fontWeight:700,color:"#34d399",letterSpacing:"0.1em",marginBottom:24,background:"rgba(52,211,153,0.06)"}}>HOA BOARDS</div>
+              <h3 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(24px,2.5vw,34px)",fontWeight:400,color:"#FAFAFA",lineHeight:1.15,marginBottom:12,letterSpacing:"-0.01em"}}>Simplify Violation<br/>Enforcement</h3>
+              <p style={{color:"#5A6478",fontSize:14,lineHeight:1.8,marginBottom:28}}>Self-managed associations struggle with rule enforcement. ViolationFlow automates the entire process so volunteer boards don't burn out.</p>
+              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:32}}>
+                {["Violation reports & notices","Hearing deadline tracking","Rule database upload","Compliance audit trail","Auto-finalization"].map(f=>(
+                  <div key={f} style={{display:"flex",gap:10,fontSize:13,color:"#8B93A8",alignItems:"center"}}>
+                    <div style={{width:4,height:4,borderRadius:"50%",background:"#34d399",flexShrink:0}}/>
+                    {f}
                   </div>
                 ))}
-                <VBtn onClick={()=>setModal("contact")} variant={p.highlight?"solid":"ghost"} style={{marginTop:28,width:"100%",justifyContent:"center",padding:"13px"}}>{p.cta}</VBtn>
+              </div>
+              <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:20}}>
+                <span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:42,fontWeight:400,color:"#FAFAFA",fontStyle:"italic"}}>$59</span>
+                <span style={{fontSize:13,color:"#5A6478",fontWeight:400}}>/month · up to 150 units</span>
+              </div>
+              <VBtn onClick={()=>setModal("contact")} variant="success" style={{width:"100%",justifyContent:"center",padding:"13px 0",borderRadius:10,fontSize:14}}>Start Free Trial</VBtn>
+            </div>
+
+            {/* Property Managers */}
+            <div style={{background:"rgba(109,40,217,0.06)",border:"1px solid rgba(109,40,217,0.3)",borderRadius:20,padding:"40px",position:"relative",transition:"all 0.3s",boxShadow:"0 0 60px rgba(109,40,217,0.06)"}}
+              onMouseEnter={e=>{e.currentTarget.style.border="1px solid rgba(109,40,217,0.5)";e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow="0 24px 80px rgba(109,40,217,0.18)";}}
+              onMouseLeave={e=>{e.currentTarget.style.border="1px solid rgba(109,40,217,0.3)";e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 0 60px rgba(109,40,217,0.06)";}}>
+              <div style={{position:"absolute",top:20,right:20,background:"linear-gradient(135deg,#6D28D9,#4338CA)",color:"#fff",padding:"3px 12px",borderRadius:6,fontSize:10,fontWeight:700,letterSpacing:"0.1em"}}>MOST POPULAR</div>
+              <div style={{display:"inline-flex",alignItems:"center",gap:7,border:"1px solid rgba(139,92,246,0.3)",borderRadius:6,padding:"3px 10px",fontSize:10,fontWeight:700,color:"#a78bfa",letterSpacing:"0.1em",marginBottom:24,background:"rgba(139,92,246,0.08)"}}>PROPERTY MANAGERS</div>
+              <h3 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(24px,2.5vw,34px)",fontWeight:400,color:"#FAFAFA",lineHeight:1.15,marginBottom:12,letterSpacing:"-0.01em"}}>Automate Compliance<br/>Across Your Portfolio</h3>
+              <p style={{color:"#5A6478",fontSize:14,lineHeight:1.8,marginBottom:28}}>Manage multiple associations from one dashboard. Analytics, unlimited violations, and full enforcement automation — without the paperwork chaos.</p>
+              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:32}}>
+                {["Multi-association dashboard","Portfolio analytics","Unlimited violations","Notice templates","API integrations","Priority support"].map(f=>(
+                  <div key={f} style={{display:"flex",gap:10,fontSize:13,color:"#8B93A8",alignItems:"center"}}>
+                    <div style={{width:4,height:4,borderRadius:"50%",background:"#8B5CF6",flexShrink:0}}/>
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:20}}>
+                <span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:42,fontWeight:400,color:"#c4b5fd",fontStyle:"italic"}}>$149</span>
+                <span style={{fontSize:13,color:"#5A6478",fontWeight:400}}>/month · up to 300 units</span>
+              </div>
+              <VBtn onClick={()=>setModal("contact")} style={{width:"100%",justifyContent:"center",padding:"13px 0",borderRadius:10,fontSize:14}}>Start Free Trial</VBtn>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          FEATURES
+      ══════════════════════════════════════════════════════ */}
+      <section id="features" style={{padding:"100px 48px",position:"relative",overflow:"hidden"}}>
+        <div style={{maxWidth:1100,margin:"0 auto"}}>
+
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:56}}>
+            <div style={{width:40,height:1,background:"rgba(139,92,246,0.4)"}}/>
+            <span style={{fontSize:11,fontWeight:700,color:"#8B5CF6",letterSpacing:"0.12em",textTransform:"uppercase"}}>Platform Features</span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 2fr",gap:64,alignItems:"start",marginBottom:0}}>
+            <div style={{position:"sticky",top:100}}>
+              <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(32px,3.5vw,52px)",fontWeight:400,lineHeight:1.08,marginBottom:20,letterSpacing:"-0.02em"}}>
+                Every tool<br/>you need to<br/><span style={{fontStyle:"italic",color:"#a78bfa"}}>enforce properly.</span>
+              </h2>
+              <p style={{color:"#5A6478",fontSize:14,lineHeight:1.8}}>Purpose-built for HOAs and Condo associations — not bolted onto generic software.</p>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              {features.map((f,i)=>(
+                <div key={f.title}
+                  style={{background:activeFeature===i?"rgba(109,40,217,0.07)":"rgba(255,255,255,0.02)",border:activeFeature===i?"1px solid rgba(109,40,217,0.28)":"1px solid rgba(255,255,255,0.06)",borderRadius:16,padding:"24px 22px",cursor:"default",transition:"all 0.25s"}}
+                  onMouseEnter={()=>setActiveFeature(i)} onMouseLeave={()=>setActiveFeature(null)}>
+                  <div style={{fontSize:22,marginBottom:14}}>{f.icon}</div>
+                  <div style={{fontSize:15,fontWeight:600,color:"#FAFAFA",marginBottom:7,letterSpacing:"-0.01em"}}>{f.title}</div>
+                  <div style={{fontSize:13,color:"#5A6478",lineHeight:1.7}}>{f.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          PRICING
+      ══════════════════════════════════════════════════════ */}
+      <section id="pricing" style={{padding:"100px 48px",background:"#08090E",borderTop:"1px solid rgba(255,255,255,0.05)",borderBottom:"1px solid rgba(255,255,255,0.05)",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 50% 40% at 50% 0%,rgba(109,40,217,0.07),transparent)",pointerEvents:"none"}}/>
+        <div style={{maxWidth:1160,margin:"0 auto",position:"relative"}}>
+
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:20}}>
+            <div style={{width:40,height:1,background:"rgba(139,92,246,0.4)"}}/>
+            <span style={{fontSize:11,fontWeight:700,color:"#8B5CF6",letterSpacing:"0.12em",textTransform:"uppercase"}}>Pricing</span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24,alignItems:"end",marginBottom:56}}>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(34px,4vw,58px)",fontWeight:400,lineHeight:1.05,letterSpacing:"-0.02em"}}>
+              Simple,<br/><span style={{fontStyle:"italic",color:"#a78bfa"}}>honest pricing.</span>
+            </h2>
+            <p style={{color:"#5A6478",fontSize:15,lineHeight:1.85,maxWidth:380,paddingBottom:4}}>No setup fees. No long-term contracts. Pick the plan that fits your community and cancel anytime.</p>
+          </div>
+
+          {/* Pricing grid */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+            {[
+              {
+                name:"On Demand",tag:"FOR OWNERS",tagColor:"#F59E0B",
+                price:"$9.99",per:"per report",
+                desc:"No subscription needed.",
+                features:["Photo evidence upload","Official notice generated","Case status tracking","Legal-grade audit trail","No monthly commitment"],
+                cta:"Submit Evidence",ctaFn:()=>setView("resident"),
+                accentBg:"rgba(245,158,11,0.04)",accentBorder:"rgba(245,158,11,0.18)",priceCl:"#fbbf24",checkCl:"#F59E0B",
+              },
+              {
+                name:"Starter",tag:"SELF-MANAGED",tagColor:"#34d399",
+                price:"$59",per:"/month",
+                desc:"Up to 150 units.",
+                features:["Resident violation portal","Rule database upload","Notice generator","Hearing tracking","Compliance history","Email support"],
+                cta:"Start Free Trial",ctaFn:()=>setModal("contact"),
+                accentBg:"rgba(52,211,153,0.04)",accentBorder:"rgba(52,211,153,0.15)",priceCl:"#34d399",checkCl:"#34d399",
+              },
+              {
+                name:"Professional",tag:"MOST POPULAR",tagColor:"#c4b5fd",highlight:true,
+                price:"$149",per:"/month",
+                desc:"Up to 300 units.",
+                features:["Unlimited associations","Portfolio dashboard","Compliance analytics","API integrations","Priority support","600 unit add-on"],
+                cta:"Start Free Trial",ctaFn:()=>setModal("contact"),
+                accentBg:"rgba(109,40,217,0.08)",accentBorder:"rgba(109,40,217,0.35)",priceCl:"#c4b5fd",checkCl:"#8B5CF6",
+              },
+              {
+                name:"Enterprise",tag:"600+ UNITS",tagColor:"#8B93A8",
+                price:"Custom",per:"pricing",
+                desc:"For large firms.",
+                features:["Unlimited units","White label option","Dedicated onboarding","Custom integrations","SLA guarantee","Account manager"],
+                cta:"Contact Sales",ctaFn:()=>setModal("contact"),
+                accentBg:"rgba(255,255,255,0.02)",accentBorder:"rgba(255,255,255,0.08)",priceCl:"#FAFAFA",checkCl:"#5A6478",
+              },
+            ].map(p=>(
+              <div key={p.name}
+                style={{background:p.accentBg,border:`1px solid ${p.accentBorder}`,borderRadius:18,padding:"28px 24px",display:"flex",flexDirection:"column",transition:"all 0.3s",position:"relative",...(p.highlight?{boxShadow:"0 0 60px rgba(109,40,217,0.1)"}:{})}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.borderColor=p.highlight?"rgba(109,40,217,0.6)":"rgba(255,255,255,0.15)";if(p.highlight)e.currentTarget.style.boxShadow="0 20px 80px rgba(109,40,217,0.2)";}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=p.accentBorder;if(p.highlight)e.currentTarget.style.boxShadow="0 0 60px rgba(109,40,217,0.1)";}}>
+
+                {/* Tag */}
+                <div style={{fontSize:9,fontWeight:800,color:p.tagColor,letterSpacing:"0.12em",marginBottom:20,opacity:0.9}}>{p.tag}</div>
+
+                {/* Plan name */}
+                <div style={{fontSize:17,fontWeight:600,color:"#FAFAFA",marginBottom:16,letterSpacing:"-0.01em"}}>{p.name}</div>
+
+                {/* Price */}
+                <div style={{marginBottom:6}}>
+                  <span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:p.price==="Custom"?28:44,fontWeight:400,color:p.priceCl,fontStyle:"italic",lineHeight:1}}>{p.price}</span>
+                  <span style={{fontSize:13,color:"#5A6478",marginLeft:4}}>{p.per}</span>
+                </div>
+                <div style={{fontSize:12,color:"#5A6478",marginBottom:24,paddingBottom:24,borderBottom:"1px solid rgba(255,255,255,0.05)"}}>{p.desc}</div>
+
+                {/* Features */}
+                <div style={{flex:1,display:"flex",flexDirection:"column",gap:9,marginBottom:24}}>
+                  {p.features.map(f=>(
+                    <div key={f} style={{display:"flex",gap:10,fontSize:13,color:"#8B93A8",alignItems:"flex-start"}}>
+                      <div style={{width:4,height:4,borderRadius:"50%",background:p.checkCl,flexShrink:0,marginTop:5}}/>
+                      {f}
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <button onClick={p.ctaFn}
+                  style={{width:"100%",padding:"12px",borderRadius:9,fontFamily:"inherit",fontSize:13,fontWeight:600,cursor:"pointer",transition:"all 0.2s",letterSpacing:"0.01em",
+                    ...(p.highlight?{background:"linear-gradient(135deg,#6D28D9,#4338CA)",color:"#fff",border:"none",boxShadow:"0 4px 20px rgba(109,40,217,0.4)"}:
+                       p.name==="On Demand"?{background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",border:"none",boxShadow:"0 4px 16px rgba(245,158,11,0.35)"}:
+                       {background:"rgba(255,255,255,0.04)",color:"#8B93A8",border:"1px solid rgba(255,255,255,0.08)"})}}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)";if(p.highlight)e.currentTarget.style.boxShadow="0 8px 32px rgba(109,40,217,0.55)";}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";if(p.highlight)e.currentTarget.style.boxShadow="0 4px 20px rgba(109,40,217,0.4)";}}>
+                  {p.cta}
+                </button>
               </div>
             ))}
           </div>
@@ -1949,7 +2161,7 @@ export default function App() {
         <div style={{maxWidth:1100,margin:"0 auto"}}>
           <div style={{textAlign:"center",marginBottom:72}}>
             <Pill style={{marginBottom:18}}>FAQ</Pill>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,lineHeight:1.1,marginBottom:18}}>Everything you need<br/>to know.</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(32px,4vw,52px)",fontWeight:800,lineHeight:1.1,marginBottom:18}}>Everything you need<br/>to know.</h2>
             <p style={{color:T.muted,fontSize:16,maxWidth:500,margin:"0 auto"}}>Can't find your answer? Email us at <a href="mailto:support@violationflow.com" style={{color:"#a78bfa",textDecoration:"none"}}>support@violationflow.com</a></p>
           </div>
 
@@ -1957,14 +2169,15 @@ export default function App() {
 
             {/* LEFT — Plan comparison */}
             <div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:24,display:"flex",alignItems:"center",gap:10}}>
+              <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:24,display:"flex",alignItems:"center",gap:10}}>
                 <span style={{width:32,height:32,background:"rgba(124,58,237,0.15)",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>💳</span>
                 Plan Differences
               </div>
               {[
-                {plan:"Starter — $49/mo",color:"#34d399",bg:"rgba(52,211,153,0.08)",border:"rgba(52,211,153,0.2)",desc:"Self-service software for small self-managed communities up to 50 units. You handle the workflow — the platform automates notices, deadlines, and documentation."},
-                {plan:"Professional — $99/mo",color:"#a78bfa",bg:"rgba(124,58,237,0.08)",border:"rgba(124,58,237,0.3)",desc:"Unlimited units + multi-association management. Built for property managers running multiple communities. Adds powerful analytics, reporting, and priority support."},
-                {plan:"Full Service — $199/mo",color:T.gold,bg:"rgba(245,158,11,0.08)",border:"rgba(245,158,11,0.2)",desc:"We do everything for you. Our team reviews cases, drafts and sends notices, coordinates hearings, and manages the full enforcement process with a dedicated account manager."},
+                {plan:"On Demand — $9.99/report",color:"#fbbf24",bg:"rgba(245,158,11,0.07)",border:"rgba(245,158,11,0.18)",desc:"For individual owners whose HOA hasn't signed up. File violation reports and track case status — no monthly fee, no account required."},
+                {plan:"Starter — $59/month",color:"#34d399",bg:"rgba(52,211,153,0.08)",border:"rgba(52,211,153,0.2)",desc:"Self-service for small self-managed communities up to 150 units. You handle the workflow — the platform automates notices, deadlines, and documentation."},
+                {plan:"Professional — $149/month",color:"#a78bfa",bg:"rgba(124,58,237,0.08)",border:"rgba(124,58,237,0.3)",desc:"Multi-association dashboard for property managers up to 300 units. Adds powerful analytics, API integrations, and priority support."},
+                {plan:"Enterprise — Custom pricing",color:T.gold,bg:"rgba(245,158,11,0.08)",border:"rgba(245,158,11,0.2)",desc:"For large management firms with 600+ units. Unlimited units, white label option, dedicated onboarding, and custom integrations."},
               ].map(p=>(
                 <div key={p.plan} style={{background:p.bg,border:`1px solid ${p.border}`,borderRadius:16,padding:20,marginBottom:14}}>
                   <div style={{fontWeight:700,fontSize:14,color:p.color,marginBottom:8}}>{p.plan}</div>
@@ -1973,7 +2186,7 @@ export default function App() {
               ))}
 
               {/* Onboarding requirements */}
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,margin:"36px 0 20px",display:"flex",alignItems:"center",gap:10}}>
+              <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,margin:"36px 0 20px",display:"flex",alignItems:"center",gap:10}}>
                 <span style={{width:32,height:32,background:"rgba(245,158,11,0.12)",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>📋</span>
                 What Associations Must Provide
               </div>
@@ -2003,7 +2216,7 @@ export default function App() {
 
             {/* RIGHT — FAQ accordion */}
             <div>
-              <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:24,display:"flex",alignItems:"center",gap:10}}>
+              <div style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:700,color:T.text,marginBottom:24,display:"flex",alignItems:"center",gap:10}}>
                 <span style={{width:32,height:32,background:"rgba(124,58,237,0.15)",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>❓</span>
                 Common Questions
               </div>
@@ -2019,7 +2232,7 @@ export default function App() {
         <div style={{position:"absolute",width:600,height:400,borderRadius:"50%",background:"radial-gradient(ellipse,rgba(124,58,237,0.2) 0%,transparent 70%)",top:"50%",left:"50%",transform:"translate(-50%,-50%)",pointerEvents:"none"}}/>
         <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto"}}>
           <ScaleLogo size={56} gold/>
-          <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(32px,5vw,56px)",fontWeight:800,lineHeight:1.1,margin:"24px 0 16px"}}>Ready to bring flow<br/>to your association?</h2>
+          <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(32px,5vw,56px)",fontWeight:800,lineHeight:1.1,margin:"24px 0 16px"}}>Ready to bring flow<br/>to your association?</h2>
           <p style={{color:T.muted,fontSize:17,marginBottom:44,lineHeight:1.75}}>Join community managers resolving HOA and Condominium violations faster, cleaner, and with full legal protection.</p>
           <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap"}}>
             <VBtn onClick={()=>setModal("contact")} variant="gold" style={{fontSize:15,padding:"15px 36px"}}>Get Started Free</VBtn>
@@ -2033,7 +2246,7 @@ export default function App() {
         <div style={{maxWidth:1100,margin:"0 auto",display:"grid",gridTemplateColumns:"1fr 1.2fr",gap:80,alignItems:"start"}}>
           <div>
             <Pill style={{marginBottom:24}}>Get In Touch</Pill>
-            <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:"clamp(28px,4vw,44px)",fontWeight:800,lineHeight:1.1,marginBottom:16}}>Let's talk about your community.</h2>
+            <h2 style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:"clamp(28px,4vw,44px)",fontWeight:800,lineHeight:1.1,marginBottom:16}}>Let's talk about your community.</h2>
             <p style={{color:T.muted,fontSize:15,lineHeight:1.8,marginBottom:36}}>Whether you manage a single HOA or hundreds of condominium buildings, our team will build the right plan for you.</p>
             {[
               {icon:"✉️",title:"Email Support",val:"support@violationflow.com",link:"mailto:support@violationflow.com"},
@@ -2063,14 +2276,14 @@ export default function App() {
             <div>
               <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
                 <ScaleLogo size={30} gold/>
-                <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:20,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></span>
+                <span style={{fontFamily:"'Instrument Serif',Georgia,serif",fontSize:20,fontWeight:800,color:T.text}}>Violation<span style={{color:"#a78bfa"}}>Flow</span></span>
               </div>
               <p style={{fontSize:13,color:T.muted,lineHeight:1.8,maxWidth:280,marginBottom:20}}>The modern compliance platform for HOAs and Condominium Associations. Nationwide coverage, automated enforcement.</p>
               <a href="mailto:support@violationflow.com" style={{fontSize:13,color:"#a78bfa",textDecoration:"none",display:"flex",alignItems:"center",gap:6}}>✉ support@violationflow.com</a>
             </div>
             {[
               {title:"Product",links:[{l:"Solutions",h:"#solutions"},{l:"Features",h:"#features"},{l:"How It Works",h:"#how-it-works"},{l:"Pricing",h:"#pricing"}]},
-              {title:"Platform",links:[{l:"Report a Violation",a:()=>setView("resident")},{l:"Manager Login",a:goToLogin},{l:"Contact Us",h:"#contact"}]},
+              {title:"Platform",links:[{l:"Owner Violation Report",a:()=>setView("resident")},{l:"Self-Managed HOA Login",a:goToLogin},{l:"Property Manager Login",a:goToLogin},{l:"Contact Us",h:"#contact"}]},
               {title:"Legal",links:[{l:"Privacy Policy",a:()=>setModal("privacy")},{l:"Terms of Service",a:()=>setModal("terms")},{l:"Legal Disclaimer",a:()=>setModal("disclaimer")}]},
               {title:"Support",links:[{l:"Email Us",link:"mailto:support@violationflow.com"},{l:"FAQ",h:"#faq"},{l:"Documentation",h:"#how-it-works"}]},
             ].map(col=>(
